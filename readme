@@ -16,6 +16,16 @@ looked hard enough)). Any way, exspect ugliness and brutality
 in all things graphical, I am trying to get it working at the
 moment.
 
+-------------------------------------------------------------
+Install
+
+Get the apk file "AndroidRacerTwo-debug.apk" from the bin
+directory under this directory onto your device and run or use
+adb to install it.
+
+-------------------------------------------------------------
+Progress
+
 It is currently in a stage of chopping all the unnecisaries of
 version one and cleaning up the code, making it more modular,
 I have already added a new game mode and simple ways to add
