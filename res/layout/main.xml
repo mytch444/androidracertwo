@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/main_view"
+	      android:orientation="vertical"
+	      xmlns:android="http://schemas.android.com/apk/res/android"
+	      android:layout_width="fill_parent"
+	      android:layout_height="fill_parent"
+	      android:background="#FF000000" >
+  <Button
+      android:id="@+id/play"
+      android:layout_width="320px"
+      android:layout_height="46px"
+      android:layout_marginTop="5px"
+      android:layout_marginRight="5px"
+      android:text="Play"
+      android:textColor="#FFFFFFFF"
+      android:textSize="36px"
+      android:gravity="right"
+      />
+    <Button
+      android:id="@+id/tron"
+      android:layout_width="320px"
+      android:layout_height="46px"
+      android:layout_marginTop="5px"
+      android:layout_marginRight="5px"
+      android:text="Tron"
+      android:textColor="#FFFFFFFF"
+      android:textSize="36px"
+      android:gravity="right"
+      />
+</LinearLayout>

@@ -1,0 +1,22 @@
+-----------------------------------------------------------
+
+                Android Racer Two beta
+
+------------------------------------------------------------
+
+I have decided to make a second android racer, my tron style
+game for android, it is still in the beta stage, exstreame
+emphisis on beta, and I have only been working on it for 
+about a week on it at this stage, my goals for this version
+is that it will have game modes allowing players a bit of 
+variety in the game. Any help would be appriciated (spelling
+in particular as I am horribile at it and the glorious emacs
+is lacking a spell check (but I could probebly get one if I
+looked hard enough)). Any way, exspect ugliness and brutality
+in all things graphical, I am trying to get it working at the
+moment.
+
+It is currently in a stage of chopping all the unnecisaries of
+version one and cleaning up the code, making it more modular,
+I have already added a new game mode and simple ways to add
+more so it is underway.
