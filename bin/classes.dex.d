@@ -1,16 +1,20 @@
 /home/mytchel/documents/androidracertwo/bin/classes.dex : \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/R$attr.class \
+/home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/MyDialog$2.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/R$layout.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/AndroidRacerTwo$1.class \
+/home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/MyDialog.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/R$id.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/Part.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/GameView.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/AndroidRacerTwo$2.class \
+/home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/PauseDialog.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/BuildConfig.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/Particle.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/R.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/R$drawable.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/Explosion.class \
+/home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/NewGameDialog.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/GameLoop.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/R$string.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/AndroidRacerTwo$3.class \
@@ -22,4 +26,5 @@
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/game/TronGame.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/AIRacer.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/AndroidRacerTwo.class \
+/home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/MyDialog$1.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/LightRacer.class \

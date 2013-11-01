@@ -5,4 +5,8 @@
 /home/mytchel/documents/androidracertwo/res/layout/main.xml \
 /home/mytchel/documents/androidracertwo/res/drawable-hdpi/ic_launcher.png \
 /home/mytchel/documents/androidracertwo/res/drawable-xhdpi/ic_launcher.png \
+/home/mytchel/documents/androidracertwo/bin/res/drawable-mdpi/ic_launcher.png \
+/home/mytchel/documents/androidracertwo/bin/res/drawable-ldpi/ic_launcher.png \
+/home/mytchel/documents/androidracertwo/bin/res/drawable-hdpi/ic_launcher.png \
+/home/mytchel/documents/androidracertwo/bin/res/drawable-xhdpi/ic_launcher.png \
 /home/mytchel/documents/androidracertwo/bin/AndroidManifest.xml \

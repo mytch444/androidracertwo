@@ -11,45 +11,86 @@ public abstract class Game {
 
     protected int otherDifficualty;
 
+    protected int kills;
+    protected int deaths;
+    protected int time;
+
     protected GameView view;
-    
+
+    protected String winMessage;
+    protected String loseMessage;
+
     public Game(int o) {
-	otherDifficualty = o;
+        otherDifficualty = o;
+
+        kills = 0;
+        deaths = 0;
+        time = 0;
     }
 
     public void init(GameView v) {
-	view = v;
+        view = v;
     }
 
     public LightRacer local() {
-	return local;
+        return local;
     }
 
     public AIRacer other() {
-	return other;
+        return other;
     }
 
     public WallRacer wall1() {
-	return wall1;
+        return wall1;
     }
 
     public WallRacer wall2() {
-	return wall2;
+        return wall2;
     }
 
     public int getOtherDifficualty() {
-	return otherDifficualty;
+        return otherDifficualty;
     }
 
     public GameView view() {
-	return view;
+        return view;
     }
-    
+
     public int checkScore() {
-	return -1;
+        return -1;
     }
 
-    public void updateLengths() {
+    public void updateLengths() {}
 
+    public String winMessage() {
+        return winMessage;
+    }
+
+    public String loseMessage() {
+        return loseMessage;
+    }
+
+    public int getKills() {
+        return kills;
+    }
+
+    public int getDeaths() {
+        return deaths;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setKills(int k) {
+        kills = k;
+    }
+
+    public void setDeaths(int d) {
+        deaths = d;
+    }
+
+    public void setTime(int t) {
+        time = t;
     }
 }

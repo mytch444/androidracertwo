@@ -20,9 +20,9 @@ public class GameLoop extends Thread {
     }
 
     public int framePeriod() {
-	return framePeriod;
+        return framePeriod;
     }
-    
+
     @Override
     public void run() {
         Canvas canvas;
@@ -40,7 +40,6 @@ public class GameLoop extends Thread {
                     beginTime = System.currentTimeMillis();
 
                     view.update();
-
                     view.render(canvas);
 
                     timeDiff = System.currentTimeMillis() - beginTime;
@@ -50,7 +49,7 @@ public class GameLoop extends Thread {
                         try {
                             Thread.sleep(sleepTime);
                         } catch (Exception e) {};
-					}
+                    }
                 }
             } finally {
                 if (canvas != null) {
@@ -86,7 +85,6 @@ public class GameLoop extends Thread {
 
     public synchronized void stopGame() {
         running = false;
-        isPaused = true;
         notify();
     }
 }

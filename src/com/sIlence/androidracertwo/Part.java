@@ -64,9 +64,5 @@ public class Part {
     public void update() {}
     public void render(Canvas c) {}
 
-    public void rotate(GameView v, int increase) {}
-
-	public void pause() {}
-	public void resume() {}
-	public void stop() {}
+    public void stop() {}
 }
