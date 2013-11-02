@@ -17,8 +17,18 @@ public class TronGame extends Game {
     public void init(GameView v) {
         super.init(v);
 
-        local = new LightRacer(v, 0xC003CCF1, GameView.INCREASE_DEATHS, (v.boxsX() / 2) * v.boxWidth(), (v.boxsY() / 2 - 5) * v.boxHeight(), 0);
-        other = new AIRacer(v, getOtherDifficualty(), GameView.INCREASE_KILLS, (v.boxsX() / 2) * v.boxWidth(), (v.boxsY() / 2 + 5) * v.boxHeight(), 2);
+
+        boolean vertstart = true;
+        if (v.boxsX() > v.boxsY()) vertstart = false;
+
+        if (vertstart) {
+            local = new LightRacer(v, 0xC003CCF1, GameView.INCREASE_DEATHS, (v.boxsX() / 2) * v.boxWidth(), (v.boxsY() / 2 - 5) * v.boxHeight(), 0);
+            other = new AIRacer(v, getOtherDifficualty(), GameView.INCREASE_KILLS, (v.boxsX() / 2) * v.boxWidth(), (v.boxsY() / 2 + 5) * v.boxHeight(), 2);
+        } else {
+            local = new LightRacer(v, 0xC003CCF1, GameView.INCREASE_DEATHS, (v.boxsX() / 2 - 5) * v.boxWidth(), (v.boxsY() / 2) * v.boxHeight(), 3);
+            other = new AIRacer(v, getOtherDifficualty(), GameView.INCREASE_KILLS, (v.boxsX() / 2 + 5) * v.boxWidth(), (v.boxsY() / 2) * v.boxHeight(), 1);
+        }
+        
         wall1 = new WallRacer(v, v.boxWidth(), v.top() + v.boxHeight(), 0);
         wall2 = new WallRacer(v, v.boxWidth() * (v.boxsX() - 1), v.boxHeight() * (v.boxsY() - 1) + v.top(), 0);
 
@@ -50,5 +60,10 @@ public class TronGame extends Game {
     public void updateLengths() {
         local.setLength(local.getLength() + 1);
         other.setLength(other.getLength() + 1);
+    }
+
+    public void update() {
+        updateLengths();
+        super.update();
     }
 }

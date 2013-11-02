@@ -2,6 +2,7 @@ package com.sIlence.androidracertwo;
 
 import android.graphics.Canvas;
 import java.util.ArrayList;
+import android.util.Log;
 
 public class LineFall extends Part {
 
@@ -13,7 +14,7 @@ public class LineFall extends Part {
 
         particles = new ArrayList<Particle>();
 
-        int x0, y0, x1, y1, distance;
+        int x0, y0, x1, y1, distance, incdec;
         for (int i = 0; i < xa.length - 1; i++) {
             if (xa[i + 1] == 0 && ya[i + 1] == 0) break;
 
@@ -23,46 +24,30 @@ public class LineFall extends Part {
             x1 = xa[i + 1];
             y1 = ya[i + 1];
 
-            if (x0 != x1) { // horizontal line
-                y = y0;
-                x = x0;
+            int xd = x1 - x0;
+            int yd = y1 - y0;
+            int xid = 1;
+            if (xd < 0) xid = -1;
+            int yid = 1;
+            if (yd < 0) yid = -1;
+            
+            if (xd > view.boxWidth()) continue;
+            if (yd > view.boxHeight()) continue;
 
-                if (x1 > x0) { // left
-                    distance = x1 - x0;
-                    if (distance <= view.boxWidth()) {
-                        for (int j = 0; j < distance; j++) {
-                            particles.add(new Particle(color, x + j, y, 3, 0.5f, 30, rand.nextInt(5)));
-                        }
-                    }
-                } else { // right
-                    distance = x0 - x1;
-                    if (distance <= view.boxWidth()) {
-                        for (int j = 0; j < distance; j++) {
-                            particles.add(new Particle(color, x - j, y, 1, 0.5f, 30, rand.nextInt(5)));
-                        }
-                    }
-                }
-            } else { // vertical line
-                y = y0;
-                x = x0;
-
-                if (y1 > y0) { // up
-                    distance = y1 - y0;
-                    if (distance <= view.boxHeight()) {
-                        for (int j = 0; j < distance; j++) {
-                            particles.add(new Particle(color, x, y + j, 0, 0.5f, 30, rand.nextInt(5)));
-                        }
-                    }
-                } else { // down
-                    distance = y0 - y1;
-                    if (distance <= view.boxWidth()) {
-                        for (int j = 0; j < distance; j++) {
-                            particles.add(new Particle(color, x, y - j, 2, 0.5f, 30, rand.nextInt(5)));
-                        }
-                    }
-                }
-            }
+            int xj = x0 - xid;
+            do {
+                int yj = y0 - yid; 
+                do {
+                    particles.add(newParticle(color, xj + xid, yj + yid));
+                    yj += yid;
+                } while (yj != y1);
+                xj += xid;
+            } while (xj != x1);
         }
+    }
+
+    public static Particle newParticle(int color, int x, int y) {
+        return new Particle(color, x, y, 0, 360, 0.25f, 0.125f, 30);
     }
 
     @Override

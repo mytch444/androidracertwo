@@ -37,7 +37,7 @@ public class LightRacer extends Part {
         light = true;
 
         explosions = new Explosion[3];
-        Arrays.fill(explosions, new Explosion(view, color, 0, 0, 0, 0, 0, 0, 0, 1));
+        Arrays.fill(explosions, new Explosion(view, color, 0, 0, 0, 0, 0, 0, 1));
 
         lineFall = new LineFall[3];
         Arrays.fill(lineFall, new LineFall(view, startColor, linex, liney, 1));
@@ -111,7 +111,7 @@ public class LightRacer extends Part {
 
         for (int i = 0; i < explosions.length; i++) {
             if (!explosions[i].isAlive()) {
-                explosions[i] = new Explosion(view, startColor, (int) linex[0], (int) liney[0], direction, 100, 30, 0, 3, 0);
+                explosions[i] = new Explosion(view, startColor, linex[0], liney[0], direction, 100, 30, 2);
                 break;
             }
         }

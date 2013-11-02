@@ -85,7 +85,7 @@ public class AIRacer extends LightRacer {
         return -1;
     }
 
-
+/*
     @Override
     protected void newLine() {
         for (int i = 0; i < lineFall.length; i++) {
@@ -97,5 +97,5 @@ public class AIRacer extends LightRacer {
 
         linex = new int[length];
         liney = new int[length];
-    }
+    }*/
 }

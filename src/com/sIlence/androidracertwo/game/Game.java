@@ -1,6 +1,7 @@
 package com.sIlence.androidracertwo.game;
 
 import com.sIlence.androidracertwo.*;
+import android.graphics.Canvas;
 
 public abstract class Game {
 
@@ -92,5 +93,19 @@ public abstract class Game {
 
     public void setTime(int t) {
         time = t;
+    }
+
+    public void update() {
+        local.update();
+        other.update();
+        wall1.update();
+        wall2.update();
+    }
+
+    public void render(Canvas c) {
+        local.render(c);
+        other.render(c);
+        wall1.render(c);
+        wall2.render(c);
     }
 }

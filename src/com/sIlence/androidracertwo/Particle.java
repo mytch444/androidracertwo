@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.Surface;
 import java.util.Random;
+import java.lang.Math;
+import android.util.Log;
 
 public class Particle {
 
@@ -12,52 +14,70 @@ public class Particle {
     private float xv, yv;
     private int age;
     private int	stop;
-    private int	start;
     private int	fade;
     private int	color;
     private Random rand;
     private boolean alive;
     private Paint brush;
-    private int	direction;
 
-    public Particle (int c, int x, int y, int d, float maxSpeed, int sto, int sta) {
+    public Particle(int c, int x, int y, int O, int Oerror, float speed, float sError, int sto) {
         rand = new Random();
         brush = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         color = c;
         mx = x;
         my = y;
-        stop = rand.nextInt(sto) + 2;
-        start = sta;
-        age = 0;
-        xv = ((maxSpeed * 2) * rand.nextFloat()) - maxSpeed;
-        yv = ((maxSpeed * 2) * rand.nextFloat()) - maxSpeed;
 
+        stop = rand.nextInt(sto) + 2;
+        age = 0;
         fade = Color.alpha(color) / 8;
         alive = true;
 
-        direction = d;
-        if (direction == 0 && yv > 0) yv = -yv;
-        if (direction == 1 && xv < 0) xv = -xv;
-        if (direction == 2 && yv < 0) yv = -yv;
-        if (direction == 3 && xv > 0) xv = -xv;
+        float rspeed = speed + ((rand.nextFloat() * sError) - (sError / 2));
 
-        if (xv * xv + yv * yv > maxSpeed * maxSpeed) {
-            xv *= 0.7f;
-            yv *= 0.7f;
+        Oerror = (int) (-60f * rspeed + 180f) + Oerror;
+        int d = O + ((int) (rand.nextFloat() * Oerror)) - (Oerror / 2);
+
+        if (d > 360) d -= 360;
+        if (d < 0) d += 360;
+
+        O = d;
+        d = d % 90; 
+        float r = (float) d / 180 * (float) Math.PI;
+        float a = (float) Math.cos(r) * rspeed;
+        float o = (float) Math.sin(r) * rspeed;
+        if (O < 90) {
+            xv = o;
+            yv = -a;
         }
+        if (O > 90 && O < 180) {
+            xv = a;
+            yv = o;
+        }
+        if (O > 180 && O < 270) {
+            xv = -o;
+            yv = a;
+        }
+        if (O > 270) {
+            xv = -a;
+            yv = -o;
+        }
+    }
+
+    public Particle(int c, int x, int y, int O, float speed, int sto) {
+        this(c, x, y, O, 40, speed, 0.5f, sto);
     }
 
     public void update() {
         if (alive) {
-            if (age > start) {
-                if (age > stop) {
-                    xv *= 0.8f;
-                    yv *= 0.8f;
-                }
-                mx += xv;
-                my += yv;
+            if (age > stop) {
+                xv *= 0.8f;
+                yv *= 0.8f;
             }
+        
+            mx += xv;
+            my += yv;
+           
             age++;
 
             if ((xv < 0.001f && xv > -0.001f) && (yv < 0.001f && yv > -0.001f)) {

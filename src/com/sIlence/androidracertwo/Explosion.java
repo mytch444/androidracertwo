@@ -7,17 +7,21 @@ public class Explosion extends Part {
     private Particle[] particles;
     private int age;
 
-    public Explosion (GameView v, int color, int x, int y, int direction, int pixels, int stop, int start, float maxSpeed, int s) {
+    public Explosion (GameView v, int color, int x, int y, int direction, int pixels, int stop, float maxSpeed, int s) {
         super(v);
 
         dieing = s;
 
         particles = new Particle[pixels];
         for (int i = 0; i < particles.length; i++) {
-            Particle p = new Particle(color, x, y, direction, maxSpeed, stop, start);
+            Particle p = new Particle(color, x, y, direction * 90, 60, maxSpeed, 1f, stop);
             particles[i] = p;
         }
         age = 0;
+    }
+
+    public Explosion(GameView v, int color, int x, int y, int direction, int pixels, int stop, float maxSpeed) {
+        this(v, color, x, y, direction, pixels, stop, maxSpeed, 0);
     }
 
     @Override

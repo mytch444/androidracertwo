@@ -80,12 +80,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         incTime(loop.framePeriod());
 
-        game.updateLengths();
-
-        local().update();
-        other().update();
-        wall1().update();
-        wall2().update();
+        game.update();
 
         if (pausing) {
             pauseGame();
@@ -96,16 +91,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         if (c == null) return;
 
         background(c);
-        drawRacers(c);
+        game.render(c);
         hud(c);
         messages();
-    }
-
-    public void drawRacers(Canvas c) {
-        local().render(c);
-        other().render(c);
-        wall1().render(c);
-        wall2().render(c);
     }
 
     public void hud(Canvas c) {

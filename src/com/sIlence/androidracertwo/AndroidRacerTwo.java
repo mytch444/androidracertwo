@@ -61,7 +61,6 @@ public class AndroidRacerTwo extends Activity {
 
     @Override
     protected void onStop() {
-        Log.d("TAG", "onStop()");
         if (view != null) view.stopGame();
 
         super.onStop();
@@ -70,7 +69,6 @@ public class AndroidRacerTwo extends Activity {
 
     @Override
     protected void onPause() {
-        Log.d("TAG", "onPause()");
         if (view != null && !view.isPaused()) {
             view.pause();
         }
@@ -80,8 +78,6 @@ public class AndroidRacerTwo extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle b) {
-        Log.d("TAG", "onsave...()");
-
         if (view != null) {
             view.stopGame();
             view.killDialog();

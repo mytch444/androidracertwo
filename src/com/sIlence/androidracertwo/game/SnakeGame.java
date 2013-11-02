@@ -14,6 +14,9 @@ public class SnakeGame extends Game {
     public void init(GameView v) {
         super.init(v);
 
+        setKills(0);
+        setDeaths(0);
+
         other = new AIRacer(v, getOtherDifficualty(), GameView.INCREASE_KILLS);
         local = new LightRacer(v, 0xC003CCF1, GameView.INCREASE_DEATHS);
         wall1 = new WallRacer(v, v.boxWidth(), v.top() + v.boxHeight(), getOtherDifficualty());
