@@ -1,3 +1,25 @@
+/*
+ *
+ * This file is part of AndroidRacerTwo
+ *
+ * AndroidRacerTwo is free software: you can redistribute it and/or modify
+ * it under the term of the GNU General Public License as published by 
+ * the Free Software Foundation, either version 3 of the Licence, or
+ * (at your option) any later version.
+ * 
+ * AndroidRacerTwo is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License 
+ * along with AndroidRacerTwo. If not, see <http://www.gnu.org/licenses/>
+ *
+ * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
+ *
+*/
+
+
 package com.sIlence.androidracertwo;
 
 import android.graphics.Canvas;
@@ -45,6 +67,8 @@ public class LightRacer extends Part {
         scoreToChange = stc;
 
         foundSpawn = true;
+
+        lives = 5;
     }
 
     public LightRacer(GameView v, int c, int stc, int x, int y, int d) {
@@ -87,8 +111,8 @@ public class LightRacer extends Part {
         move();
         offScreen();
         updateLength();	
-        updateLine();
         checkCollisions();
+        updateLine();
     }
 
     public void updateLength() {
@@ -106,27 +130,56 @@ public class LightRacer extends Part {
         }
     }
 
-    public void die() {
-        if (explosions == null || lineFall == null) return;
+    public void die(int hx, int hy, int di) {
+        if (explosions == null || lineFall == null) {
+            return;
+        }
+
+        if (lives <= 0 && hx == linex[0] && hy == liney[0]) {
+            view.changeScore(scoreToChange);
+            foundSpawn = false;
+            dieing = 1;
+        } 
 
         for (int i = 0; i < explosions.length; i++) {
             if (!explosions[i].isAlive()) {
-                explosions[i] = new Explosion(view, startColor, linex[0], liney[0], direction, 100, 30, 2);
+                explosions[i] = new Explosion(view, startColor, hx, hy, di, 100, 30, 1.5f);
                 break;
             }
         }
+
+        int start = 0;
+
+        for (int i = linex.length - 1; i > 0; i--) {
+            if (hx == linex[i] && hy == liney[i]) {
+                start = i;
+                break;
+            }
+        }
+
+        int[] lx = new int[linex.length - start];
+        int[] ly = new int[liney.length - start];
+
+        System.arraycopy(linex, start, lx, 0, lx.length);
+        System.arraycopy(liney, start, ly, 0, ly.length); 
 
         for (int i = 0; i < lineFall.length; i++) {
             if (!lineFall[i].isAlive()) {
-                lineFall[i] = new LineFall(view, startColor, linex, liney, 0);
+                lineFall[i] = new LineFall(view, startColor, lx, ly, 0);
                 break;
             }
         }
 
-        view.changeScore(scoreToChange);
-        dieing = 1;
+        if (start > 0) {
+            lx = linex.clone();
+            ly = liney.clone();
 
-        foundSpawn = false;
+            linex = new int[start];
+            liney = new int[start];
+
+            System.arraycopy(lx, 0, linex, 0, linex.length);
+            System.arraycopy(ly, 0, liney, 0, liney.length);
+        }
     }
 
     public void updateExplosions() {
@@ -140,11 +193,11 @@ public class LightRacer extends Part {
 
     public void updateLine() {
         for (int i = linex.length - 1; i > 0; i--) {
-            if (linex[0] == linex[i] && liney[0] == liney[i]) {
-                die();
-                return;
+            /*           if (linex[0] == linex[i] && liney[0] == liney[i]) {
+                         die(linex[0], liney[0], direction);
+                         return;
             }
-
+            */
             linex[i] = linex[i - 1];
             liney[i] = liney[i - 1];
         }
@@ -156,10 +209,16 @@ public class LightRacer extends Part {
         x = linex[0];
         y = liney[0];
         for (int i = 0; i < opps.length; i++) {
-            if (opps[i] != this) {
-                if (opps[i].collides(this) && opps[i].isAlive()) {
-                    die();
-                    break;
+            if (opps[i].isAlive()) {
+                if (opps[i].collides(this)) {
+                    if (lives > 0) {
+                        opps[i].die(linex[0], liney[0], direction);
+                        lives--;
+                        break;
+                    } else {
+                        die(linex[0], liney[0], direction);
+                        break;
+                    }
                 }
             }
         }
@@ -176,7 +235,7 @@ public class LightRacer extends Part {
             case 2:
                 liney[0] += view.boxHeight();
                 break;
-            case 3:
+            case 3: 
                 linex[0] -= view.boxWidth();
                 break;
         }
@@ -201,8 +260,8 @@ public class LightRacer extends Part {
 
         brush.setColor(color);
         for (ri = linex.length - 1; ri > 0; ri--) {
-            if ((((linex[ri] > linex[ri - 1]) ? (linex[ri] - linex[ri - 1]) : (linex[ri - 1] - linex[ri])) <= view.boxWidth() * 10) &&
-                    (((liney[ri] > liney[ri - 1]) ? (liney[ri] - liney[ri - 1]) : (liney[ri - 1] - liney[ri])) <= view.boxHeight() * 10)) {
+            if ((((linex[ri] > linex[ri - 1]) ? (linex[ri] - linex[ri - 1]) : (linex[ri - 1] - linex[ri])) <= view.boxWidth() * 2) &&
+                    (((liney[ri] > liney[ri - 1]) ? (liney[ri] - liney[ri - 1]) : (liney[ri - 1] - liney[ri])) <= view.boxHeight() * 2)) {
                 c.drawLine(linex[ri], liney[ri], linex[ri - 1], liney[ri - 1], brush);
                     }
         }
@@ -210,15 +269,15 @@ public class LightRacer extends Part {
         if (!light) return;
 
         for (ri = 0; ri < linex.length - 1; ri++) {
-            if ((((linex[ri] > linex[ri + 1]) ? (linex[ri] - linex[ri + 1]) : (linex[ri + 1] - linex[ri])) <= view.boxWidth() * 10) &&
-                    (((liney[ri] > liney[ri + 1]) ? (liney[ri] - liney[ri + 1]) : (liney[ri + 1] - liney[ri])) <= view.boxHeight() * 10)) {
+            if ((((linex[ri] > linex[ri + 1]) ? (linex[ri] - linex[ri + 1]) : (linex[ri + 1] - linex[ri])) <= view.boxWidth() * 2) &&
+                    (((liney[ri] > liney[ri + 1]) ? (liney[ri] - liney[ri + 1]) : (liney[ri + 1] - liney[ri])) <= view.boxHeight() * 2)) {
                 a = Color.alpha(front);
                 a -= 25;
                 front = Color.argb(a, 255, 255, 255);
                 brush.setColor(front);
                 c.drawLine(linex[ri], liney[ri], linex[ri + 1], liney[ri + 1], brush);
                 if (a < 25) break;
-                  }
+                    }
         }
     }
 
@@ -291,7 +350,7 @@ public class LightRacer extends Part {
             x = linex[0];
             y = liney[0];
 
-            clearancetesting:
+clearancetesting:
             for (int clearance = 1; clearance < view.gratestLengthInSegments(); clearance++) {
                 switch (checkingDi) {
                     case 0:
@@ -345,22 +404,18 @@ public class LightRacer extends Part {
             switch (wd) {
                 case 0:
                     distanceChecked += view.boxHeight();
-
                     y -= view.boxHeight();
                     break;
                 case 1:
                     distanceChecked += view.boxWidth();
-
                     x += view.boxWidth();
                     break;
                 case 2:
                     distanceChecked += view.boxHeight();
-
                     y += view.boxHeight();
                     break;
                 case 3:
                     distanceChecked += view.boxWidth();
-
                     x -= view.boxWidth();
                     break;
             }
@@ -416,13 +471,13 @@ public class LightRacer extends Part {
     }
 
     public boolean collides(Part other) {
-        int lx = other.getX();
-        int ly = other.getY();
-        for (int i = 0; i < linex.length -1; i++) {
-            if (lx == linex[i] && ly == liney[i]) {
+        int x = other.getX();
+        int y = other.getY();
+
+        for (int i = 1; i < linex.length; i++) {
+            if (x == linex[i] && y == liney[i]) 
                 return true;
-            }
-        }
+        } 
         return false;
     }
 

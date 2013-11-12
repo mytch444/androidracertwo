@@ -1,3 +1,25 @@
+/*
+ *
+ * This file is part of AndroidRacerTwo
+ *
+ * AndroidRacerTwo is free software: you can redistribute it and/or modify
+ * it under the term of the GNU General Public License as published by 
+ * the Free Software Foundation, either version 3 of the Licence, or
+ * (at your option) any later version.
+ * 
+ * AndroidRacerTwo is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License 
+ * along with AndroidRacerTwo. If not, see <http://www.gnu.org/licenses/>
+ *
+ * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
+ *
+*/
+
+
 package com.sIlence.androidracertwo;
 
 import android.graphics.Canvas;
@@ -16,6 +38,7 @@ public class Part {
     Part[] opps;
     long lastTurn;
     int dieing;
+    int lives;
 
     public Part(GameView v) {
         this.view = v;
@@ -29,6 +52,7 @@ public class Part {
         opps = null;
         lastTurn = 0;
         dieing = 0;
+        lives = 0;
     }
     public void setOpps(Part[] o) {
         opps = o.clone();
@@ -54,12 +78,25 @@ public class Part {
         return false;
     }
 
-
     public static int oppDirection(int di) {
         di -= 2;
         while (di < 0) di += 4;
         return di;
     }
+
+    public void upLives() {
+        lives++;
+    }
+
+    public void downLives() {
+        lives--;
+    }
+
+    public int lives() {
+        return lives;
+    }
+
+    public void die(int hx, int hy, int di) {}
 
     public void update() {}
     public void render(Canvas c) {}

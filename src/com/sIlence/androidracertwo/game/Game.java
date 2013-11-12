@@ -2,6 +2,7 @@ package com.sIlence.androidracertwo.game;
 
 import com.sIlence.androidracertwo.*;
 import android.graphics.Canvas;
+import java.util.Random;
 
 public abstract class Game {
 
@@ -9,6 +10,8 @@ public abstract class Game {
     protected AIRacer other;
     protected WallRacer wall1;
     protected WallRacer wall2;
+
+    protected int speedl, speedo, speedw;
 
     protected int otherDifficualty;
 
@@ -21,12 +24,16 @@ public abstract class Game {
     protected String winMessage;
     protected String loseMessage;
 
+    protected Random rand;
+
     public Game(int o) {
         otherDifficualty = o;
 
         kills = 0;
         deaths = 0;
         time = 0;
+
+        rand = new Random();
     }
 
     public void init(GameView v) {
@@ -93,6 +100,10 @@ public abstract class Game {
 
     public void setTime(int t) {
         time = t;
+    }
+
+    public Random rand() {
+        return rand;
     }
 
     public void update() {

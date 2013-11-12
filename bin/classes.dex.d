@@ -12,6 +12,7 @@
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/BuildConfig.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/Particle.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/R.class \
+/home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/Blockade.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/R$drawable.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/Explosion.class \
 /home/mytchel/documents/androidracertwo/bin/classes/com/sIlence/androidracertwo/NewGameDialog.class \

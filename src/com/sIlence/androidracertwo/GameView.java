@@ -1,3 +1,25 @@
+/*
+ *
+ * This file is part of AndroidRacerTwo
+ *
+ * AndroidRacerTwo is free software: you can redistribute it and/or modify
+ * it under the term of the GNU General Public License as published by 
+ * the Free Software Foundation, either version 3 of the Licence, or
+ * (at your option) any later version.
+ * 
+ * AndroidRacerTwo is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License 
+ * along with AndroidRacerTwo. If not, see <http://www.gnu.org/licenses/>
+ *
+ * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
+ *
+*/
+
+
 package com.sIlence.androidracertwo;
 
 import com.sIlence.androidracertwo.game.*;
@@ -21,13 +43,16 @@ import android.util.Log;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public static int INCREASE_KILLS = 1;
-    public static int INCREASE_DEATHS = -1;
     public static int INCREASE_NULL = 0;
+    public static int INCREASE_DEATHS = -1;
 
-    private boolean pausing = false;
-    private boolean starting = true;
-    private boolean gameOver = false;
-    private boolean won = false;
+    private boolean pausing;
+    private boolean starting;
+    private boolean gameOver;
+    private boolean won;
+    
+    private int countdown;
+    private int startcount;
 
     private GameLoop loop;
 
@@ -42,7 +67,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Rect bounds;
     private String textString;
 
-    private Rect menu;
     private int	fromRight;
     private Paint brush;
 
@@ -61,27 +85,36 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     protected void newGame() {
+        game.init(this);
+        
         closing = false;
         starting = true;
         gameOver = false;
         won = false;
+        startcount = getTime();
+        countdown = 3;
 
-        game.init(this);
-    
         bounds = new Rect();
         textString = "";
 
-        setTime(0);
+//        setTime(0);
         endTime = System.currentTimeMillis();
     }
 
     public void update() {
         if (starting || gameOver) return;
-
+         
         incTime(loop.framePeriod());
-
+        
+        if (countdown > 0) {
+            if ((getTime() - startcount) / 1000 >= 4 - countdown) {
+                countdown--;
+            }
+            return;
+        }
+     
         game.update();
-
+       
         if (pausing) {
             pauseGame();
         }
@@ -100,8 +133,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         brush.setColor(0xffffffff);
         c.drawText("Time: " + (getTime() / 1000), 10, brush.getFontSpacing(), brush);
 
-        textString = getKills() + " :";
-        c.drawText(getKills() + " : " + getDeaths(), getWidth() - fromRight - halfWidth(textString), brush.getFontSpacing(), brush);
+        textString = getKills() + " : " + getDeaths();
+        c.drawText(textString, getWidth() - fromRight - halfWidth(textString), brush.getFontSpacing(), brush);
+
+        textString = "Lives: " + local().lives();
+        c.drawText(textString, getWidth() / 2 - halfWidth(textString), brush.getFontSpacing(), brush);
+
+        if (countdown > 0) {
+            brush.setColor(0xffffffff);
+            float size = brush.getTextSize();
+            brush.setTextSize(getHeight() / 10);
+            String message = "" + countdown;
+            c.drawText(message, getWidth() / 2 - halfWidth(message), getHeight() / 2, brush);
+            brush.setTextSize(size);
+        }
     }
 
     public void messages() {
@@ -283,7 +328,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         if (size < 350) { // small
 
-            menu = new Rect(getWidth() / 2 - 100, getHeight() / 2 - 40, getWidth() / 2 + 100, getHeight() / 2 + 40);
             brush.setTextSize(12);
 
             boxWidth = 3;
@@ -293,13 +337,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             fromRight = 40;
         } else { // normal
 
-            menu = new Rect(getWidth() / 2 - 220, getHeight() / 2 - 80, getWidth() / 2 + 220, getHeight() / 2 + 80);
             brush.setTextSize(26);
 
-            boxWidth = 5;
-            boxHeight = 5;
+            boxWidth = 7;
+            boxHeight = 7;
             // has to be in boxs or it fucks everything up
-            top = boxHeight * 9;
+            top = boxHeight * 8;
             fromRight = 80;
         }
 

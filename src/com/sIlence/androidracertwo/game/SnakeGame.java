@@ -14,6 +14,7 @@ public class SnakeGame extends Game {
     public void init(GameView v) {
         super.init(v);
 
+        setTime(0);
         setKills(0);
         setDeaths(0);
 
@@ -32,6 +33,8 @@ public class SnakeGame extends Game {
 
         other.spawn();
         local.spawn();
+
+        for (int i = 0; i < 5; i++) update();
     }
 
     public int checkScore() {
@@ -54,7 +57,7 @@ public class SnakeGame extends Game {
     }
 
     public void updateLengths() {
-        local.setLength(view.getKills() * view.getKills() + LightRacer.STANDARD_LENGTH);
-        other.setLength(view.getDeaths() * view.getDeaths() + LightRacer.STANDARD_LENGTH);
+        local.setLength(getKills() * getKills() + LightRacer.STANDARD_LENGTH);
+        other.setLength(getDeaths() * getDeaths() + LightRacer.STANDARD_LENGTH);
     }
 }

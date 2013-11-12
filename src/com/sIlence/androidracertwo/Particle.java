@@ -1,3 +1,25 @@
+/*
+ *
+ * This file is part of AndroidRacerTwo
+ *
+ * AndroidRacerTwo is free software: you can redistribute it and/or modify
+ * it under the term of the GNU General Public License as published by 
+ * the Free Software Foundation, either version 3 of the Licence, or
+ * (at your option) any later version.
+ * 
+ * AndroidRacerTwo is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License 
+ * along with AndroidRacerTwo. If not, see <http://www.gnu.org/licenses/>
+ *
+ * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
+ *
+*/
+
+
 package com.sIlence.androidracertwo;
 
 import android.graphics.Canvas;
@@ -14,7 +36,6 @@ public class Particle {
     private float xv, yv;
     private int age;
     private int	stop;
-    private int	fade;
     private int	color;
     private Random rand;
     private boolean alive;
@@ -28,9 +49,8 @@ public class Particle {
         mx = x;
         my = y;
 
-        stop = rand.nextInt(sto) + 2;
+        stop = rand.nextInt(sto * 2);
         age = 0;
-        fade = Color.alpha(color) / 8;
         alive = true;
 
         float rspeed = speed + ((rand.nextFloat() * sError) - (sError / 2));
@@ -70,22 +90,18 @@ public class Particle {
 
     public void update() {
         if (alive) {
-            if (age > stop) {
-                xv *= 0.8f;
-                yv *= 0.8f;
-            }
-        
-            mx += xv;
-            my += yv;
-           
-            age++;
 
-            if ((xv < 0.001f && xv > -0.001f) && (yv < 0.001f && yv > -0.001f)) {
+            if (age > stop) {
                 int a = Color.alpha(color);
-                a -= fade;
+                a = (int) (255f * (1 - Math.sin(Math.toRadians(age * 1.5f))));
                 color = Color.argb(a, Color.red(color), Color.green(color), Color.blue(color));
-                if (a <= 10) alive = false;
+                if (a < 20) alive = false;
             }
+
+            mx += xv * (1 - (float) Math.sin(Math.toRadians(age * 1.5f)));
+            my += yv * (1 - (float) Math.sin(Math.toRadians(age * 1.5f)));
+
+            age++;
         }
     }
 
