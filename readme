@@ -1,30 +1,14 @@
 -----------------------------------------------------------
 
-                Android Racer Two beta
-           (beta doesnt even begin to describe it)
+                Android Racer Two
 
 ------------------------------------------------------------
 
-I have decided to make a second android racer, my tron style
-game for android, it is still in the beta stage, exstreame
-emphisis on beta, and I have only been working on it for 
-about a week on it at this stage, my goals for this version
-is that it will have game modes allowing players a bit of 
-variety in the game. Any help would be appriciated (spelling
-in particular as I am horribile at it and the glorious emacs
-is lacking a spell check (but I could probebly get one if I
-looked hard enough)). Any way, exspect ugliness and brutality
-in all things graphical, I am trying to get it working at the
-moment.
-
--------------------------------------------------------------
-
-Progress
-
-It is currently in a stage of chopping all the unnecisaries of
-version one and cleaning up the code, making it more modular,
-I have already added a new game mode and simple ways to add
-more so it is underway.
+I have decided to make a second (much better) android racer,
+my tron style game for android, it is currently in active
+development with a focus on the gameplay (as in the menus are
+bare minimum to test). Any advice on what to add and what
+needs improving would be appreciated.
 
 ------------------------------------------------------------
 
@@ -34,9 +18,9 @@ Now it really begins.
 02.11.13: Never before have I had to use a do while loop. This
 	  is a very radical time in my life. In other words, cleaning,
 	  refractoring and fixing...
-16.11.13: Added lives and blockades, made rendering lines
-	  much more efficant (40% to 2% or something amazing),
+16.11.13: Added lives and blockades, made rendering lines much
+	  more efficient (40% to 2% or something rediculous),
 	  made explosions and linefall look better, more realistic.
-	  Need to fix particles as they go more transparent on
-	  blockades than the blockade (if that makes sense)
+	  Need to stop particles with blockades as they seem to
+	  become more transparent than the blockade.
 
