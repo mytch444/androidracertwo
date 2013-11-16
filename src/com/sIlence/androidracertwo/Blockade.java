@@ -25,6 +25,7 @@ package com.sIlence.androidracertwo;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import java.util.Random;
+import android.util.Log;
 
 public class Blockade extends Part {
 
@@ -35,7 +36,7 @@ public class Blockade extends Part {
         super(v);
         this.x = x;
         this.y = y;
-        color = 0xaa666666;
+        color = 0xff333333;
         startColor = color;
 
         width = w;
@@ -103,12 +104,28 @@ public class Blockade extends Part {
     }
 
     public void die(int hx, int hy, int di) {
+        int xd, yd, start, stop;
+        float anglerange, speed;
+
         dieing = 1;
+        anglerange = 0;
        
         particles = new Particle[width * height];
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                particles[x * height + y] = new Particle(color, x + this.x, y + this.y, 0, 360, 1, 0.5f, 20);
+                
+                xd = this.x + x - hx;
+                yd = this.y + y - hy;
+
+                anglerange = (0.005f * xd * xd + 0.051f) * (0.005f * yd * yd + 0.051f) * 360;
+
+                start = (int) (anglerange / 10);
+                if (start > 50) start = 50;
+                stop = 20;
+                speed = 4f / anglerange + 1f;
+
+                particles[x * height + y] = 
+                    new Particle(color, x + this.x, y + this.y, di * 90, (int) anglerange, speed, 0.1f, start, stop);
             }
         }
     }

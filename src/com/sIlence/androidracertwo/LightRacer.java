@@ -40,7 +40,7 @@ public class LightRacer extends Part {
 
     int	scoreToChange;
 
-    int ri, a, front;
+    int ri, a, front, bx, by;
 
     boolean foundSpawn;
 
@@ -58,17 +58,15 @@ public class LightRacer extends Part {
         brush.setStrokeWidth(0f);
         light = true;
 
-        explosions = new Explosion[3];
-        Arrays.fill(explosions, new Explosion(view, color, 0, 0, 0, 0, 0, 0, 1));
+        explosions = new Explosion[4];
+        Arrays.fill(explosions, new Explosion(view, color, 0, 0, 0, 0, 1));
 
-        lineFall = new LineFall[3];
+        lineFall = new LineFall[4];
         Arrays.fill(lineFall, new LineFall(view, startColor, linex, liney, 1));
 
         scoreToChange = stc;
-
         foundSpawn = true;
-
-        lives = 5;
+        lives = 0;
     }
 
     public LightRacer(GameView v, int c, int stc, int x, int y, int d) {
@@ -130,7 +128,7 @@ public class LightRacer extends Part {
         }
     }
 
-    public void die(int hx, int hy, int di) {
+    public void die(int hx, int hy, int di, boolean self) {
         if (explosions == null || lineFall == null) {
             return;
         }
@@ -141,20 +139,15 @@ public class LightRacer extends Part {
             dieing = 1;
         } 
 
-        for (int i = 0; i < explosions.length; i++) {
-            if (!explosions[i].isAlive()) {
-                explosions[i] = new Explosion(view, startColor, hx, hy, di, 100, 30, 1.5f);
-                break;
-            }
-        }
+        addExplosion(new Explosion(view, startColor, hx, hy, di, 100));
 
         int start = 0;
 
-        for (int i = linex.length - 1; i > 0; i--) {
-            if (hx == linex[i] && hy == liney[i]) {
-                start = i;
-                break;
-            }
+        if (!self) {
+            for (start = linex.length - 1; 
+                    start > 0 
+                    && !(hx == linex[start] && hy == liney[start]); 
+                    start--);
         }
 
         int[] lx = new int[linex.length - start];
@@ -163,12 +156,7 @@ public class LightRacer extends Part {
         System.arraycopy(linex, start, lx, 0, lx.length);
         System.arraycopy(liney, start, ly, 0, ly.length); 
 
-        for (int i = 0; i < lineFall.length; i++) {
-            if (!lineFall[i].isAlive()) {
-                lineFall[i] = new LineFall(view, startColor, lx, ly, 0);
-                break;
-            }
-        }
+        addLineFall(new LineFall(view, startColor, lx, ly, 0));
 
         if (start > 0) {
             lx = linex.clone();
@@ -179,6 +167,27 @@ public class LightRacer extends Part {
 
             System.arraycopy(lx, 0, linex, 0, linex.length);
             System.arraycopy(ly, 0, liney, 0, liney.length);
+        }
+    }
+
+    public void die(int hx, int hy, int di) {
+        die(hx, hy, di, false);
+    }
+
+    public void addLineFall(LineFall l) {
+        for (int i = 0; i < lineFall.length; i++) {
+            if (!lineFall[i].isAlive()) {
+                lineFall[i] = l;
+                break;
+            }
+        }
+    }
+
+    public void addExplosion(Explosion e) {
+        for (int i = 0; i < explosions.length; i++) {
+            if (!explosions[i].isAlive()) {
+                explosions[i] = e;
+            }
         }
     }
 
@@ -193,11 +202,6 @@ public class LightRacer extends Part {
 
     public void updateLine() {
         for (int i = linex.length - 1; i > 0; i--) {
-            /*           if (linex[0] == linex[i] && liney[0] == liney[i]) {
-                         die(linex[0], liney[0], direction);
-                         return;
-            }
-            */
             linex[i] = linex[i - 1];
             liney[i] = liney[i - 1];
         }
@@ -214,10 +218,8 @@ public class LightRacer extends Part {
                     if (lives > 0) {
                         opps[i].die(linex[0], liney[0], direction);
                         lives--;
-                        break;
                     } else {
-                        die(linex[0], liney[0], direction);
-                        break;
+                        die(linex[0], liney[0], direction, true);
                     }
                 }
             }
@@ -256,33 +258,40 @@ public class LightRacer extends Part {
     }
 
     public void renderLines(Canvas c) {
-        front = Color.argb(255, 255, 255, 255);
+        int a = 255;;
 
-        brush.setColor(color);
-        for (ri = linex.length - 1; ri > 0; ri--) {
-            if ((((linex[ri] > linex[ri - 1]) ? (linex[ri] - linex[ri - 1]) : (linex[ri - 1] - linex[ri])) <= view.boxWidth() * 2) &&
-                    (((liney[ri] > liney[ri - 1]) ? (liney[ri] - liney[ri - 1]) : (liney[ri - 1] - liney[ri])) <= view.boxHeight() * 2)) {
-                c.drawLine(linex[ri], liney[ri], linex[ri - 1], liney[ri - 1], brush);
-                    }
-        }
+	int x = linex[0];
+	int y = liney[0];
 
-        if (!light) return;
+	brush.setColor(color);
+	for (ri = 1; ri < linex.length && linex[ri] != 0 && liney[ri] != 0; ri++) {
+	    if (ri == linex.length - 1 || (linex[ri + 1] != x && liney[ri + 1] != y)) {
+		c.drawLine(x, y, linex[ri], liney[ri], brush);
+		
+		x = linex[ri];
+		y = liney[ri];
 
-        for (ri = 0; ri < linex.length - 1; ri++) {
-            if ((((linex[ri] > linex[ri + 1]) ? (linex[ri] - linex[ri + 1]) : (linex[ri + 1] - linex[ri])) <= view.boxWidth() * 2) &&
-                    (((liney[ri] > liney[ri + 1]) ? (liney[ri] - liney[ri + 1]) : (liney[ri + 1] - liney[ri])) <= view.boxHeight() * 2)) {
-                a = Color.alpha(front);
-                a -= 25;
-                front = Color.argb(a, 255, 255, 255);
-                brush.setColor(front);
-                c.drawLine(linex[ri], liney[ri], linex[ri + 1], liney[ri + 1], brush);
-                if (a < 25) break;
-                    }
+      		if (ri < linex.length - 1 && linex[ri + 1] == 0 && liney[ri + 1] == 0) break;
+	    }
+	}
+
+	if (!light) return;
+
+        for (ri = 0; ri < linex.length - 1 && linex[ri + 1] != 0 && liney[ri + 1] != 0; ri++) {
+	    front = Color.argb(a, 255, 255, 255);
+	    brush.setColor(front);
+	    c.drawLine(linex[ri], liney[ri], linex[ri + 1], liney[ri + 1], brush);
+
+	    a -= 25;
+	    if (a < 0) break;
         }
     }
 
     public boolean changeDirection(int wd) { // Change to spicific direction
-        if ((wd == oppDirection(direction)) || (wd == direction) || (lastTurn + 5 * view.framePeriod() > view.getTime()) || (dieing != 0)) {
+        if ((wd == oppDirection(direction)) 
+                || (wd == direction) 
+                || (lastTurn + view.turnDelay() * view.framePeriod() > view.getTime()) 
+                || (dieing != 0)) {
             return false;
         } else { // Can turn this way8
             direction = wd;

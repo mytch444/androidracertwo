@@ -32,5 +32,11 @@ Updates
 
 Now it really begins.
 02.11.13: Never before have I had to use a do while loop. This
-    is a very radical time in my life. In other words, cleaning,
-    refractoring and fixing...
+	  is a very radical time in my life. In other words, cleaning,
+	  refractoring and fixing...
+16.11.13: Added lives and blockades, made rendering lines
+	  much more efficant (40% to 2% or something amazing),
+	  made explosions and linefall look better, more realistic.
+	  Need to fix particles as they go more transparent on
+	  blockades than the blockade (if that makes sense)
+

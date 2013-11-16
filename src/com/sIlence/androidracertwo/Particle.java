@@ -31,25 +31,35 @@ import java.lang.Math;
 import android.util.Log;
 
 public class Particle {
-
     private float mx, my;
     private float xv, yv;
     private int age;
-    private int	stop;
-    private int	color;
+    private int start;
+    private int	life;
+    private int	a, r, g, b;
     private Random rand;
     private boolean alive;
     private Paint brush;
+    private int starta;
 
-    public Particle(int c, int x, int y, int O, int Oerror, float speed, float sError, int sto) {
+    public Particle(int color, int x, int y, int O, int Oerror, float speed, float sError, int sta, int lif) {
         rand = new Random();
         brush = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-        color = c;
+        a = Color.alpha(color);
+        r = Color.red(color);
+        g = Color.green(color);
+        b = Color.blue(color);
+        starta = a;
+        
         mx = x;
         my = y;
 
-        stop = rand.nextInt(sto * 2);
+        if (sta == 0) sta = 1;
+        if (lif == 0) lif = 1;
+
+        start = rand.nextInt(sta) + sta / 2;
+        life = rand.nextInt(lif) + lif / 2;
         age = 0;
         alive = true;
 
@@ -85,28 +95,27 @@ public class Particle {
     }
 
     public Particle(int c, int x, int y, int O, float speed, int sto) {
-        this(c, x, y, O, 40, speed, 0.5f, sto);
+        this(c, x, y, O, 40, speed, 0.5f, 0, sto);
     }
 
     public void update() {
-        if (alive) {
+        if (!alive) return;
+            
+        age++;
 
-            if (age > stop) {
-                int a = Color.alpha(color);
-                a = (int) (255f * (1 - Math.sin(Math.toRadians(age * 1.5f))));
-                color = Color.argb(a, Color.red(color), Color.green(color), Color.blue(color));
-                if (a < 20) alive = false;
-            }
-
-            mx += xv * (1 - (float) Math.sin(Math.toRadians(age * 1.5f)));
-            my += yv * (1 - (float) Math.sin(Math.toRadians(age * 1.5f)));
-
-            age++;
+        if (age > start && age < start + life) {
+            mx += -(xv / (life * life)) * ((age - start) + life) * ((age - start) - life);
+            my += -(yv / (life * life)) * ((age - start) + life) * ((age - start) - life);
         }
+
+        a = (int) -(((float) starta / ((start + life) * (start + life))) * (age + (start + life)) * (age - (start + life)));
+        if (a < 20) alive = false;
     }
 
     public void render (Canvas c) {
-        brush.setColor(color);
+        if (!alive) return;
+
+        brush.setColor(Color.argb(a, r, g, b));
         c.drawPoint(mx, my, brush);
     }
 

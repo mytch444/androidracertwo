@@ -110,6 +110,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             if ((getTime() - startcount) / 1000 >= 4 - countdown) {
                 countdown--;
             }
+	    if (countdown == 0) setTime(startcount);
             return;
         }
      
@@ -131,22 +132,25 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void hud(Canvas c) {
         brush.setColor(0xffffffff);
-        c.drawText("Time: " + (getTime() / 1000), 10, brush.getFontSpacing(), brush);
 
-        textString = getKills() + " : " + getDeaths();
-        c.drawText(textString, getWidth() - fromRight - halfWidth(textString), brush.getFontSpacing(), brush);
-
-        textString = "Lives: " + local().lives();
-        c.drawText(textString, getWidth() / 2 - halfWidth(textString), brush.getFontSpacing(), brush);
-
-        if (countdown > 0) {
+	int t = getTime() / 1000;
+	if (countdown > 0) {
             brush.setColor(0xffffffff);
             float size = brush.getTextSize();
             brush.setTextSize(getHeight() / 10);
             String message = "" + countdown;
             c.drawText(message, getWidth() / 2 - halfWidth(message), getHeight() / 2, brush);
             brush.setTextSize(size);
+	    t = startcount / 1000;
         }
+
+	c.drawText("Time: " + t, 10, brush.getFontSpacing(), brush);
+
+        textString = getKills() + " : " + getDeaths();
+        c.drawText(textString, getWidth() - fromRight - halfWidth(textString), brush.getFontSpacing(), brush);
+
+        textString = "Lives: " + local().lives();
+        c.drawText(textString, getWidth() / 2 - halfWidth(textString), brush.getFontSpacing(), brush);
     }
 
     public void messages() {
@@ -469,5 +473,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void killDialog() {
         if (dialog != null) dialog.dismiss();
+    }
+
+    public int turnDelay() {
+        return 5;
     }
 }
