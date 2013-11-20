@@ -84,10 +84,10 @@ public class Blockade extends Part {
     }
 
     public void spawn(Part[] parts) {
+	if (width == 0) width = rand.nextInt((2 * view.boxsX() * view.boxWidth()) / 3) + view.boxWidth();
+	if (height == 0) height = (((2 * view.boxsX() * view.boxWidth()) / 3) * view.boxHeight()) / width;
+	
         for (int tries = 0; tries < 10; tries++) {
-            width = rand.nextInt((2 * view.boxsX() * view.boxWidth()) / 3) + view.boxWidth();
-            height = (((2 * view.boxsX() * view.boxWidth()) / 3) * view.boxHeight()) / width;
-
             x = rand.nextInt((view.boxsX() - 8) * view.boxWidth() - width) + 4 * view.boxWidth();
             y = rand.nextInt((view.boxsY() - 8) * view.boxHeight() - view.top() - height) + view.top() + 4 * view.boxHeight();
             
@@ -103,7 +103,14 @@ public class Blockade extends Part {
         }
     }
 
-    public void die(int hx, int hy, int di) {
+    public void die(Part p, int hx, int hy, int di) {
+	p.downLives();
+
+	if (p != this && p.lives() < 1) {
+	    p.die(this, hx, hy, di);
+	    return;
+	}
+	
         int xd, yd, start, stop;
         float anglerange, speed;
 

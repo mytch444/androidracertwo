@@ -24,6 +24,7 @@ package com.sIlence.androidracertwo;
 
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
+import android.util.Log;
 
 public class GameLoop extends Thread {
 
@@ -86,6 +87,7 @@ public class GameLoop extends Thread {
                             wait();
                         } catch (Exception e) {}
                     }
+		    Log.d("TAG!", "not paused any more");
                 }
             }
         }
@@ -102,10 +104,12 @@ public class GameLoop extends Thread {
     public synchronized void resumeGame() {
         isPaused = false;
         notify();
+	Log.d("Tag", "resumed");
     }
 
     public synchronized void stopGame() {
         running = false;
         notify();
+	Log.d("Tag", "stoped thread!!!!!!!!!");
     }
 }

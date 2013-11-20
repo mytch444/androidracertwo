@@ -27,4 +27,15 @@
       android:textSize="36px"
       android:gravity="right"
       />
+    <Button
+      android:id="@+id/trondpad"
+      android:layout_width="320px"
+      android:layout_height="46px"
+      android:layout_marginTop="5px"
+      android:layout_marginRight="5px"
+      android:text="Tron DPad"
+      android:textColor="#FFFFFFFF"
+      android:textSize="36px"
+      android:gravity="right"
+      />
 </LinearLayout>

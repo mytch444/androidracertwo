@@ -96,7 +96,7 @@ public class Part {
         return lives;
     }
 
-    public void die(int hx, int hy, int di) {}
+    public void die(Part p, int hx, int hy, int di) {}
 
     public void update() {}
     public void render(Canvas c) {}

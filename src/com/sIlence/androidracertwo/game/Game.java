@@ -6,11 +6,18 @@ import java.util.Random;
 
 public abstract class Game {
 
+    public static int LOCALPOS = 0;
+    public static int OTHERPOS = 1;
+    public static int WALL1POS = 2;
+    public static int WALL2POS = 3;
+    
+    protected Part[] parts;
+    /*
     protected LightRacer local;
     protected AIRacer other;
     protected WallRacer wall1;
     protected WallRacer wall2;
-
+    */
     protected int speedl, speedo, speedw;
 
     protected int otherDifficualty;
@@ -41,19 +48,19 @@ public abstract class Game {
     }
 
     public LightRacer local() {
-        return local;
+        return (LightRacer) parts[LOCALPOS];
     }
 
     public AIRacer other() {
-        return other;
+        return (AIRacer) parts[OTHERPOS];
     }
 
     public WallRacer wall1() {
-        return wall1;
+        return (WallRacer) parts[WALL1POS];
     }
 
     public WallRacer wall2() {
-        return wall2;
+        return (WallRacer) parts[WALL2POS];
     }
 
     public int getOtherDifficualty() {
@@ -107,16 +114,15 @@ public abstract class Game {
     }
 
     public void update() {
-        local.update();
-        other.update();
-        wall1.update();
-        wall2.update();
+	updateLengths();
+	for (int i = 0; i < parts.length; i++) {
+	    parts[i].update();
+	}
     }
 
     public void render(Canvas c) {
-        local.render(c);
-        other.render(c);
-        wall1.render(c);
-        wall2.render(c);
+        for (int i = 0; i < parts.length; i++) {
+	    parts[i].render(c);
+	}
     }
 }

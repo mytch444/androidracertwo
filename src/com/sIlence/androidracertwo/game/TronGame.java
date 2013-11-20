@@ -9,8 +9,6 @@ public class TronGame extends Game {
     protected int startKills;
     protected int startDeaths;
 
-    protected Blockade[] blockades;
-
     public TronGame(int o) {
         super(o);
 
@@ -35,44 +33,55 @@ public class TronGame extends Game {
             d0 = 3;
             d1 = 1;
         }
-       
-        local = new LightRacer(v, 0xC004CCF1, GameView.INCREASE_DEATHS, x0 * view.boxWidth(), y0 * view.boxHeight(), d0);
-        other = new AIRacer(v, getOtherDifficualty(), GameView.INCREASE_KILLS, x1 * view.boxWidth(), y1 * view.boxHeight(), d1);
-        wall1 = new WallRacer(v, v.boxWidth(), v.top() + v.boxHeight(), 0);
-        wall2 = new WallRacer(v, v.boxWidth() * (v.boxsX() - 1), v.boxHeight() * (v.boxsY() - 1) + v.top(), 0);
 
+	Blockade[] blockades;
+	Life[] lives;
+	
         if (kills > 0) { 
             int nblockades = (int) (rand.nextInt(kills)) + kills / 2;
             blockades = new Blockade[nblockades];
 
-            int x, y, w, h;
             for (int i = 0; i < blockades.length; i++) {
                 blockades[i] = new Blockade(v);
             }
+
+	    int nlives = (int) (rand.nextInt(kills)) + kills / 2;
+	    lives = new Life[nlives];
+
+	    for (int i = 0; i < lives.length; i++) {
+		lives[i] = new Life(v);
+	    }
         } else {
             blockades = new Blockade[0];
+	    lives = new Life[0];
         }
 
-        Part[] parts = new Part[4 + blockades.length];
-        parts[0] = local;
-        parts[1] = other;
-        parts[2] = wall1;
-        parts[3] = wall2;
+        parts = new Part[4 + blockades.length + lives.length];
+
+	parts[LOCALPOS] = new LightRacer(v, 0xC004CCF1, GameView.INCREASE_DEATHS, x0 * view.boxWidth(), y0 * view.boxHeight(), d0);
+        parts[OTHERPOS] = new AIRacer(v, getOtherDifficualty(), GameView.INCREASE_KILLS, x1 * view.boxWidth(), y1 * view.boxHeight(), d1);
+        parts[WALL1POS] = new WallRacer(v, v.boxWidth(), v.top() + v.boxHeight(), 0);
+        parts[WALL2POS] = new WallRacer(v, v.boxWidth() * (v.boxsX() - 1), v.boxHeight() * (v.boxsY() - 1) + v.top(), 0);
+
         for (int i = 0; i < blockades.length; i++) {
             parts[i + 4] = blockades[i];
         }
+	for (int i = 0; i < lives.length; i++) {
+	    parts[i + blockades.length + 4] = lives[i];
+	}
 
-        local.setOpps(parts);
-        other.setOpps(parts);
+        local().setOpps(parts);
+        other().setOpps(parts);
 
-        other.setLength(1);
-        local.setLength(1);
+        local().setLength(1);
+        other().setLength(1);
 
         startKills = kills;
         startDeaths = deaths;
 
         for (int i = 0; i < 5; i++) update();
         for (int i = 0; i < blockades.length; i++) blockades[i].spawn(parts);
+	for (int i = 0; i < lives.length; i++) lives[i].spawn(parts);
     }
 
     public int checkScore() {
@@ -89,24 +98,7 @@ public class TronGame extends Game {
     }
 
     public void updateLengths() {
-        local.setLength(local.getLength() + 1);
-        other.setLength(other.getLength() + 1);
-    }
-
-    public void update() {
-        updateLengths();
-        super.update();
-
-        for (int i = 0; i < blockades.length; i++) {
-            blockades[i].update();
-        }
-    }
-
-    public void render(Canvas c) {
-        for (int i = 0; i < blockades.length; i++) {
-            blockades[i].render(c);
-        }
-
-        super.render(c);
+        local().setLength(local().getLength() + 1);
+	other().setLength(other().getLength() + 1);
     }
 }

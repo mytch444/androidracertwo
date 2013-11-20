@@ -66,7 +66,7 @@ public class LightRacer extends Part {
 
         scoreToChange = stc;
         foundSpawn = true;
-        lives = 0;
+        lives = 5;
     }
 
     public LightRacer(GameView v, int c, int stc, int x, int y, int d) {
@@ -128,27 +128,34 @@ public class LightRacer extends Part {
         }
     }
 
-    public void die(int hx, int hy, int di, boolean self) {
-        if (explosions == null || lineFall == null) {
-            return;
-        }
+    public void die(Part p, int hx, int hy, int di) {
+	boolean self = false;
 
-        if (lives <= 0 && hx == linex[0] && hy == liney[0]) {
+	if (p != this & lives() > 0 && hx == linex[0] && hy == liney[0]) {
+	    p.die(this, hx, hy, di);
+	    return;
+	}
+		
+	if (lives() <= 0 && hx == linex[0] && hy == liney[0]) {
+	    self = true;
             view.changeScore(scoreToChange);
             foundSpawn = false;
             dieing = 1;
-        } 
+        }
+
+	downLives();
+	p.downLives();
 
         addExplosion(new Explosion(view, startColor, hx, hy, di, 100));
 
         int start = 0;
 
-        if (!self) {
+	if (!self) {
             for (start = linex.length - 1; 
                     start > 0 
                     && !(hx == linex[start] && hy == liney[start]); 
                     start--);
-        }
+	}
 
         int[] lx = new int[linex.length - start];
         int[] ly = new int[liney.length - start];
@@ -168,10 +175,6 @@ public class LightRacer extends Part {
             System.arraycopy(lx, 0, linex, 0, linex.length);
             System.arraycopy(ly, 0, liney, 0, liney.length);
         }
-    }
-
-    public void die(int hx, int hy, int di) {
-        die(hx, hy, di, false);
     }
 
     public void addLineFall(LineFall l) {
@@ -213,15 +216,9 @@ public class LightRacer extends Part {
         x = linex[0];
         y = liney[0];
         for (int i = 0; i < opps.length; i++) {
-            if (opps[i].isAlive()) {
-                if (opps[i].collides(this)) {
-                    if (lives > 0) {
-                        opps[i].die(linex[0], liney[0], direction);
-                        lives--;
-                    } else {
-                        die(linex[0], liney[0], direction, true);
-                    }
-                }
+	    if (opps[i].isAlive()
+		&& opps[i].collides(this)) {
+		die(opps[i], x, y, getDirection());
             }
         }
     }

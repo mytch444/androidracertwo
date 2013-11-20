@@ -60,7 +60,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private int	boxWidth, boxHeight, boxsX, boxsY;
     private int	top;
-    private int	rotation;
+    
+    private int bottom;
+    private boolean usingArrows;
+    private Rect[] arrows;
 
     private float x, y, xDiff, yDiff;
 
@@ -82,6 +85,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         game = g;
         loop = new GameLoop(this);
+
+	usingArrows = false;
+    }
+
+    public GameView(Context context, Game g, boolean arrows) {
+	this(context, g);
+	usingArrows = arrows;
     }
 
     protected void newGame() {
@@ -151,6 +161,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         textString = "Lives: " + local().lives();
         c.drawText(textString, getWidth() / 2 - halfWidth(textString), brush.getFontSpacing(), brush);
+
+	if (usingArrows) {
+	    brush.setColor(0xffaaaaaa);
+	    brush.setStyle(Paint.Style.STROKE);
+
+	    for (int i = 0; i < arrows.length; i++) {
+		c.drawRect(arrows[i], brush);
+	    }
+	}
     }
 
     public void messages() {
@@ -241,24 +260,32 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent (MotionEvent e) {
-        if (e.getAction() == MotionEvent.ACTION_DOWN) {
-            x = e.getX();
-            y = e.getY();
-        } else if (e.getAction() == MotionEvent.ACTION_MOVE) {
-            xDiff = e.getX() - x;
-            yDiff = e.getY() - y;
-            x = e.getX();
-            y = e.getY();
+	if (usingArrows) {
+	    for (int i = 0; i < arrows.length; i++) {
+		if (arrows[i].contains((int) e.getX(), (int) e.getY())) {
+		    local().changeDirection(i);
+		}
+	    }
+	} else {
+	    if (e.getAction() == MotionEvent.ACTION_DOWN) {
+		x = e.getX();
+		y = e.getY();
+	    } else if (e.getAction() == MotionEvent.ACTION_MOVE) {
+		xDiff = e.getX() - x;
+		yDiff = e.getY() - y;
+		x = e.getX();
+		y = e.getY();
 
-            int g = vertorhorz(xDiff, yDiff);
-            if (g == 0) {
-                if (xDiff > 0 && local().changeDirection(1));
-                if (xDiff < 0 && local().changeDirection(3));
-            } else if (g == 1) {
-                if (yDiff < 0 && local().changeDirection(0));
-                if (yDiff > 0 && local().changeDirection(2));
-            }
-        }
+		int g = vertorhorz(xDiff, yDiff);
+		if (g == 0) {
+		    if (xDiff > 0 && local().changeDirection(1));
+		    if (xDiff < 0 && local().changeDirection(3));
+		} else if (g == 1) {
+		    if (yDiff < 0 && local().changeDirection(0));
+		    if (yDiff > 0 && local().changeDirection(2));
+		}
+	    }
+	}
         return true;
     }
 
@@ -278,17 +305,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void pauseGame() {
         loop.pauseGame();
         pausing = false;
-        
-        local().pause();
-        other().pause();
-        wall1().pause();
-        wall2().pause();
     }
 
     public synchronized void resumeGame() {
         if (gameOver) return;
         closing = false;
         loop.resumeGame();
+	Log.d("Tag", "resumed?");
     }
 
     public synchronized void stopGame() {
@@ -319,17 +342,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void surfaceCreated(SurfaceHolder arg0) {
-
-        Display display = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        rotation = display.getRotation();
-
         brush = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         // Screen dependent stuff
 
         int size = getWidth();
         if (getHeight() < getWidth()) size = getHeight();
-
+	
         if (size < 350) { // small
 
             brush.setTextSize(12);
@@ -350,6 +369,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             fromRight = 80;
         }
 
+	bottom = getHeight();
+	
+	if (usingArrows) {
+	    int arrowWidth = boxWidth * 15;
+	    bottom = getHeight() - arrowWidth * 2 - boxHeight * 10;
+
+	    arrows = new Rect[4];
+	    arrows[0] = new Rect(getWidth() / 2 - arrowWidth / 2, bottom + boxHeight * 2, getWidth() / 2 + arrowWidth / 2, bottom + arrowWidth + boxHeight * 2);
+	    arrows[1] = new Rect(getWidth() / 2 + arrowWidth / 2 + boxWidth * 2, bottom + boxHeight * 4 + arrowWidth, getWidth() / 2 + arrowWidth / 2 + arrowWidth + boxWidth * 2, bottom + boxHeight * 4 + arrowWidth * 2);
+	    arrows[2] = new Rect(getWidth() / 2 - arrowWidth / 2, bottom + boxHeight * 4 + arrowWidth, getWidth() / 2 + arrowWidth / 2, bottom + arrowWidth * 2 + boxHeight * 4);
+	    arrows[3] = new Rect(getWidth() / 2 - arrowWidth / 2 - arrowWidth - boxWidth * 2, bottom + boxHeight * 4 + arrowWidth, getWidth() / 2 - arrowWidth / 2 - boxWidth * 2, bottom + arrowWidth * 2 + boxHeight * 4); 
+	}
+
         boxsX = getWidth() / boxWidth;
         boxsY = (getHeight() - top) / boxHeight;
 
@@ -358,14 +390,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void surfaceDestroyed(SurfaceHolder arg0) {
-        closing = true;
-
-        local().stop();
-        other().stop();
-        wall1().stop();
-        wall2().stop();
-
-        stopGame();
+        //closing = true;
+	//        stopGame();
     }
 
     public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {}
@@ -404,10 +430,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public int top() {
         return top;
-    }
-
-    public int rotation() {
-        return rotation;
     }
 
     public int gratestLengthInSegments() {
@@ -472,7 +494,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void killDialog() {
-        if (dialog != null) dialog.dismiss();
+	//        if (dialog != null) dialog.dismiss();
     }
 
     public int turnDelay() {

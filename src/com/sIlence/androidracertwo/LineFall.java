@@ -73,7 +73,7 @@ public class LineFall extends Part {
     }
 
     public static Particle newParticle(int color, int x, int y, int start) {
-        return new Particle(color, x, y, 0, 360, 0.5f, 0.1f, start, 20);
+        return new Particle(color, x, y, 0, 360, 0.3f, 0.2f, start, 40);
     }
 
     @Override

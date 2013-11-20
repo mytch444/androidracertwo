@@ -36,7 +36,7 @@ public class Explosion extends Part {
 
         particles = new Particle[pixels];
         for (int i = 0; i < particles.length; i++) {
-            Particle p = new Particle(color, x, y, direction * 90, 60, 1f, 1f, 0, 75);
+            Particle p = new Particle(color, x, y, direction * 90, 60, 0.5f, 0.75f, 0, 100);
             particles[i] = p;
         }
         age = 0;

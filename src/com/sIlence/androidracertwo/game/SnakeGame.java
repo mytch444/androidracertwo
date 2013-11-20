@@ -18,21 +18,21 @@ public class SnakeGame extends Game {
         setKills(0);
         setDeaths(0);
 
-        other = new AIRacer(v, getOtherDifficualty(), GameView.INCREASE_KILLS);
-        local = new LightRacer(v, 0xC003CCF1, GameView.INCREASE_DEATHS);
-        wall1 = new WallRacer(v, v.boxWidth(), v.top() + v.boxHeight(), getOtherDifficualty());
-        wall2 = new WallRacer(v, v.boxWidth() * (v.boxsX() - 1), v.boxHeight() * (v.boxsY() - 1) + v.top(), getOtherDifficualty());
+	parts = new Part[4];
+	
+        parts[LOCALPOS] = new LightRacer(v, 0xC003CCF1, GameView.INCREASE_DEATHS);
+        parts[OTHERPOS] = new AIRacer(v, getOtherDifficualty(), GameView.INCREASE_KILLS);
+        parts[WALL1POS] = new WallRacer(v, v.boxWidth(), v.top() + v.boxHeight(), getOtherDifficualty());
+        parts[WALL2POS] = new WallRacer(v, v.boxWidth() * (v.boxsX() - 1), v.boxHeight() * (v.boxsY() - 1) + v.top(), getOtherDifficualty());
 
-        Part[] parts = new Part[] {other, local, wall1, wall2};
+        local().setOpps(parts);
+        other().setOpps(parts);
 
-        local.setOpps(parts);
-        other.setOpps(parts);
+        local().setLength(LightRacer.STANDARD_LENGTH);
+        other().setLength(LightRacer.STANDARD_LENGTH);
 
-        other.setLength(LightRacer.STANDARD_LENGTH);
-        local.setLength(LightRacer.STANDARD_LENGTH);
-
-        other.spawn();
-        local.spawn();
+        local().spawn();
+        other().spawn();
 
         for (int i = 0; i < 5; i++) update();
     }
@@ -57,7 +57,7 @@ public class SnakeGame extends Game {
     }
 
     public void updateLengths() {
-        local.setLength(getKills() * getKills() + LightRacer.STANDARD_LENGTH);
-        other.setLength(getDeaths() * getDeaths() + LightRacer.STANDARD_LENGTH);
+	local().setLength(getKills() * getKills() + LightRacer.STANDARD_LENGTH);
+        other().setLength(getDeaths() * getDeaths() + LightRacer.STANDARD_LENGTH);
     }
 }

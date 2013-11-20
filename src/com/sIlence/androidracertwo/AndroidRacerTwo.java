@@ -68,6 +68,13 @@ public class AndroidRacerTwo extends Activity {
             }
         });
 
+	Button trondpad = (Button) findViewById(R.id.trondpad);
+	trondpad.setOnClickListener(new OnClickListener() {
+		public void onClick(android.view.View arg0) {
+		    newGame(new GameView(context, new TronGame(AIRacer.DIFF_MEDI), true));
+		}
+	    });
+	
     }
 
     @Override
@@ -83,6 +90,7 @@ public class AndroidRacerTwo extends Activity {
 
     @Override
     protected void onStop() {
+	Log.d("TAG", "onstop()");
         if (view != null) view.stopGame();
 
         super.onStop();
@@ -91,8 +99,9 @@ public class AndroidRacerTwo extends Activity {
 
     @Override
     protected void onPause() {
+	Log.d("TAG", "onpause()");
         if (view != null && !view.isPaused()) {
-            view.pause();
+            view.pauseGame();
         }
 
         super.onPause();
@@ -101,7 +110,8 @@ public class AndroidRacerTwo extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle b) {
         if (view != null) {
-            view.stopGame();
+	    //            view.stopGame();
+	    view.pauseGame();
             view.killDialog();
         }
 
@@ -110,6 +120,12 @@ public class AndroidRacerTwo extends Activity {
 
     @Override
     protected void onResume() {
+	Log.d("TAG", "onresume()");
+	if (view != null) {
+	    Log.d("FUCK YOU", "i'm not null!!!");
+	    view.resumeGame();
+	}
+	
         super.onResume();
     }
 

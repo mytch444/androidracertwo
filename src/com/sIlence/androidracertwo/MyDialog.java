@@ -70,12 +70,12 @@ public class MyDialog extends DialogFragment {
 
     @Override
     public void onCancel(DialogInterface dialog) {
-        Log.d("tag", "canceling");
+
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        Log.d("tag", "dismissing");
+
     }
 
     public void pos() {
