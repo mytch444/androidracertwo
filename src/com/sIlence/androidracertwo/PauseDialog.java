@@ -29,6 +29,6 @@ public class PauseDialog extends MyDialog {
     }
 
     public void pos() {
-        view.resumeGame();
+        view.start();
     }
 }

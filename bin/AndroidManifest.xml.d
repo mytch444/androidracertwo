@@ -1,2 +1,2 @@
-/home/mytchel/documents/androidracertwo/bin/AndroidManifest.xml : \
-/home/mytchel/documents/androidracertwo/AndroidManifest.xml \
+/home/mytchel/documents/android/androidracertwo/bin/AndroidManifest.xml : \
+/home/mytchel/documents/android/androidracertwo/AndroidManifest.xml \

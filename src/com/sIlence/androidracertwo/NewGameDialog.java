@@ -30,6 +30,5 @@ public class NewGameDialog extends MyDialog {
 
     public void pos() {
         view.newGame();
-        view.resumeGame();
     }
 }

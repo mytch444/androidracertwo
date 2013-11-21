@@ -56,22 +56,22 @@ public class AndroidRacerTwo extends Activity {
 
         Button play = (Button) findViewById(R.id.play);
         play.setOnClickListener(new OnClickListener() {
-            public void onClick(android.view.View arg0) {
-                newGame(new GameView(context, new SnakeGame(AIRacer.DIFF_MEDI)));
-            }
-        });
+		public void onClick(android.view.View arg0) {
+		    openGame(new GameView(context, new SnakeGame(AIRacer.DIFF_MEDI)));
+		}
+	    });
 
         Button tron = (Button) findViewById(R.id.tron);
         tron.setOnClickListener(new OnClickListener() {
-            public void onClick(android.view.View arg0) {
-                newGame(new GameView(context, new TronGame(AIRacer.DIFF_MEDI)));
-            }
-        });
+		public void onClick(android.view.View arg0) {
+		    openGame(new GameView(context, new TronGame(AIRacer.DIFF_MEDI)));
+		}
+	    });
 
 	Button trondpad = (Button) findViewById(R.id.trondpad);
 	trondpad.setOnClickListener(new OnClickListener() {
 		public void onClick(android.view.View arg0) {
-		    newGame(new GameView(context, new TronGame(AIRacer.DIFF_MEDI), true));
+		    openGame(new GameView(context, new TronGame(AIRacer.DIFF_MEDI), true));
 		}
 	    });
 	
@@ -91,7 +91,7 @@ public class AndroidRacerTwo extends Activity {
     @Override
     protected void onStop() {
 	Log.d("TAG", "onstop()");
-        if (view != null) view.stopGame();
+        if (view != null) view.stop();
 
         super.onStop();
         onDestroy();
@@ -101,7 +101,7 @@ public class AndroidRacerTwo extends Activity {
     protected void onPause() {
 	Log.d("TAG", "onpause()");
         if (view != null && !view.isPaused()) {
-            view.pauseGame();
+            view.stop();
         }
 
         super.onPause();
@@ -110,8 +110,7 @@ public class AndroidRacerTwo extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle b) {
         if (view != null) {
-	    //            view.stopGame();
-	    view.pauseGame();
+	    view.stop();
             view.killDialog();
         }
 
@@ -121,29 +120,36 @@ public class AndroidRacerTwo extends Activity {
     @Override
     protected void onResume() {
 	Log.d("TAG", "onresume()");
+
 	if (view != null) {
-	    Log.d("FUCK YOU", "i'm not null!!!");
-	    view.resumeGame();
+	    view.tick();
 	}
-	
         super.onResume();
     }
 
     @Override
     protected void onRestart() {
+	Log.d("TAG", "onrestart()");
+	
         super.onRestart();
     }
 
     @Override
     protected void onStart() {
-        super.onStart();
+	Log.d("TAG", "onstart()");
 
-        menu();
+	super.onStart();
 
+	if (view == null)
+	    menu();
+	else {
+	    openGame(view);
+	}
+	
         unlockOrientation();
     }
 
-    public void newGame(final GameView newView) {
+    public void openGame(final GameView newView) {
         lockOrientation(); 
         runOnUiThread(new Runnable() {
             public void run() {	

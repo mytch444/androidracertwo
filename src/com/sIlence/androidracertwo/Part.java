@@ -89,7 +89,8 @@ public class Part {
     }
 
     public void downLives() {
-        lives--;
+	if (lives > 0)
+	    lives--;
     }
 
     public int lives() {

@@ -32,84 +32,69 @@ public class GameLoop extends Thread {
     private final int framePeriod = 1000 / wantedFps;
 
     private boolean running = false;
-    private boolean isPaused = false;
 
     private GameView view;
 
+    private Canvas canvas;
+    private long beginTime;
+    private long timeDiff;
+    private int sleepTime;
+
+    private SurfaceHolder holder;
+    
     public GameLoop(GameView v) {
         view = v;
-        running = true;
-        isPaused = true;
+        running = false;
+
+	holder = view.getHolder();
     }
 
     public int framePeriod() {
         return framePeriod;
     }
 
-    @Override
     public void run() {
-        Canvas canvas;
-        long beginTime;
-        long timeDiff;
-        int sleepTime;
+	while (running) {
+	    tick();
+	}
+    }
+    
+    public void tick() {
+	canvas = null;
+	try {
+	    canvas = holder.lockCanvas(null);
+	    synchronized (holder) {
+		beginTime = System.currentTimeMillis();
+		
+		view.update();
+		view.render(canvas);
 
-        SurfaceHolder holder = view.getHolder();
+		timeDiff = System.currentTimeMillis() - beginTime;
+		sleepTime = (int) (framePeriod - timeDiff);
 
-        while (running) {
-            canvas = null;
-            try {
-                canvas = holder.lockCanvas(null);
-                synchronized (holder) {
-                    beginTime = System.currentTimeMillis();
-
-                    view.update();
-                    view.render(canvas);
-
-                    timeDiff = System.currentTimeMillis() - beginTime;
-                    sleepTime = (int) (framePeriod - timeDiff);
-
-                    if (sleepTime > 0) {
-                        try {
-                            Thread.sleep(sleepTime);
-                        } catch (Exception e) {};
-                    }
-                }
-            } finally {
-                if (canvas != null) {
-                    holder.unlockCanvasAndPost(canvas);
-                }
-            }
-
-            if (isPaused) {
-                synchronized (this) {
-                    while (isPaused && running) {
-                        try {
-                            wait();
-                        } catch (Exception e) {}
-                    }
-		    Log.d("TAG!", "not paused any more");
-                }
-            }
-        }
+		if (sleepTime > 0) {
+		    try {
+			Thread.sleep(sleepTime);
+		    } catch (Exception e) {};
+		}
+	    }
+	} finally {
+	    if (canvas != null) {
+		holder.unlockCanvasAndPost(canvas);
+	    }
+	}
     }
 
-    public boolean isPaused() {
-        return isPaused;
+    public boolean running() {
+	return running;
     }
 
-    public void pauseGame() {
-        isPaused = true;
+    public void start() {
+	running = true;
+	super.start();
     }
-
-    public synchronized void resumeGame() {
-        isPaused = false;
-        notify();
-	Log.d("Tag", "resumed");
-    }
-
-    public synchronized void stopGame() {
+    
+    public void stopLoop() {
         running = false;
-        notify();
-	Log.d("Tag", "stoped thread!!!!!!!!!");
     }
 }

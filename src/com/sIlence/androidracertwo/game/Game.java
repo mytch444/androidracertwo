@@ -12,13 +12,6 @@ public abstract class Game {
     public static int WALL2POS = 3;
     
     protected Part[] parts;
-    /*
-    protected LightRacer local;
-    protected AIRacer other;
-    protected WallRacer wall1;
-    protected WallRacer wall2;
-    */
-    protected int speedl, speedo, speedw;
 
     protected int otherDifficualty;
 
@@ -40,13 +33,17 @@ public abstract class Game {
         deaths = 0;
         time = 0;
 
+	parts = new Part[4];
+	
         rand = new Random();
     }
 
-    public void init(GameView v) {
-        view = v;
-    }
+    public void init() {}
 
+    public void setView(GameView v) {
+	view = v;
+    }
+    
     public LightRacer local() {
         return (LightRacer) parts[LOCALPOS];
     }

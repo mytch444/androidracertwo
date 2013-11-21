@@ -16,13 +16,12 @@ public class TronGame extends Game {
         loseMessage = "Round Over\nYou Lost";
     }
 
-    public void init(GameView v) {
-        super.init(v);
+    public void init() {
 
         int x0, y0, d0, x1, y1, d1;
-        x0 = x1 = v.boxsX() / 2;
-        y0 = y1 = v.boxsY() / 2;
-        if (v.boxsX() < v.boxsY()) {
+        x0 = x1 = view.boxsX() / 2;
+        y0 = y1 = view.boxsY() / 2;
+        if (view.boxsX() < view.boxsY()) {
             y0 -= 5;
             y1 += 5;
             d0 = 0;
@@ -42,14 +41,14 @@ public class TronGame extends Game {
             blockades = new Blockade[nblockades];
 
             for (int i = 0; i < blockades.length; i++) {
-                blockades[i] = new Blockade(v);
+                blockades[i] = new Blockade(view);
             }
 
 	    int nlives = (int) (rand.nextInt(kills)) + kills / 2;
 	    lives = new Life[nlives];
 
 	    for (int i = 0; i < lives.length; i++) {
-		lives[i] = new Life(v);
+		lives[i] = new Life(view);
 	    }
         } else {
             blockades = new Blockade[0];
@@ -58,10 +57,10 @@ public class TronGame extends Game {
 
         parts = new Part[4 + blockades.length + lives.length];
 
-	parts[LOCALPOS] = new LightRacer(v, 0xC004CCF1, GameView.INCREASE_DEATHS, x0 * view.boxWidth(), y0 * view.boxHeight(), d0);
-        parts[OTHERPOS] = new AIRacer(v, getOtherDifficualty(), GameView.INCREASE_KILLS, x1 * view.boxWidth(), y1 * view.boxHeight(), d1);
-        parts[WALL1POS] = new WallRacer(v, v.boxWidth(), v.top() + v.boxHeight(), 0);
-        parts[WALL2POS] = new WallRacer(v, v.boxWidth() * (v.boxsX() - 1), v.boxHeight() * (v.boxsY() - 1) + v.top(), 0);
+	parts[LOCALPOS] = new LightRacer(view, 0xC004CCF1, GameView.INCREASE_DEATHS, x0 * view.boxWidth(), y0 * view.boxHeight(), d0);
+        parts[OTHERPOS] = new AIRacer(view, getOtherDifficualty(), GameView.INCREASE_KILLS, x1 * view.boxWidth(), y1 * view.boxHeight(), d1);
+        parts[WALL1POS] = new WallRacer(view, view.boxWidth(), view.top() + view.boxHeight(), 0);
+        parts[WALL2POS] = new WallRacer(view, view.boxWidth() * (view.boxsX() - 1), view.boxHeight() * (view.boxsY() - 1) + view.top(), 0);
 
         for (int i = 0; i < blockades.length; i++) {
             parts[i + 4] = blockades[i];

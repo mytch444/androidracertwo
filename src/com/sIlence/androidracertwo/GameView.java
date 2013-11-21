@@ -53,15 +53,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     
     private int countdown;
     private int startcount;
-
-    private GameLoop loop;
-
     private long endTime;
+    
+    private GameLoop loop;
 
     private int	boxWidth, boxHeight, boxsX, boxsY;
     private int	top;
     
-    private int bottom;
     private boolean usingArrows;
     private Rect[] arrows;
 
@@ -76,9 +74,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Game game;
 
     private MyDialog dialog;
-    private boolean closing;
 
-    public GameView(Context context, Game g) {
+    public GameView(Context context, Game g, boolean arrows) {
         super(context);
         getHolder().addCallback(this);
         setFocusable(true);
@@ -86,29 +83,32 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         game = g;
         loop = new GameLoop(this);
 
-	usingArrows = false;
-    }
-
-    public GameView(Context context, Game g, boolean arrows) {
-	this(context, g);
 	usingArrows = arrows;
-    }
-
-    protected void newGame() {
-        game.init(this);
-        
-        closing = false;
-        starting = true;
-        gameOver = false;
-        won = false;
-        startcount = getTime();
-        countdown = 3;
 
         bounds = new Rect();
         textString = "";
 
-//        setTime(0);
-        endTime = System.currentTimeMillis();
+	endTime = 0;
+    }
+
+    public GameView(Context context, Game g) {
+	this(context, g, false);
+    }
+
+    protected void newGame() {
+	stop();
+	
+        game.init();
+
+	starting = true;
+        gameOver = false;
+        won = false;
+	pausing = false;
+	
+        startcount = getTime();
+        countdown = 3;
+	
+	tick();
     }
 
     public void update() {
@@ -125,10 +125,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
      
         game.update();
-       
-        if (pausing) {
-            pauseGame();
-        }
     }
 
     public void render(Canvas c) {
@@ -173,21 +169,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void messages() {
-        if (closing) {
-            return;
-        }
-
         if (gameOver) {
             if (won) {
-                newGameBox(game.winMessage(), "New Game", "Exit");
+                dialog(new NewGameDialog(this, game.winMessage(), "New Game", "Exit"));
             } else {
-                newGameBox(game.loseMessage(), "New Game", "Exit");
+                dialog(new NewGameDialog(this, game.loseMessage(), "New Game", "Exit"));
             }
         } else if (starting) {
-            pauseBox("You Are Blue\nSwipe To Turn\nMake Yellow Crash\nTap To Play", "Start", "Exit");
-            starting = false;
-        } else if (loop.isPaused() || pausing) {
-            pauseBox("Paused", "Resume", "Exit");
+            dialog(new PauseDialog(this, "You Are Blue\nSwipe To Turn\nMake Yellow Crash\nTap To Play", "Start", "Exit"));
+        } else if (!loop.running() || pausing) {
+            dialog(new PauseDialog(this, "Paused", "Resume", "Exit"));
         }
     }
 
@@ -200,22 +191,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         return ft;
     }
 
-    public void newGameBox(String message, String p, String n) {
-        pauseGame();
-
-        FragmentTransaction ft = cleanupFragments();
-
-        dialog = new NewGameDialog(this, message, p, n);
-        dialog.show(ft, "dialog");
-    }
-
-    public void pauseBox(String m, String p, String n) {
-        pauseGame();
-
-        FragmentTransaction ft = cleanupFragments();
-
-        dialog = new PauseDialog(this, m, p, n);
-        dialog.show(ft, "dialog");
+    public void dialog(MyDialog d) {
+	stop();
+	FragmentTransaction ft = cleanupFragments();
+	dialog = d;
+	dialog.show(ft, "dialog");
     }
 
     public void checkScore() {
@@ -302,49 +282,33 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         pausing = true;
     }
 
-    public void pauseGame() {
-        loop.pauseGame();
-        pausing = false;
+    public void stop() {
+	pausing = false;
+	loop.stopLoop();
     }
 
-    public synchronized void resumeGame() {
-        if (gameOver) return;
-        closing = false;
-        loop.resumeGame();
-	Log.d("Tag", "resumed?");
-    }
+    public void start() {
+	stop();
 
-    public synchronized void stopGame() {
-        closing = true;
-        if (loop != null) 
-            loop.stopGame();
-    }
-
-    public synchronized void start() {
-        if (loop != null) {
-            loop.stopGame();
-        }
-
-        pausing = false;
-        closing = false;
-        notify();
-
-        loop = new GameLoop(this);
+	starting = false;
+        
+	loop = new GameLoop(this);
         loop.start();
-
-        pauseGame();
     }
 
+    public void tick() {
+	loop.tick();
+    }
+    
     public boolean isPaused() {
-        if (loop == null) return true;
         if (gameOver) return true;
-        return loop.isPaused();
+        return loop.running();
     }
 
     public void surfaceCreated(SurfaceHolder arg0) {
+	Log.d("TAG", "surfaceCreated");
+	
         brush = new Paint(Paint.ANTI_ALIAS_FLAG);
-
-        // Screen dependent stuff
 
         int size = getWidth();
         if (getHeight() < getWidth()) size = getHeight();
@@ -369,11 +333,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             fromRight = 80;
         }
 
-	bottom = getHeight();
-	
 	if (usingArrows) {
 	    int arrowWidth = boxWidth * 15;
-	    bottom = getHeight() - arrowWidth * 2 - boxHeight * 10;
+	    int bottom = getHeight() - arrowWidth * 2 - boxHeight * 10;
 
 	    arrows = new Rect[4];
 	    arrows[0] = new Rect(getWidth() / 2 - arrowWidth / 2, bottom + boxHeight * 2, getWidth() / 2 + arrowWidth / 2, bottom + arrowWidth + boxHeight * 2);
@@ -385,13 +347,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         boxsX = getWidth() / boxWidth;
         boxsY = (getHeight() - top) / boxHeight;
 
-        newGame();
-        start();
+	game.setView(this);
+	pause();
+	
+	if (game.local() == null)
+	    newGame();
+	else
+	    tick();
     }
 
     public void surfaceDestroyed(SurfaceHolder arg0) {
-        //closing = true;
-	//        stopGame();
+	Log.d("TAG", "surfaceDestroyed");
+	stop();
     }
 
     public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {}
@@ -494,7 +461,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void killDialog() {
-	//        if (dialog != null) dialog.dismiss();
+	if (dialog != null) dialog.dismiss();
     }
 
     public int turnDelay() {
