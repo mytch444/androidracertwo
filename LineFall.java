@@ -68,7 +68,9 @@ public class LineFall extends Part {
 		    yp = yj + yid;
                     O = rand.nextFloat() * (float) Math.PI * 2;
 		    s = 0.3f + rand.nextFloat() * 0.2f - 0.1f;
-		    particles.add(new Particle(color, xp, yp,
+		    //		    particles.add(
+		    v.addParticle(
+				  new Particle(color, xp, yp,
 					       O, s,
 					       i / 5, 40));
                     yj += yid;
@@ -77,8 +79,8 @@ public class LineFall extends Part {
             } while (xj != x1);
         }
 
-	this.particles = new Particle[particles.size()];
-	for (i = 0; i < particles.size(); i++) this.particles[i] = particles.get(i);
+	//	this.particles = new Particle[particles.size()];
+	//	for (i = 0; i < particles.size(); i++) this.particles[i] = particles.get(i);
     }
 
     @Override

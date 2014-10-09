@@ -91,4 +91,65 @@ public class Particle {
     public boolean isAlive() {
         return alive;
     }
+
+    /****************************** Particle layouts ***********************************/
+    public static void initLineFall(GameView v, int color, int[] xa, int[] ya, int state) {
+	Random rand = new Random();
+        int x0, y0, x1, y1, distance, incdec;
+	int i;
+	
+        for (i = 0; i < xa.length - 1; i++) {
+            if (xa[i + 1] == 0 && ya[i + 1] == 0) break;
+
+            x0 = xa[i];
+            y0 = ya[i];
+
+            x1 = xa[i + 1];
+            y1 = ya[i + 1];
+
+            int xd = x1 - x0;
+            int yd = y1 - y0;
+            int xid = 1;
+            if (xd < 0) xid = -1;
+            int yid = 1;
+            if (yd < 0) yid = -1;
+            
+            if (xd > v.boxWidth()) continue;
+            if (yd > v.boxHeight()) continue;
+
+	    float O, s;
+	    int xp, yp;
+	    
+            int xj = x0 - xid;
+            do {
+                int yj = y0 - yid; 
+                do {
+		    xp = xj + xid;
+		    yp = yj + yid;
+                    O = rand.nextFloat() * (float) Math.PI * 2;
+		    s = 0.3f + rand.nextFloat() * 0.2f - 0.1f;
+		    v.addParticle(
+				  new Particle(color, xp, yp,
+					       O, s,
+					       i / 5, 40));
+                    yj += yid;
+                } while (yj != y1);
+                xj += xid;
+            } while (xj != x1);
+        }
+    }
+    
+    public static void initExplosion(GameView v, int color, int x, int y, int direction, int pixels) {
+	Random rand = new Random();
+	
+	float O, speed;
+	int d;
+        for (int i = 0; i < pixels; i++) {
+	    O = direction * (float) Math.PI / 2;
+	    speed = v.boxHeight() * 0.2f;
+            v.addParticle(new Particle(color, x, y,
+				       O, speed,
+				       0, 100));
+        }
+    }
 }

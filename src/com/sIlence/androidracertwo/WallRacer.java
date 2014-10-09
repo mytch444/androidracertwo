@@ -55,10 +55,6 @@ public class WallRacer extends LightRacer {
 
     @Override
     public void update() {
-	for (ri = 0; ri < explosions.length; ri++) {
-	    explosions[ri].update();
-	}
-
 	offScreen();
         move();
         updateLine();
@@ -74,14 +70,11 @@ public class WallRacer extends LightRacer {
 
     @Override
     public void render(Canvas c) {
-	for (ri = 0; ri < explosions.length; ri++) {
-	    explosions[ri].render(c);
-	}
         renderLines(c);
     }
 
     public void die(Part p, int hx, int hy, int di) {
 	p.downLives();
-	addExplosion(new Explosion(view, startColor, hx, hy, di, 100));
+	Particle.initExplosion(view, startColor, hx, hy, di, 100);
     }
 }

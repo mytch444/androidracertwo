@@ -35,9 +35,6 @@ public class LightRacer extends Part {
     int[] liney;
     int length;
 
-    Explosion[] explosions;
-    LineFall[] lineFall;
-
     int	scoreToChange;
 
     int ri, a, front, bx, by;
@@ -58,12 +55,6 @@ public class LightRacer extends Part {
         brush.setStrokeWidth(0f);
         light = true;
 
-        explosions = new Explosion[4];
-        Arrays.fill(explosions, new Explosion(view, color, 0, 0, 0, 0, 1));
-
-        lineFall = new LineFall[4];
-        Arrays.fill(lineFall, new LineFall(view, startColor, linex, liney, 1));
-
         scoreToChange = stc;
         foundSpawn = true;
         lives = 5;
@@ -79,9 +70,6 @@ public class LightRacer extends Part {
 
     @Override
     public void update() {
-
-        updateExplosions();
-
         if (dieing > 0) {
             dieing++;
 
@@ -146,7 +134,7 @@ public class LightRacer extends Part {
 	downLives();
 	p.downLives();
 
-        addExplosion(new Explosion(view, startColor, hx, hy, di, 100));
+	Particle.initExplosion(view, startColor, hx, hy, di, 100);
 
         int start = 0;
 
@@ -163,7 +151,7 @@ public class LightRacer extends Part {
         System.arraycopy(linex, start, lx, 0, lx.length);
         System.arraycopy(liney, start, ly, 0, ly.length); 
 
-        addLineFall(new LineFall(view, startColor, lx, ly, 0));
+	Particle.initLineFall(view, startColor, lx, ly, 0);
 
         if (start > 0) {
             lx = linex.clone();
@@ -174,32 +162,6 @@ public class LightRacer extends Part {
 
             System.arraycopy(lx, 0, linex, 0, linex.length);
             System.arraycopy(ly, 0, liney, 0, liney.length);
-        }
-    }
-
-    public void addLineFall(LineFall l) {
-        for (int i = 0; i < lineFall.length; i++) {
-            if (!lineFall[i].isAlive()) {
-                lineFall[i] = l;
-                break;
-            }
-        }
-    }
-
-    public void addExplosion(Explosion e) {
-        for (int i = 0; i < explosions.length; i++) {
-            if (!explosions[i].isAlive()) {
-                explosions[i] = e;
-            }
-        }
-    }
-
-    public void updateExplosions() {
-        for (int i = 0; i < explosions.length; i++) {
-            explosions[i].update();
-        }
-        for (int i = 0; i < lineFall.length; i++) {
-            lineFall[i].update();
         }
     }
 
@@ -241,14 +203,6 @@ public class LightRacer extends Part {
     }
 
     public void render(Canvas c) {
-        for (ri = 0; ri < explosions.length; ri++) {
-            explosions[ri].render(c);
-        }
-
-        for (ri = 0; ri < lineFall.length; ri++) {
-            lineFall[ri].render(c);
-        }
-
         if (dieing == 0) {
             renderLines(c);
         }
@@ -299,12 +253,7 @@ public class LightRacer extends Part {
     }
 
     protected void newLine() {
-        for (int i = 0; i < lineFall.length; i++) {
-            if (!lineFall[i].isAlive()) {
-                lineFall[i] = new LineFall(view, startColor, linex, liney, 0);
-                break;
-            }
-        }
+	Particle.initLineFall(view, startColor, linex, liney, 0);
 
         linex = new int[length];
         liney = new int[length];
@@ -462,13 +411,7 @@ clearancetesting:
         } else
             return;
 
-
-        for (int i = 0; i < lineFall.length; i++) {
-            if (!lineFall[i].isAlive()) {
-                lineFall[i] = new LineFall(view, startColor, linex, liney, 0);
-                break;
-            }
-        }
+	Particle.initLineFall(view, startColor, linex, liney, 0);
 
         linex = new int[length];
         liney = new int[length];

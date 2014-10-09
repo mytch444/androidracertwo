@@ -50,8 +50,6 @@ public class AIRacer extends LightRacer {
 
     @Override
     public void update() {
-        updateExplosions();
-
         if (dieing > 0) {
             dieing++;
 
