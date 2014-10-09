@@ -36,7 +36,7 @@ public class Blockade extends Part {
         super(v);
         this.x = x;
         this.y = y;
-        color = 0xff333333;
+        color = 0xff888888;
         startColor = color;
 
         width = w;
@@ -105,16 +105,19 @@ public class Blockade extends Part {
 
     public void die(Part p, int hx, int hy, int di) {
 	p.downLives();
-
 	if (p != this && p.lives() < 1) {
 	    p.die(this, hx, hy, di);
 	    return;
 	}
 	
-        int xd, yd, start, stop;
-        float anglerange, speed;
+        dieing = 1;	
+	createParticles(hx, hy, di);
+    }
 
-        dieing = 1;
+    public void createParticles(int hx, int hy, int di) {
+        int xd, yd, start, stop;
+        float anglerange, O, speed;
+
         anglerange = 0;
        
         particles = new Particle[width * height];
@@ -124,15 +127,17 @@ public class Blockade extends Part {
                 xd = this.x + x - hx;
                 yd = this.y + y - hy;
 
-                anglerange = (0.005f * xd * xd + 0.051f) * (0.005f * yd * yd + 0.051f) * 360;
+                anglerange = (0.005f * xd * xd + 0.051f) * (0.005f * yd * yd + 0.051f) * (float) Math.PI * 2;
+		O = di * (float) Math.PI / 2 + anglerange;
 
                 start = (int) (anglerange / 10);
                 if (start > 50) start = 50;
                 stop = 20;
-                speed = 4f / anglerange + 1f;
+                speed = 4f / anglerange + 1f + rand.nextFloat() * 0.1f - 0.5f;
 
                 particles[x * height + y] = 
-                    new Particle(color, x + this.x, y + this.y, di * 90, (int) anglerange, speed, 0.1f, start, stop);
+                    new Particle(color, x + this.x, y + this.y,
+				 O, speed, start, stop);
             }
         }
     }

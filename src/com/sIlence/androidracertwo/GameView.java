@@ -258,11 +258,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 		int g = vertorhorz(xDiff, yDiff);
 		if (g == 0) {
-		    if (xDiff > 0 && local().changeDirection(1));
-		    if (xDiff < 0 && local().changeDirection(3));
+		    if (xDiff > 0 && local().changeDirection(0));
+		    if (xDiff < 0 && local().changeDirection(2));
 		} else if (g == 1) {
-		    if (yDiff < 0 && local().changeDirection(0));
-		    if (yDiff > 0 && local().changeDirection(2));
+		    if (yDiff < 0 && local().changeDirection(3));
+		    if (yDiff > 0 && local().changeDirection(1));
 		}
 	    }
 	}
@@ -338,10 +338,30 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	    int bottom = getHeight() - arrowWidth * 2 - boxHeight * 10;
 
 	    arrows = new Rect[4];
-	    arrows[0] = new Rect(getWidth() / 2 - arrowWidth / 2, bottom + boxHeight * 2, getWidth() / 2 + arrowWidth / 2, bottom + arrowWidth + boxHeight * 2);
-	    arrows[1] = new Rect(getWidth() / 2 + arrowWidth / 2 + boxWidth * 2, bottom + boxHeight * 4 + arrowWidth, getWidth() / 2 + arrowWidth / 2 + arrowWidth + boxWidth * 2, bottom + boxHeight * 4 + arrowWidth * 2);
-	    arrows[2] = new Rect(getWidth() / 2 - arrowWidth / 2, bottom + boxHeight * 4 + arrowWidth, getWidth() / 2 + arrowWidth / 2, bottom + arrowWidth * 2 + boxHeight * 4);
-	    arrows[3] = new Rect(getWidth() / 2 - arrowWidth / 2 - arrowWidth - boxWidth * 2, bottom + boxHeight * 4 + arrowWidth, getWidth() / 2 - arrowWidth / 2 - boxWidth * 2, bottom + arrowWidth * 2 + boxHeight * 4); 
+	    arrows[0] =
+		new Rect(
+			 getWidth() / 2 + arrowWidth / 2 + boxWidth * 2,
+			 bottom + boxHeight * 4 + arrowWidth,
+			 getWidth() / 2 + arrowWidth / 2 + arrowWidth + boxWidth * 2,
+			 bottom + boxHeight * 4 + arrowWidth * 2);
+	    arrows[1] =
+		new Rect(
+			 getWidth() / 2 - arrowWidth / 2,
+			 bottom + boxHeight * 4 + arrowWidth,
+			 getWidth() / 2 + arrowWidth / 2,
+			 bottom + arrowWidth * 2 + boxHeight * 4);
+	    arrows[2] =
+		new Rect(
+			 getWidth() / 2 - arrowWidth / 2 - arrowWidth - boxWidth * 2,
+			 bottom + boxHeight * 4 + arrowWidth,
+			 getWidth() / 2 - arrowWidth / 2 - boxWidth * 2,
+			 bottom + arrowWidth * 2 + boxHeight * 4);
+	    arrows[3] =
+		new Rect(
+			 getWidth() / 2 - arrowWidth / 2,
+			 bottom + boxHeight * 2,
+			 getWidth() / 2 + arrowWidth / 2,
+			 bottom + arrowWidth + boxHeight * 2);
 	}
 
         boxsX = getWidth() / boxWidth;
@@ -458,6 +478,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public WallRacer wall2() {
         return game.wall2();
+    }
+
+    public Particle particles(int i) {
+	return game.particles(i);
+    }
+
+    public void addParticle(Particle p) {
+	game.addParticle(p);
     }
 
     public void killDialog() {

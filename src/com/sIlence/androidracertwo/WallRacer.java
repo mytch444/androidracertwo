@@ -66,10 +66,10 @@ public class WallRacer extends LightRacer {
 
     @Override
     public void offScreen() {
-        if (linex[0] < view.boxWidth() * 2 && liney[0] > view.getHeight() / 2) changeDirection(0);
-        else if (liney[0] < view.top() + view.boxHeight() * 2 && linex[0] < view.getWidth() / 2) changeDirection(1);
-        else if (linex[0] > (view.boxsX() - 2) * view.boxWidth() && liney[0] < view.getHeight() / 2) changeDirection(2);
-        else if (liney[0] > (view.boxsY() - 2) * view.boxHeight() + view.top() && linex[0] > view.getWidth() / 2) changeDirection(3);
+        if (linex[0] < view.boxWidth() * 2 && liney[0] > view.getHeight() / 2) changeDirection(3);
+        else if (liney[0] < view.top() + view.boxHeight() * 2 && linex[0] < view.getWidth() / 2) changeDirection(0);
+        else if (linex[0] > (view.boxsX() - 2) * view.boxWidth() && liney[0] < view.getHeight() / 2) changeDirection(1);
+        else if (liney[0] > (view.boxsY() - 2) * view.boxHeight() + view.top() && linex[0] > view.getWidth() / 2) changeDirection(2);
     }
 
     @Override

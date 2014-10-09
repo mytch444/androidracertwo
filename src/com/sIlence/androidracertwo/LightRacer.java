@@ -226,16 +226,16 @@ public class LightRacer extends Part {
     public void move() {
         switch (direction) {
             case 0:
-                liney[0] -= view.boxHeight();
-                break;
-            case 1:
                 linex[0] += view.boxWidth();
                 break;
-            case 2:
+            case 1:
                 liney[0] += view.boxHeight();
                 break;
-            case 3: 
+            case 2:
                 linex[0] -= view.boxWidth();
+                break;
+            case 3: 
+                liney[0] -= view.boxHeight();
                 break;
         }
     }
@@ -360,20 +360,20 @@ clearancetesting:
             for (int clearance = 1; clearance < view.gratestLengthInSegments(); clearance++) {
                 switch (checkingDi) {
                     case 0:
-                        x = linex[0];
-                        y = liney[0] - (clearance * view.boxHeight());
-                        break;
-                    case 1:
                         x = linex[0] + (clearance * view.boxWidth());
                         y = liney[0];
                         break;
-                    case 2:
+                    case 1:
                         x = linex[0];
                         y = liney[0] + (clearance * view.boxHeight());
                         break;
-                    case 3:
+                    case 2:
                         x = linex[0] - (clearance * view.boxWidth());
                         y = liney[0];
+                        break;
+                    case 3:
+                        x = linex[0];
+                        y = liney[0] - (clearance * view.boxHeight());
                         break;
                 }
 

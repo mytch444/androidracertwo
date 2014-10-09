@@ -35,8 +35,8 @@ public class LineFall extends Part {
         super(v);
         dieing = state;
 
-        ArrayList<Particle> particles = new ArrayList<Particle>();
-
+	ArrayList<Particle> particles = new ArrayList<Particle>();
+	
         int x0, y0, x1, y1, distance, incdec;
         for (i = 0; i < xa.length - 1; i++) {
             if (xa[i + 1] == 0 && ya[i + 1] == 0) break;
@@ -57,11 +57,20 @@ public class LineFall extends Part {
             if (xd > view.boxWidth()) continue;
             if (yd > view.boxHeight()) continue;
 
+	    float O, s;
+	    int xp, yp;
+	    
             int xj = x0 - xid;
             do {
                 int yj = y0 - yid; 
                 do {
-                    particles.add(newParticle(color, xj + xid, yj + yid, i / 5));
+		    xp = xj + xid;
+		    yp = yj + yid;
+                    O = rand.nextFloat() * (float) Math.PI * 2;
+		    s = 0.3f + rand.nextFloat() * 0.2f - 0.1f;
+		    particles.add(new Particle(color, xp, yp,
+					       O, s,
+					       i / 5, 40));
                     yj += yid;
                 } while (yj != y1);
                 xj += xid;
@@ -70,10 +79,6 @@ public class LineFall extends Part {
 
 	this.particles = new Particle[particles.size()];
 	for (i = 0; i < particles.size(); i++) this.particles[i] = particles.get(i);
-    }
-
-    public static Particle newParticle(int color, int x, int y, int start) {
-        return new Particle(color, x, y, 0, 360, 0.3f, 0.2f, start, 40);
     }
 
     @Override

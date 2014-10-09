@@ -42,7 +42,9 @@ public class Particle {
     private Paint brush;
     private int starta;
 
-    public Particle(int color, int x, int y, int O, int Oerror, float speed, float sError, int sta, int lif) {
+    public Particle(int color, int x, int y,
+		    float O, float speed,
+		    int sta, int lif) {
         rand = new Random();
         brush = new Paint(Paint.ANTI_ALIAS_FLAG);
 
@@ -55,47 +57,14 @@ public class Particle {
         mx = x;
         my = y;
 
-        if (sta == 0) sta = 1;
-        if (lif == 0) lif = 1;
-
-        start = rand.nextInt(sta) + sta / 2;
+	
+        start = sta;
         life = rand.nextInt(lif) + lif / 2;
         age = 0;
         alive = true;
 
-        float rspeed = speed + ((rand.nextFloat() * sError) - (sError / 2));
-
-        Oerror = (int) (-60f * rspeed + 180f) + Oerror;
-        int d = O + ((int) (rand.nextFloat() * Oerror)) - (Oerror / 2);
-
-        if (d > 360) d -= 360;
-        if (d < 0) d += 360;
-
-        O = d;
-        d = d % 90; 
-        float r = (float) d / 180 * (float) Math.PI;
-        float a = (float) Math.cos(r) * rspeed;
-        float o = (float) Math.sin(r) * rspeed;
-        if (O < 90) {
-            xv = o;
-            yv = -a;
-        }
-        if (O > 90 && O < 180) {
-            xv = a;
-            yv = o;
-        }
-        if (O > 180 && O < 270) {
-            xv = -o;
-            yv = a;
-        }
-        if (O > 270) {
-            xv = -a;
-            yv = -o;
-        }
-    }
-
-    public Particle(int c, int x, int y, int O, float speed, int sto) {
-        this(c, x, y, O, 40, speed, 0.5f, 0, sto);
+        xv = (float) Math.cos(O) * speed;
+        yv = (float) Math.sin(O) * speed;
     }
 
     public void update() {

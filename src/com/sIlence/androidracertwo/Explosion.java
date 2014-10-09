@@ -34,10 +34,15 @@ public class Explosion extends Part {
 
         dieing = s;
 
+	float O, speed;
+	int d;
         particles = new Particle[pixels];
         for (int i = 0; i < particles.length; i++) {
-            Particle p = new Particle(color, x, y, direction * 90, 60, 0.5f, 0.75f, 0, 100);
-            particles[i] = p;
+	    O = direction * (float) Math.PI / 2;
+	    speed = v.boxHeight() * 0.2f;
+            particles[i] = new Particle(color, x, y,
+				      O, speed,
+				      0, 100);
         }
         age = 0;
     }

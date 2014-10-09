@@ -3,6 +3,7 @@ package com.sIlence.androidracertwo.game;
 import com.sIlence.androidracertwo.*;
 import android.graphics.Canvas;
 import java.util.Random;
+import java.util.ArrayList;
 
 public abstract class Game {
 
@@ -12,6 +13,7 @@ public abstract class Game {
     public static int WALL2POS = 3;
     
     protected Part[] parts;
+    protected ArrayList<Particle> particles;
 
     protected int otherDifficualty;
 
@@ -34,6 +36,7 @@ public abstract class Game {
         time = 0;
 
 	parts = new Part[4];
+	particles = new ArrayList<Particle>();
 	
         rand = new Random();
     }
@@ -58,6 +61,14 @@ public abstract class Game {
 
     public WallRacer wall2() {
         return (WallRacer) parts[WALL2POS];
+    }
+
+    public Particle particles(int i) {
+	return particles.get(i);
+    }
+
+    public void addParticle(Particle p) {
+	particles.add(p);
     }
 
     public int getOtherDifficualty() {
@@ -111,15 +122,30 @@ public abstract class Game {
     }
 
     public void update() {
+	int i;
 	updateLengths();
-	for (int i = 0; i < parts.length; i++) {
+	for (i = 0; i < parts.length; i++) {
 	    parts[i].update();
+	}
+
+	for (i = 0; i < particles.size(); i++) {
+	    Particle p = particles.get(i);
+	    if (!p.isAlive())
+		particles.remove(p);
+	    else
+		p.update();
 	}
     }
 
     public void render(Canvas c) {
-        for (int i = 0; i < parts.length; i++) {
+	int i;
+        for (i = 0; i < parts.length; i++) {
 	    parts[i].render(c);
 	}
+
+	for (i = 0; i < particles.size(); i++) {
+	    particles.get(i).render(c);
+	}
+
     }
 }

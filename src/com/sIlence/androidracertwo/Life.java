@@ -40,33 +40,9 @@ public class Life extends Blockade {
     }
 
     public void die(Part p, int hx, int hy, int di) {
-        int xd, yd, start, stop;
-        float anglerange, speed;
-	
 	p.upLives();
 
 	dieing = 1;
-        anglerange = 0;
-
-	color = 0xffff00ff;
-	
-        particles = new Particle[width * height];
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                
-                xd = this.x + x - hx;
-                yd = this.y + y - hy;
-
-                anglerange = (0.005f * xd * xd + 0.051f) * (0.005f * yd * yd + 0.051f) * 360;
-
-                start = (int) (anglerange / 10);
-                if (start > 50) start = 50;
-                stop = 20;
-                speed = 4f / anglerange + 1f;
-
-                particles[x * height + y] = 
-                    new Particle(color, x + this.x, y + this.y, di * 90, (int) anglerange, speed, 0.1f, start, stop);
-            }
-        }
+	createParticles(hx, hy, di);
     }
 }
