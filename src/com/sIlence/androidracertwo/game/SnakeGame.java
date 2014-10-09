@@ -1,6 +1,7 @@
 package com.sIlence.androidracertwo.game;
 
 import com.sIlence.androidracertwo.*;
+import java.util.ArrayList;
 
 public class SnakeGame extends Game {
 
@@ -16,6 +17,7 @@ public class SnakeGame extends Game {
         setKills(0);
         setDeaths(0);
 
+	particles = new ArrayList<Particle>();
 	parts = new Part[4];
 	
         parts[LOCALPOS] = new LightRacer(view, 0xC003CCF1, GameView.INCREASE_DEATHS);

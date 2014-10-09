@@ -30,7 +30,6 @@ import android.util.Log;
 public class Blockade extends Part {
 
     int width, height;
-    Particle[] particles;
 
     public Blockade(GameView v, int x, int y, int w, int h) {
         super(v);
@@ -42,8 +41,6 @@ public class Blockade extends Part {
         width = w;
         height = h;
 
-        particles = null;
-
         dieing = 0;
     }
 
@@ -51,16 +48,10 @@ public class Blockade extends Part {
         this(v, 0, 0, 0, 0);
     }
 
-    public void update() {
-        if (particles != null) {
-            for (int i = 0; i < particles.length; i++) particles[i].update();
-        }
-    }
+    public void update() {}
 
     public void render(Canvas c) {
-        if (particles != null) {
-           for (int i = 0; i < particles.length; i++) particles[i].render(c);
-        } else {
+        if (dieing == 0) {
             brush.setColor(color);
             c.drawRect(x, y, x + width, y + height, brush);
         }
@@ -116,18 +107,19 @@ public class Blockade extends Part {
 
     public void createParticles(int hx, int hy, int di) {
         int xd, yd, start, stop;
-        float anglerange, O, speed;
+        float anglerange, O, speed, d;
 
         anglerange = 0;
        
-        particles = new Particle[width * height];
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 
                 xd = this.x + x - hx;
                 yd = this.y + y - hy;
+		d = (float) Math.sqrt(xd * xd + yd * yd);
 
-                anglerange = (0.005f * xd * xd + 0.051f) * (0.005f * yd * yd + 0.051f) * (float) Math.PI * 2;
+                anglerange = 
+		    (float) -(Math.PI / 25) * (d - 5) * (d + 5);
 		O = di * (float) Math.PI / 2 + anglerange;
 
                 start = (int) (anglerange / 10);
@@ -135,9 +127,9 @@ public class Blockade extends Part {
                 stop = 20;
                 speed = 4f / anglerange + 1f + rand.nextFloat() * 0.1f - 0.5f;
 
-                particles[x * height + y] = 
+                view.addParticle(
                     new Particle(color, x + this.x, y + this.y,
-				 O, speed, start, stop);
+				 O, speed, start, stop));
             }
         }
     }

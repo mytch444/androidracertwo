@@ -54,9 +54,11 @@ public class Part {
         dieing = 0;
         lives = 0;
     }
+
     public void setOpps(Part[] o) {
         opps = o.clone();
     }
+
     public boolean isAlive() {
         if (dieing == 0) return true;
         return false;
@@ -80,7 +82,8 @@ public class Part {
 
     public static int oppDirection(int di) {
         di -= 2;
-        while (di < 0) di += 4;
+        if (di < 0)
+	    di += 4;
         return di;
     }
 

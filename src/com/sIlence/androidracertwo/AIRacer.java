@@ -50,7 +50,7 @@ public class AIRacer extends LightRacer {
 
     @Override
     public void update() {
-        if (dieing > 0) {
+	if (dieing > 0) {
             dieing++;
 
             if (!foundSpawn) {
@@ -97,7 +97,6 @@ public class AIRacer extends LightRacer {
             }, lag);
         }
     }
-
 
     private int tryToDodge() { // Try avoid other player
         if (!safeToTurn(direction, difficualty)) {

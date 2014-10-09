@@ -36,7 +36,6 @@ public abstract class Game {
         time = 0;
 
 	parts = new Part[4];
-	particles = new ArrayList<Particle>();
 	
         rand = new Random();
     }

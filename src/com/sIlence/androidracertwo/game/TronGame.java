@@ -3,6 +3,8 @@ package com.sIlence.androidracertwo.game;
 import com.sIlence.androidracertwo.*;
 import android.graphics.Canvas;
 import android.util.Log;
+import java.util.ArrayList;
+import java.util.ArrayList;
 
 public class TronGame extends Game {
 
@@ -17,7 +19,6 @@ public class TronGame extends Game {
     }
 
     public void init() {
-
         int x0, y0, d0, x1, y1, d1;
         x0 = x1 = view.boxsX() / 2;
         y0 = y1 = view.boxsY() / 2;
@@ -33,6 +34,8 @@ public class TronGame extends Game {
             d1 = 1;
         }
 
+	particles = new ArrayList<Particle>();
+	
 	Blockade[] blockades;
 	Life[] lives;
 	
@@ -57,10 +60,18 @@ public class TronGame extends Game {
 
         parts = new Part[4 + blockades.length + lives.length];
 
-	parts[LOCALPOS] = new LightRacer(view, 0xC004CCF1, GameView.INCREASE_DEATHS, x0 * view.boxWidth(), y0 * view.boxHeight(), d0);
-        parts[OTHERPOS] = new AIRacer(view, getOtherDifficualty(), GameView.INCREASE_KILLS, x1 * view.boxWidth(), y1 * view.boxHeight(), d1);
-        parts[WALL1POS] = new WallRacer(view, view.boxWidth(), view.top() + view.boxHeight(), 0);
-        parts[WALL2POS] = new WallRacer(view, view.boxWidth() * (view.boxsX() - 1), view.boxHeight() * (view.boxsY() - 1) + view.top(), 0);
+	parts[LOCALPOS] =
+	    new LightRacer(view, 0xC004CCF1, GameView.INCREASE_DEATHS,
+			   x0 * view.boxWidth(), y0 * view.boxHeight(), d0);
+        parts[OTHERPOS] =
+	    new AIRacer(view, getOtherDifficualty(), GameView.INCREASE_KILLS,
+			x1 * view.boxWidth(), y1 * view.boxHeight(), d1);
+        parts[WALL1POS] =
+	    new WallRacer(view,
+			  view.boxWidth(), view.top() + view.boxHeight(), 0);
+        parts[WALL2POS] =
+	    new WallRacer(view,
+			  view.boxWidth() * (view.boxsX() - 1), view.boxHeight() * (view.boxsY() - 1) + view.top(), 0);
 
         for (int i = 0; i < blockades.length; i++) {
             parts[i + 4] = blockades[i];

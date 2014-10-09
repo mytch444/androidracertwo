@@ -1,4 +1,4 @@
-/*
+ /*
  *
  * This file is part of AndroidRacerTwo
  *
@@ -18,7 +18,6 @@
  * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
  *
 */
-
 
 package com.sIlence.androidracertwo;
 
@@ -57,7 +56,6 @@ public class Particle {
         mx = x;
         my = y;
 
-	
         start = sta;
         life = rand.nextInt(lif) + lif / 2;
         age = 0;
@@ -73,8 +71,8 @@ public class Particle {
         age++;
 
         if (age > start && age < start + life) {
-            mx += -(xv / (life * life)) * ((age - start) + life) * ((age - start) - life);
-            my += -(yv / (life * life)) * ((age - start) + life) * ((age - start) - life);
+            mx += xv;//-(xv / (life * life)) * ((age - start) + life) * ((age - start) - life);
+	    my += yv;//-(yv / (life * life)) * ((age - start) + life) * ((age - start) - life);
         }
 
         a = (int) -(((float) starta / ((start + life) * (start + life))) * (age + (start + life)) * (age - (start + life)));
@@ -92,7 +90,10 @@ public class Particle {
         return alive;
     }
 
+
+
     /****************************** Particle layouts ***********************************/
+
     public static void initLineFall(GameView v, int color, int[] xa, int[] ya, int state) {
 	Random rand = new Random();
         int x0, y0, x1, y1, distance, incdec;
@@ -131,7 +132,7 @@ public class Particle {
 		    v.addParticle(
 				  new Particle(color, xp, yp,
 					       O, s,
-					       i / 5, 40));
+					       i / 5, i / 5 + 20));
                     yj += yid;
                 } while (yj != y1);
                 xj += xid;
@@ -142,14 +143,28 @@ public class Particle {
     public static void initExplosion(GameView v, int color, int x, int y, int direction, int pixels) {
 	Random rand = new Random();
 	
-	float O, speed;
+	float O, Op, Od, speed, step;
 	int d;
-        for (int i = 0; i < pixels; i++) {
-	    O = direction * (float) Math.PI / 2;
-	    speed = v.boxHeight() * 0.2f;
-            v.addParticle(new Particle(color, x, y,
+	/*
+	step = (float) Math.PI * 2 / pixels;
+	for (int i = 0; i < pixels; i++) {
+	    O += step;
+	    speed = v.boxHeight() * (rand.nextFloat() * 0.2f + 1.5f);
+	    v.addParticle(new Particle(color, x, y,
 				       O, speed,
 				       0, 100));
-        }
+	}
+	*/
+	O = direction * (float) Math.PI / 2;
+	step = 2 * (float) Math.PI / pixels;
+	Od = (float) -Math.PI;;
+        for (int i = 0; i < pixels; i++) {
+	    Od += step;
+	    speed = (float) (Math.cos(1.2 * Od) + 1.5f) * (rand.nextFloat() / 2 + 0.2f);
+
+            v.addParticle(new Particle(color, x, y,
+				       O + Od, speed,
+				       0, 40));
+	}
     }
 }
