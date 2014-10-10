@@ -468,7 +468,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         return game.local();
     }
 
-    public AIRacer other() {
+    public LightRacer other() {
         return game.other();
     }
 

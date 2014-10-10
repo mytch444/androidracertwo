@@ -75,7 +75,8 @@ public class Particle {
 	    my += -(yv / (life * life)) * ((age - start) + life) * ((age - start) - life);
         }
 
-        a = a - (starta / life); //(int) -(((float) starta / ((start + life) * (start + life))) * (age + (start + life)) * (age - (start + life)));
+	a = //(int) (255 / (age));
+	    (int) -(((float) starta / ((start + life) * (start + life))) * (age + (start + life)) * (age - (start + life)));
         if (a < 20) alive = false;
     }
 
@@ -94,7 +95,7 @@ public class Particle {
 
     /****************************** Particle layouts ***********************************/
 
-    public static void initLineFall(GameView v, int color, int[] xa, int[] ya, int state) {
+    public static void initLineFall(GameView v, int color, int[] xa, int[] ya) {
 	Random rand = new Random();
         int x0, y0, x1, y1, distance, incdec;
 	int i;

@@ -95,11 +95,11 @@ public class Blockade extends Part {
     }
 
     public void die(Part p, int hx, int hy, int di) {
-	p.downLives();
+	/*	p.downLives();
 	if (p != this && p.lives() < 1) {
 	    p.die(this, hx, hy, di);
 	    return;
-	}
+	    }*/
 	
         dieing = 1;	
 	createParticles(hx, hy, di);

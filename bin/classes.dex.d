@@ -6,9 +6,9 @@
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/GameView.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/GameLoop.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/game/Game.class \
+/shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/game/DodgeGame.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/game/SnakeGame.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/game/TronGame.class \
-/shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/game/DodgeGame.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/MyDialog$1.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/MyDialog$2.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/MyDialog.class \
@@ -18,6 +18,7 @@
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/AndroidRacerTwo$2.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/AndroidRacerTwo$3.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/AndroidRacerTwo$4.class \
+/shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/AndroidRacerTwo$5.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/AndroidRacerTwo.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/Blockade.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/Life.class \
@@ -30,4 +31,3 @@
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/R$layout.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/R$string.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/R.class \
-/shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/AndroidRacerTwo$5.class \

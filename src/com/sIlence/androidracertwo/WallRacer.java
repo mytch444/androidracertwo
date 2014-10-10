@@ -74,7 +74,7 @@ public class WallRacer extends LightRacer {
     }
 
     public void die(Part p, int hx, int hy, int di) {
-	p.downLives();
+	//	p.downLives();
 	Particle.initExplosion(view, startColor, hx, hy, di);
     }
 }

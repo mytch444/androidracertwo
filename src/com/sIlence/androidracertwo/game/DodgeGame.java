@@ -92,7 +92,7 @@ public class DodgeGame extends Game {
 	return "You survived for " + (view.getTime() / 1000) + " seconds.";
     }
 
-    public AIRacer other() {
+    public LightRacer other() {
         return null;
     }
 

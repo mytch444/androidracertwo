@@ -2,6 +2,7 @@ package com.sIlence.androidracertwo.game;
 
 import com.sIlence.androidracertwo.*;
 import java.util.ArrayList;
+import android.util.Log;
 
 public class SnakeGame extends Game {
 
@@ -59,5 +60,19 @@ public class SnakeGame extends Game {
     public void updateLengths() {
 	local().setLength(getKills() * getKills() + LightRacer.STANDARD_LENGTH);
         other().setLength(getDeaths() * getDeaths() + LightRacer.STANDARD_LENGTH);
+    }
+
+    public void checkCollisions() {
+	int i;
+	LightRacer l = local();
+	LightRacer o = other();
+	for (i = 0; i < parts.length; i++) {
+	    if (parts[i].collides(l)) {
+		Log.d("Controler!!!", "local collided with part " + i);
+	    }
+	    if (parts[i].collides(o)) {
+		Log.d("Controler!!!", "other collided with part " + i);
+	    }
+	}	
     }
 }

@@ -51,51 +51,30 @@ public class AIRacer extends LightRacer {
     @Override
     public void update() {
 	if (dieing > 0) {
-            dieing++;
+	    updateDieing();
+        } else {
+	    updateLength();
+	    updateLine();
+	    move();
+	    offScreen();
 
-            if (!foundSpawn) {
-                findSpawn();
-            }
+	    nd = -1;
+	    r = -1;
+	    if (rand.nextInt(16) == 1) r = safestDirection();
+	    d = tryToDodge();
+	    if (r != -1) nd = r;
+	    if (d != -1) nd = d;
+	    if (nd != -1) {
+		final int lag = rand.nextInt(20000 / difficualty);
+		final int di = nd;
 
-            if (dieing == 30) {
-
-                view.checkScore();
-
-                if (!foundSpawn) {
-                    spawn();
-                } else {
-                    spawnSpec(linex[0], liney[0], safestDirection());
-                }
-
-                dieing = 0;
-                foundSpawn = true;
-            }
-
-            return;
-        }
-
-        move();
-        offScreen();
-        updateLength();
-        checkCollisions();
-        updateLine();
-
-        nd = -1;
-        r = -1;
-        if (rand.nextInt(16) == 1) r = safestDirection();
-        d = tryToDodge();
-        if (r != -1) nd = r;
-        if (d != -1) nd = d;
-        if (nd != -1) {
-            final int lag = rand.nextInt(20000 / difficualty);
-            final int di = nd;
-
-            view.postDelayed(new Runnable() {
-                public void run() {
-                    changeDirection(di);
-                }
-            }, lag);
-        }
+		view.postDelayed(new Runnable() {
+			public void run() {
+			    changeDirection(di);
+			}
+		    }, lag);
+	    }
+	}
     }
 
     private int tryToDodge() { // Try avoid other player

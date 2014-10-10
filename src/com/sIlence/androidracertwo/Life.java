@@ -40,7 +40,7 @@ public class Life extends Blockade {
     }
 
     public void die(Part p, int hx, int hy, int di) {
-	p.upLives();
+	//	p.upLives();
 
 	dieing = 1;
 	createParticles(hx, hy, di);

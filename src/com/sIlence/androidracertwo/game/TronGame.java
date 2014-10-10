@@ -40,7 +40,7 @@ public class TronGame extends Game {
 	Life[] lives;
 
 	int nblockades, nlives;
-	nblockades = 1 + getOtherDifficualty() / 20;
+	nblockades = 0;
 	nlives = 0;
 
 	if (kills > 0) {

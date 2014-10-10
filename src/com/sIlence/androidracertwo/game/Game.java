@@ -50,8 +50,8 @@ public abstract class Game {
         return (LightRacer) parts[LOCALPOS];
     }
 
-    public AIRacer other() {
-        return (AIRacer) parts[OTHERPOS];
+    public LightRacer other() {
+        return (LightRacer) parts[OTHERPOS];
     }
 
     public WallRacer wall1() {
@@ -123,9 +123,16 @@ public abstract class Game {
     public Random rand() {
         return rand;
     }
+    
+    public void checkCollisions() {
+	
+    }
 
     public void update() {
 	int i;
+
+	checkCollisions();
+	
 	updateLengths();
 	for (i = 0; i < parts.length; i++) {
 	    parts[i].update();
