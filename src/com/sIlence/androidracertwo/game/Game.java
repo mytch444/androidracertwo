@@ -2,6 +2,7 @@ package com.sIlence.androidracertwo.game;
 
 import com.sIlence.androidracertwo.*;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import java.util.Random;
 import java.util.ArrayList;
 
@@ -26,6 +27,10 @@ public abstract class Game {
     protected String winMessage;
     protected String loseMessage;
 
+    private String textString;
+    private int	fromRight;
+    private Paint brush;
+
     protected Random rand;
 
     public Game(int o) {
@@ -40,7 +45,10 @@ public abstract class Game {
         rand = new Random();
     }
 
-    public void init() {}
+    public void init() {
+	brush = new Paint(Paint.ANTI_ALIAS_FLAG);
+	fromRight = view.getWidth() / 8;
+    }
 
     public void setView(GameView v) {
 	view = v;
@@ -78,9 +86,7 @@ public abstract class Game {
         return view;
     }
 
-    public int checkScore() {
-        return -1;
-    }
+    public void checkScore() {}
 
     public void updateLengths() {}
 
@@ -124,14 +130,10 @@ public abstract class Game {
         return rand;
     }
     
-    public void checkCollisions() {
-	
-    }
+    public void checkCollisions() {}
 
     public void update() {
 	int i;
-
-	checkCollisions();
 	
 	updateLengths();
 	for (i = 0; i < parts.length; i++) {
@@ -145,6 +147,8 @@ public abstract class Game {
 	    else
 		p.update();
 	}
+
+	checkCollisions();
     }
 
     public void render(Canvas c) {
@@ -156,6 +160,19 @@ public abstract class Game {
 	for (i = 0; i < particles.size(); i++) {
 	    particles.get(i).render(c);
 	}
+    }
 
+    public void hud(Canvas c) {
+        brush.setColor(0xffffffff);
+
+	int t = getTime() / 1000;
+
+	c.drawText("Time: " + t, 10, brush.getFontSpacing(), brush);
+
+        textString = getKills() + " : " + getDeaths();
+        c.drawText(textString, view.getWidth() - fromRight - view.halfWidth(textString), brush.getFontSpacing(), brush);
+
+	//        textString = "Lives: " + local().lives();
+	//        c.drawText(textString, view.getWidth() / 2 - view.halfWidth(textString), brush.getFontSpacing(), brush);
     }
 }

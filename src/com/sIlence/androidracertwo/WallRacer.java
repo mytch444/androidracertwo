@@ -27,17 +27,18 @@ import android.util.Log;
 
 public class WallRacer extends LightRacer {
 
-    public WallRacer (GameView v, int x, int y, int gap) {
+    public WallRacer (GameView v, float x, float y, float gap) {
         super (v, 0xC05FFE3C, GameView.INCREASE_NULL);
 
         direction = 3;
 
-        length = view.boxsX() + view.boxsY() - gap - 2;
+        length = (int) (view.width() + view.height() - gap - 2);
 
-        if (gap == 0) light = false;
+        if (gap == 0)
+	    light = false;
 
-        linex = new int[length];
-        liney = new int[length];
+        linex = new float[length];
+        liney = new float[length];
 
         linex[0] = x;
         liney[0] = y;
@@ -62,10 +63,10 @@ public class WallRacer extends LightRacer {
 
     @Override
     public void offScreen() {
-        if (linex[0] < view.boxWidth() * 2 && liney[0] > view.getHeight() / 2) changeDirection(3);
-        else if (liney[0] < view.top() + view.boxHeight() * 2 && linex[0] < view.getWidth() / 2) changeDirection(0);
-        else if (linex[0] > (view.boxsX() - 2) * view.boxWidth() && liney[0] < view.getHeight() / 2) changeDirection(1);
-        else if (liney[0] > (view.boxsY() - 2) * view.boxHeight() + view.top() && linex[0] > view.getWidth() / 2) changeDirection(2);
+        if (linex[0] < 2 && liney[0] > view.height() / 2) changeDirection(3);
+        else if (liney[0] < 2 && linex[0] < view.width() / 2) changeDirection(0);
+        else if (linex[0] > view.width() - 2 && liney[0] < view.height() / 2) changeDirection(1);
+        else if (liney[0] > view.height() - 2 && linex[0] > view.width() / 2) changeDirection(2);
     }
 
     @Override
@@ -73,7 +74,7 @@ public class WallRacer extends LightRacer {
         renderLines(c);
     }
 
-    public void die(Part p, int hx, int hy, int di) {
+    public void die(Part p, float hx, float hy, int di) {
 	//	p.downLives();
 	Particle.initExplosion(view, startColor, hx, hy, di);
     }

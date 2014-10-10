@@ -37,10 +37,9 @@ public class AIRacer extends LightRacer {
         super(v, 0xC0FFE64D, stc);
         startColor = color;
         difficualty = d;
-        lives = 0;
     }
 
-    public AIRacer(GameView v, int d, int stc, int x, int y, int dd) {
+    public AIRacer(GameView v, int d, int stc, float x, float y, int dd) {
         this(v, d, stc);
 
         linex[0] = x;
@@ -50,33 +49,32 @@ public class AIRacer extends LightRacer {
 
     @Override
     public void update() {
-	if (dieing > 0) {
-	    updateDieing();
-        } else {
-	    updateLength();
-	    updateLine();
-	    move();
-	    offScreen();
-
-	    nd = -1;
-	    r = -1;
-	    if (rand.nextInt(16) == 1) r = safestDirection();
-	    d = tryToDodge();
-	    if (r != -1) nd = r;
-	    if (d != -1) nd = d;
-	    if (nd != -1) {
-		final int lag = rand.nextInt(20000 / difficualty);
-		final int di = nd;
-
-		view.postDelayed(new Runnable() {
-			public void run() {
-			    changeDirection(di);
-			}
-		    }, lag);
-	    }
+	if (!isAlive())
+	    return;
+	
+	updateLength();
+	updateLine();
+	move();
+	offScreen();
+	
+	nd = -1;
+	r = -1;
+	if (rand.nextInt(16) == 1) r = safestDirection();
+	d = tryToDodge();
+	if (r != -1) nd = r;
+	if (d != -1) nd = d;
+	if (nd != -1) {
+	    final int lag = rand.nextInt(20000 / difficualty);
+	    final int di = nd;
+	    
+	    view.postDelayed(new Runnable() {
+		    public void run() {
+			changeDirection(di);
+		    }
+		}, lag);
 	}
     }
-
+    
     private int tryToDodge() { // Try avoid other player
         if (!safeToTurn(direction, difficualty)) {
             return safestDirection();

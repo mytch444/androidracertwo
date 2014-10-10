@@ -19,20 +19,17 @@ public class TronGame extends Game {
     }
 
     public void init() {
-        int x0, y0, d0, x1, y1, d1;
-        x0 = x1 = view.boxsX() / 2;
-        y0 = y1 = view.boxsY() / 2;
-        if (view.boxsX() < view.boxsY()) {
-            y0 -= 5;
-            y1 += 5;
-            d0 = 0;
-            d1 = 2;
-        } else {
-            x0 -= 5;
-            x1 += 5;
-            d0 = 3;
-            d1 = 1;
-        }
+	super.init();
+	
+        float x0, y0, x1, y1;
+	int d0, d1;
+
+        x0 = x1 = view.width() / 2;
+	
+        y0 = view.height() / 2 - 5;
+	d0 = 3;
+	y1 = view.height() / 2 + 5;
+	d1 = 1;
 
 	particles = new ArrayList<Particle>();
 	
@@ -62,16 +59,14 @@ public class TronGame extends Game {
 
 	parts[LOCALPOS] =
 	    new LightRacer(view, 0xC004CCF1, GameView.INCREASE_DEATHS,
-			   x0 * view.boxWidth(), y0 * view.boxHeight(), d0);
+			   x0, y0, d0);
         parts[OTHERPOS] =
 	    new AIRacer(view, getOtherDifficualty(), GameView.INCREASE_KILLS,
-			x1 * view.boxWidth(), y1 * view.boxHeight(), d1);
+			x1, y1, d1);
         parts[WALL1POS] =
-	    new WallRacer(view,
-			  view.boxWidth(), view.top() + view.boxHeight(), 0);
+	    new WallRacer(view, 1, 1, 0);
         parts[WALL2POS] =
-	    new WallRacer(view,
-			  view.boxWidth() * (view.boxsX() - 1), view.boxHeight() * (view.boxsY() - 1) + view.top(), 0);
+	    new WallRacer(view, view.width() - 1, view.height() - 1, 0);
 
         for (int i = 0; i < blockades.length; i++) {
             parts[i + 4] = blockades[i];
@@ -94,17 +89,34 @@ public class TronGame extends Game {
 	for (int i = 0; i < lives.length; i++) lives[i].spawn(parts);
     }
 
-    public int checkScore() {
-        int score = -1;
-
+    public void checkScore() {
         if (getKills() > startKills) {
             view.gameOver(true);
-            score = view.getTime();
         } else if (getDeaths() > startDeaths) {
             view.gameOver(false);
         }
+    }
 
-        return score;
+    public void checkCollisions() {
+	LightRacer local = local();
+	LightRacer other = other();
+	if (!local.isAlive())
+	    return;
+	if (!other.isAlive())
+	    return;
+	for (int i = 0; i < parts.length; i++) {
+	    if (parts[i].collides(local)) {
+		local.die(local.getX(), local.getY(), local.getDirection());
+		setDeaths(getDeaths() + 1);
+		checkScore();
+	    }
+
+	    if (parts[i].collides(other)) {
+		other.die(other.getX(), other.getY(), other.getDirection());
+		setKills(getKills() + 1);
+		checkScore();
+	    }
+	}
     }
 
     public void updateLengths() {

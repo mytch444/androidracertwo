@@ -30,7 +30,7 @@ import android.util.Log;
 public class Life extends Blockade {
 
     public Life(GameView v, int x, int y) {
-        super(v, x, y, 30, 30);
+        super(v, x, y, 10, 10);
         color = 0xff0000ff;
         startColor = color;
     }
@@ -39,10 +39,8 @@ public class Life extends Blockade {
         this(v, 0, 0);
     }
 
-    public void die(Part p, int hx, int hy, int di) {
-	//	p.upLives();
-
-	dieing = 1;
+    public void die(int hx, int hy, int di) {
+	alive = false;
 	createParticles(hx, hy, di);
     }
 }

@@ -27,8 +27,8 @@ import android.graphics.Paint;
 import java.util.Random;
 
 public class Part {
-    int x;
-    int y;
+    float x;
+    float y;
     GameView view;
     int direction;
     int color;
@@ -37,8 +37,7 @@ public class Part {
     Paint brush;
     Part[] opps;
     long lastTurn;
-    int dieing;
-    int lives;
+    boolean alive;
 
     public Part(GameView v) {
         this.view = v;
@@ -51,8 +50,7 @@ public class Part {
         brush = new Paint(Paint.ANTI_ALIAS_FLAG);
         opps = null;
         lastTurn = 0;
-        dieing = 0;
-        lives = 0;
+	alive = true;
     }
 
     public void setOpps(Part[] o) {
@@ -60,15 +58,14 @@ public class Part {
     }
 
     public boolean isAlive() {
-        if (dieing == 0) return true;
-        return false;
+        return alive;
     }
 
-    public int getX() {
+    public float getX() {
         return x;
     }
 
-    public int getY() {
+    public float getY() {
         return y;
     }
 
@@ -87,20 +84,7 @@ public class Part {
         return di;
     }
 
-    public void upLives() {
-        lives++;
-    }
-
-    public void downLives() {
-	if (lives > 0)
-	    lives--;
-    }
-
-    public int lives() {
-        return lives;
-    }
-
-    public void die(Part p, int hx, int hy, int di) {}
+    public void die(int hx, int hy, int di) {}
 
     public void update() {}
     public void render(Canvas c) {}

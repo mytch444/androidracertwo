@@ -14,6 +14,8 @@ public class SnakeGame extends Game {
     }
 
     public void init() {
+	super.init();
+	
         setTime(0);
         setKills(0);
         setDeaths(0);
@@ -23,8 +25,8 @@ public class SnakeGame extends Game {
 	
         parts[LOCALPOS] = new LightRacer(view, 0xC003CCF1, GameView.INCREASE_DEATHS);
         parts[OTHERPOS] = new AIRacer(view, getOtherDifficualty(), GameView.INCREASE_KILLS);
-        parts[WALL1POS] = new WallRacer(view, view.boxWidth(), view.top() + view.boxHeight(), getOtherDifficualty());
-        parts[WALL2POS] = new WallRacer(view, view.boxWidth() * (view.boxsX() - 1), view.boxHeight() * (view.boxsY() - 1) + view.top(), getOtherDifficualty());
+        parts[WALL1POS] = new WallRacer(view, 1, 1, getOtherDifficualty());
+        parts[WALL2POS] = new WallRacer(view, view.width() - 1, view.height() - 1, getOtherDifficualty());
 
         local().setOpps(parts);
         other().setOpps(parts);
@@ -38,9 +40,8 @@ public class SnakeGame extends Game {
         for (int i = 0; i < 5; i++) update();
     }
 
-    public int checkScore() {
-        int score = -1;
-
+    public void checkScore() {
+	int score;
         if (view.getKills() >= 10 && view.getKills() - 2 >= view.getDeaths()) {
             if (view.getDeaths() > 0) {
                 score = (int) (10000 / (view.getTime() / 1000) * ((float) view.getKills() / view.getDeaths()));
@@ -53,26 +54,32 @@ public class SnakeGame extends Game {
         } else if (view.getDeaths() >= 10 && view.getDeaths() - 2 >= view.getKills()) {
             view.gameOver(false);
         }
+    }
 
-        return score;
+    public void checkCollisions() {
+	LightRacer local = local();
+	LightRacer other = other();
+	if (!local.isAlive())
+	    return;
+	if (!other.isAlive())
+	    return;
+	for (int i = 0; i < parts.length; i++) {
+	    if (parts[i].collides(local)) {
+		local.die(local.getX(), local.getY(), local.getDirection());
+		setDeaths(getDeaths() + 1);
+		checkScore();
+	    }
+
+	    if (parts[i].collides(other)) {
+		other.die(other.getX(), other.getY(), other.getDirection());
+		setKills(getKills() + 1);
+		checkScore();
+	    }
+	}
     }
 
     public void updateLengths() {
 	local().setLength(getKills() * getKills() + LightRacer.STANDARD_LENGTH);
         other().setLength(getDeaths() * getDeaths() + LightRacer.STANDARD_LENGTH);
-    }
-
-    public void checkCollisions() {
-	int i;
-	LightRacer l = local();
-	LightRacer o = other();
-	for (i = 0; i < parts.length; i++) {
-	    if (parts[i].collides(l)) {
-		Log.d("Controler!!!", "local collided with part " + i);
-	    }
-	    if (parts[i].collides(o)) {
-		Log.d("Controler!!!", "other collided with part " + i);
-	    }
-	}	
     }
 }

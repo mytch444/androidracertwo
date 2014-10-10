@@ -15,6 +15,8 @@ public class DodgeGame extends Game {
     }
 
     public void init() {
+	super.init();
+	
 	setTime(0);
 	setKills(0);
 
@@ -65,15 +67,23 @@ public class DodgeGame extends Game {
 	for (int i = 0; i < lives.length; i++) lives[i].spawn(parts);
     }
 
-    public int checkScore() {
-        int score = -1;
-
+    public void checkScore() {
         if (getDeaths() > level) {
-            view.gameOver(false);
-	    score = view.getTime();
+	    view.gameOver(false);
         }
+    }
 
-        return score;
+    public void checkCollisions() {
+	LightRacer local = local();
+	if (!local.isAlive())
+	    return;
+	for (int i = 0; i < parts.length; i++) {
+	    if (parts[i].collides(local)) {
+		local.die(local.getX(), local.getY(), local.getDirection());
+		setDeaths(getDeaths() + 1);
+		checkScore();
+	    }
+	}
     }
 
     public void updateLengths() {
