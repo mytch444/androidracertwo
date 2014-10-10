@@ -71,11 +71,11 @@ public class Particle {
         age++;
 
         if (age > start && age < start + life) {
-            mx += xv;//-(xv / (life * life)) * ((age - start) + life) * ((age - start) - life);
-	    my += yv;//-(yv / (life * life)) * ((age - start) + life) * ((age - start) - life);
+            mx += -(xv / (life * life)) * ((age - start) + life) * ((age - start) - life);
+	    my += -(yv / (life * life)) * ((age - start) + life) * ((age - start) - life);
         }
 
-        a = (int) -(((float) starta / ((start + life) * (start + life))) * (age + (start + life)) * (age - (start + life)));
+        a = a - (starta / life); //(int) -(((float) starta / ((start + life) * (start + life))) * (age + (start + life)) * (age - (start + life)));
         if (a < 20) alive = false;
     }
 
@@ -99,14 +99,14 @@ public class Particle {
         int x0, y0, x1, y1, distance, incdec;
 	int i;
 	
-        for (i = 0; i < xa.length - 1; i++) {
-            if (xa[i + 1] == 0 && ya[i + 1] == 0) break;
+        for (i = 1; i < xa.length; i++) {
+            if (xa[i - 1] == 0 && ya[i - 1] == 0) break;
 
             x0 = xa[i];
             y0 = ya[i];
 
-            x1 = xa[i + 1];
-            y1 = ya[i + 1];
+            x1 = xa[i - 1];
+            y1 = ya[i - 1];
 
             int xd = x1 - x0;
             int yd = y1 - y0;
@@ -140,27 +140,19 @@ public class Particle {
         }
     }
     
-    public static void initExplosion(GameView v, int color, int x, int y, int direction, int pixels) {
+    public static void initExplosion(GameView v, int color, int x, int y, int direction) {
 	Random rand = new Random();
 	
 	float O, Op, Od, speed, step;
-	int d;
-	/*
-	step = (float) Math.PI * 2 / pixels;
-	for (int i = 0; i < pixels; i++) {
-	    O += step;
-	    speed = v.boxHeight() * (rand.nextFloat() * 0.2f + 1.5f);
-	    v.addParticle(new Particle(color, x, y,
-				       O, speed,
-				       0, 100));
-	}
-	*/
+	int d, i, n;
+
+	n = 150;
 	O = direction * (float) Math.PI / 2;
-	step = 2 * (float) Math.PI / pixels;
+	step = 2 * (float) Math.PI / n;
 	Od = (float) -Math.PI;;
-        for (int i = 0; i < pixels; i++) {
+        for (i = 0; i < n; i++) {
 	    Od += step;
-	    speed = (float) (Math.cos(1.2 * Od) + 1.5f) * (rand.nextFloat() / 2 + 0.2f);
+	    speed = (float) (Math.cos(1.3 * Od) + 1.5f) * (rand.nextFloat() * 0.9f + 0.2f);
 
             v.addParticle(new Particle(color, x, y,
 				       O + Od, speed,

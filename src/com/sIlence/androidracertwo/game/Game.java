@@ -116,6 +116,10 @@ public abstract class Game {
         time = t;
     }
 
+    public boolean killTailOffScreen() {
+	return true;
+    }
+
     public Random rand() {
         return rand;
     }

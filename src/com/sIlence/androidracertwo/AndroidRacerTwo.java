@@ -74,7 +74,14 @@ public class AndroidRacerTwo extends Activity {
 		    openGame(new GameView(context, new TronGame(AIRacer.DIFF_MEDI), true));
 		}
 	    });
-	
+
+	Button dodge = (Button) findViewById(R.id.dodge);
+	dodge.setOnClickListener(new OnClickListener() {
+		public void onClick(android.view.View arg0) {
+		    openGame(new GameView(context, new DodgeGame(AIRacer.DIFF_MEDI)));
+		}
+	    });
+
     }
 
     @Override

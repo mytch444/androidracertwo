@@ -134,7 +134,7 @@ public class LightRacer extends Part {
 	downLives();
 	p.downLives();
 
-	Particle.initExplosion(view, startColor, hx, hy, di, 100);
+	Particle.initExplosion(view, startColor, hx, hy, di);
 
         int start = 0;
 
@@ -411,12 +411,14 @@ clearancetesting:
         } else
             return;
 
-	Particle.initLineFall(view, startColor, linex, liney, 0);
+	if (view.killTailOffScreen()) {
+	    Particle.initLineFall(view, startColor, linex, liney, 0);
 
-        linex = new int[length];
-        liney = new int[length];
-        linex[0] = nx;
-        liney[0] = ny;
+	    linex = new int[length];
+	    liney = new int[length];
+	    linex[0] = nx;
+	    liney[0] = ny;
+	}
     }
 
     public boolean collides(Part other) {

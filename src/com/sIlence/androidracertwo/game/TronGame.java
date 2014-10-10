@@ -38,25 +38,25 @@ public class TronGame extends Game {
 	
 	Blockade[] blockades;
 	Life[] lives;
-	
-        if (kills > 0) { 
-            int nblockades = (int) (rand.nextInt(kills)) + kills / 2;
-            blockades = new Blockade[nblockades];
 
-            for (int i = 0; i < blockades.length; i++) {
-                blockades[i] = new Blockade(view);
-            }
+	int nblockades, nlives;
+	nblockades = 1 + getOtherDifficualty() / 20;
+	nlives = 0;
 
-	    int nlives = (int) (rand.nextInt(kills)) + kills / 2;
-	    lives = new Life[nlives];
+	if (kills > 0) {
+	    nblockades += rand.nextInt(kills) + kills / 2;
+	    nlives += rand.nextInt(kills) + kills / 2;
+	}
 
-	    for (int i = 0; i < lives.length; i++) {
-		lives[i] = new Life(view);
-	    }
-        } else {
-            blockades = new Blockade[0];
-	    lives = new Life[0];
-        }
+	blockades = new Blockade[nblockades];
+	lives = new Life[nlives];
+
+	for (int i = 0; i < blockades.length; i++) {
+	    blockades[i] = new Blockade(view);
+	}
+	for (int i = 0; i < lives.length; i++) {
+	    lives[i] = new Life(view);
+	}
 
         parts = new Part[4 + blockades.length + lives.length];
 
@@ -110,5 +110,9 @@ public class TronGame extends Game {
     public void updateLengths() {
         local().setLength(local().getLength() + 1);
 	other().setLength(other().getLength() + 1);
+    }
+
+    public boolean killTailOffScreen() {
+	return false;
     }
 }

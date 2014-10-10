@@ -118,12 +118,16 @@ public class Blockade extends Part {
                 yd = this.y + y - hy;
 		d = (float) Math.sqrt(xd * xd + yd * yd);
 
-                anglerange = 
-		    (float) -(Math.PI / 25) * (d - 5) * (d + 5);
-		O = di * (float) Math.PI / 2 + anglerange;
+		if (d < 20) {
+		    anglerange = 
+			(float) -(Math.PI / 100) * (d - 20) * (d + 20);
+		    O = di * (float) Math.PI / 2 + anglerange;
+		    start = (int) (anglerange / 10) + (int) d / 5;
+		} else {
+		    O = rand.nextFloat() * 2 * (float) Math.PI;
+		    start = (int) d / 3;
+		}
 
-                start = (int) (anglerange / 10);
-                if (start > 50) start = 50;
                 stop = 20;
                 speed = 4f / anglerange + 1f + rand.nextFloat() * 0.1f - 0.5f;
 

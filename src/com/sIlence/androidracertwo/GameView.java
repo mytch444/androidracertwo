@@ -495,4 +495,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public int turnDelay() {
         return 5;
     }
+
+    public boolean killTailOffScreen() {
+	return game.killTailOffScreen();
+    }
 }
