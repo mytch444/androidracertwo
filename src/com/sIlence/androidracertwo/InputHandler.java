@@ -45,34 +45,37 @@ public class InputHandler {
 
     public void init() {
 	if (usingArrows) {
-	    float arrowWidth = 40;
-	    float bottom = view.height() - arrowWidth * 2 - 10;
+	    int arrowWidth = view.getWidth() / 5;
 	    
 	    arrows = new Rect[4];
-	    arrows[0] =
-		new Rect(
-			 (int) view.toPoint(view.width() / 2 + arrowWidth / 2 + 2, true),
-			 (int) view.toPoint(bottom + 4 + arrowWidth, false),
-			 (int) view.toPoint(view.width() / 2 + arrowWidth / 2 + arrowWidth + 2, true),
-			 (int) view.toPoint(bottom + 4 + arrowWidth * 2, false));
-	    arrows[1] =
-		new Rect(
-			 (int) view.toPoint(view.width() / 2 - arrowWidth / 2, true),
-			 (int) view.toPoint(bottom + 4 + arrowWidth, false),
-			 (int) view.toPoint(view.width() / 2 + arrowWidth / 2, true),
-			 (int) view.toPoint(bottom + arrowWidth * 2 + 4, false));
-	    arrows[2] =
-		new Rect(
-			 (int) view.toPoint(view.width() / 2 - arrowWidth / 2 - arrowWidth - 2, true),
-			 (int) view.toPoint(bottom + 4 + arrowWidth, false),
-			 (int) view.toPoint(view.width() / 2 - arrowWidth / 2 - 2, true),
-			 (int) view.toPoint(bottom + arrowWidth * 2 + 4, false));
 	    arrows[3] =
 		new Rect(
-			 (int) view.toPoint(view.width() / 2 - arrowWidth / 2, true),
-			 (int) view.toPoint(bottom + view.height() * 2, false),
-			 (int) view.toPoint(view.width() / 2 + arrowWidth / 2, true),
-			 (int) view.toPoint(bottom + arrowWidth + 2, false));
+			 view.getWidth() / 2 - arrowWidth / 2,
+			 view.getHeight() - arrowWidth * 2 - 20,
+			 view.getWidth() / 2 + arrowWidth / 2,
+			 view.getHeight() - arrowWidth - 20
+			 );
+	    arrows[1] =
+		new Rect(
+			 view.getWidth() / 2 - arrowWidth / 2,
+			 view.getHeight() - arrowWidth - 10,
+			 view.getWidth() / 2 + arrowWidth / 2,
+			 view.getHeight() - 10
+			 );
+	    arrows[0] =
+		new Rect(
+			 view.getWidth() / 2 + arrowWidth / 2 + 10,
+			 view.getHeight() - arrowWidth - 10,
+			 view.getWidth() / 2 + arrowWidth / 2 + arrowWidth + 10,
+			 view.getHeight() - 10
+			 );
+	    arrows[2] =
+		new Rect(
+			 view.getWidth() / 2 - arrowWidth / 2 - arrowWidth - 10,
+			 view.getHeight() - arrowWidth - 10,
+			 view.getWidth() / 2 - arrowWidth / 2 - 10,
+			 view.getHeight() - 10
+			 );			 
 	}
     }
     
@@ -91,7 +94,7 @@ public class InputHandler {
 	if (usingArrows) {
 	    for (int i = 0; i < arrows.length; i++) {
 		if (arrows[i].contains((int) e.getX(), (int) e.getY())) {
-		    view.local().changeDirection(i);
+		    view.getLocal().changeDirection(i);
 		}
 	    }
 	} else {
@@ -106,11 +109,11 @@ public class InputHandler {
 		
 		int g = vertorhorz(xDiff, yDiff);
 		if (g == 0) {
-		    if (xDiff > 0 && view.local().changeDirection(0));
-		    if (xDiff < 0 && view.local().changeDirection(2));
+		    if (xDiff > 0 && view.getLocal().changeDirection(0));
+		    if (xDiff < 0 && view.getLocal().changeDirection(2));
 		} else if (g == 1) {
-		    if (yDiff < 0 && view.local().changeDirection(3));
-		    if (yDiff > 0 && view.local().changeDirection(1));
+		    if (yDiff < 0 && view.getLocal().changeDirection(3));
+		    if (yDiff > 0 && view.getLocal().changeDirection(1));
 		}
 	    }
 	}

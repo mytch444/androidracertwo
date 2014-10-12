@@ -31,7 +31,6 @@ public class AIRacer extends LightRacer {
     public static final int DIFF_INSANE = 300;
 
     int difficualty;
-    int nd, r, d;
 
     public AIRacer(GameView v, int d, int stc) {
         super(v, 0xC0FFE64D, stc);
@@ -57,12 +56,11 @@ public class AIRacer extends LightRacer {
 	move();
 	offScreen();
 	
-	nd = -1;
-	r = -1;
-	if (rand.nextInt(16) == 1) r = safestDirection();
-	d = tryToDodge();
-	if (r != -1) nd = r;
-	if (d != -1) nd = d;
+	int nd = -1;
+	if (rand.nextInt(16) == 1)
+	    nd = safestDirection();
+	else
+	    nd = tryToDodge();
 	if (nd != -1) {
 	    final int lag = rand.nextInt(20000 / difficualty);
 	    final int di = nd;

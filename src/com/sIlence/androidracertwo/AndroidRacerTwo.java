@@ -38,7 +38,7 @@ import android.util.Log;
 
 public class AndroidRacerTwo extends Activity {
 
-    private GameView view;
+    GameView view;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

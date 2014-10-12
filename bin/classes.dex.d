@@ -13,7 +13,6 @@
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/MyDialog$1.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/MyDialog$2.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/MyDialog.class \
-/shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/WallRacer.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/Particle.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/AndroidRacerTwo$1.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/AndroidRacerTwo$2.class \
@@ -25,6 +24,7 @@
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/Life.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/NewGameDialog.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/PauseDialog.class \
+/shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/WallRacer.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/BuildConfig.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/R$attr.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/R$drawable.class \

@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import java.util.ArrayList;
 import android.util.Log;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
@@ -45,32 +46,31 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public static int INCREASE_NULL = 0;
     public static int INCREASE_DEATHS = -1;
 
-    private boolean pausing;
-    private boolean starting;
-    private boolean gameOver;
-    private boolean won;
+    boolean pausing;
+    boolean starting;
+    boolean gameOver;
+    boolean won;
     
-    private int countdown;
-    private int startcount;
-    private long endTime;
+    int countdown;
+    int startcount;
+    long endTime;
     
-    private GameLoop loop;
+    GameLoop loop;
 
-    private float width, height;
-    private float topBorder, bottomBorder, leftBorder, rightBorder;
-    private float yPartSize, xPartSize;
-    private boolean horizontalOrientation;
+    float width, height;
+    float topBorder, bottomBorder, leftBorder, rightBorder;
+    float yPartSize, xPartSize;
+    boolean horizontalOrientation;
     
-    private InputHandler handler;
+    InputHandler handler;
 
-    private Rect bounds;
-    private String textString;
+    String textString;
 
-    private Paint brush;
+    Paint brush;
 
-    private Game game;
+    Game game;
 
-    private MyDialog dialog;
+    MyDialog dialog;
 
     public GameView(Context context, Game g, boolean usingArrows) {
         super(context);
@@ -82,7 +82,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 	handler = new InputHandler(this, usingArrows);
 
-        bounds = new Rect();
         textString = "";
 
 	endTime = 0;
@@ -129,17 +128,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         background(c);
         game.render(c);
-        game.hud(c);
+	game.hud(c, countdown == 0);
 
 	if (countdown > 0) {
 	    int t = getTime() / 1000;
             brush.setColor(0xffffffff);
-            float size = brush.getTextSize();
             brush.setTextSize(getHeight() / 10);
+
             String message = "" + countdown;
-            c.drawText(message, getWidth() / 2 - halfWidth(message), getHeight() / 2, brush);
-            brush.setTextSize(size);
-	    t = startcount / 1000;
+            c.drawText(message, getWidth() / 2 - halfWidth(message, brush), getHeight() / 2, brush);
         }
 	
 	handler.overlay(c);
@@ -191,8 +188,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    public int halfWidth(String text) {
-        brush.getTextBounds(text, 0, text.length(), bounds);
+    public int halfWidth(String text, Paint p) {
+        Rect bounds = new Rect();
+        p.getTextBounds(text, 0, text.length(), bounds);
         return bounds.width() / 2;
     }
 
@@ -272,7 +270,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	game.setView(this);
 	pause();
 	
-	if (game.local() == null)
+	if (game.getParts() == null)
 	    newGame();
 	else
 	    tick();
@@ -364,28 +362,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         return loop.framePeriod();
     }
 
-    public LightRacer local() {
-        return game.local();
+    public LightRacer getLocal() {
+        return game.getLocal();
     }
 
-    public LightRacer other() {
-        return game.other();
+    public ArrayList<Part> getParts() {
+	return game.getParts();
     }
 
-    public WallRacer wall1() {
-        return game.wall1();
-    }
-
-    public WallRacer wall2() {
-        return game.wall2();
-    }
-
-    public Particle particles(int i) {
-	return game.particles(i);
-    }
-
-    public void addParticle(Particle p) {
-	game.addParticle(p);
+    public ArrayList<Particle> getParticles() {
+	return game.getParticles();
     }
 
     public void killDialog() {

@@ -5,33 +5,31 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import java.util.Random;
 import java.util.ArrayList;
+import android.util.Log;
 
 public abstract class Game {
 
     public static int LOCALPOS = 0;
-    public static int OTHERPOS = 1;
-    public static int WALL1POS = 2;
-    public static int WALL2POS = 3;
     
-    protected Part[] parts;
-    protected ArrayList<Particle> particles;
+    ArrayList<Part> parts;
+    ArrayList<Particle> particles;
 
-    protected int otherDifficualty;
+    int otherDifficualty;
 
-    protected int kills;
-    protected int deaths;
-    protected int time;
+    int kills;
+    int deaths;
+    int time;
 
-    protected GameView view;
+    GameView view;
 
-    protected String winMessage;
-    protected String loseMessage;
+    String winMessage;
+    String loseMessage;
 
-    private String textString;
-    private int	fromRight;
-    private Paint brush;
+    String textString;
+    int	fromRight;
+    Paint brush;
 
-    protected Random rand;
+    Random rand;
 
     public Game(int o) {
         otherDifficualty = o;
@@ -40,8 +38,6 @@ public abstract class Game {
         deaths = 0;
         time = 0;
 
-	parts = new Part[4];
-	
         rand = new Random();
     }
 
@@ -54,28 +50,16 @@ public abstract class Game {
 	view = v;
     }
     
-    public LightRacer local() {
-        return (LightRacer) parts[LOCALPOS];
+    public LightRacer getLocal() {
+        return (LightRacer) parts.get(LOCALPOS);
     }
 
-    public LightRacer other() {
-        return (LightRacer) parts[OTHERPOS];
+    public ArrayList<Part> getParts() {
+        return parts;
     }
 
-    public WallRacer wall1() {
-        return (WallRacer) parts[WALL1POS];
-    }
-
-    public WallRacer wall2() {
-        return (WallRacer) parts[WALL2POS];
-    }
-
-    public Particle particles(int i) {
-	return particles.get(i);
-    }
-
-    public void addParticle(Particle p) {
-	particles.add(p);
+    public ArrayList<Particle> getParticles() {
+	return particles;
     }
 
     public int getOtherDifficualty() {
@@ -136,8 +120,8 @@ public abstract class Game {
 	int i;
 	
 	updateLengths();
-	for (i = 0; i < parts.length; i++) {
-	    parts[i].update();
+	for (i = 0; i < parts.size(); i++) {
+	    parts.get(i).update();
 	}
 
 	for (i = 0; i < particles.size(); i++) {
@@ -153,8 +137,8 @@ public abstract class Game {
 
     public void render(Canvas c) {
 	int i;
-        for (i = 0; i < parts.length; i++) {
-	    parts[i].render(c);
+        for (i = 0; i < parts.size(); i++) {
+	    parts.get(i).render(c);
 	}
 
 	for (i = 0; i < particles.size(); i++) {
@@ -162,17 +146,5 @@ public abstract class Game {
 	}
     }
 
-    public void hud(Canvas c) {
-        brush.setColor(0xffffffff);
-
-	int t = getTime() / 1000;
-
-	c.drawText("Time: " + t, 10, brush.getFontSpacing(), brush);
-
-        textString = getKills() + " : " + getDeaths();
-        c.drawText(textString, view.getWidth() - fromRight - view.halfWidth(textString), brush.getFontSpacing(), brush);
-
-	//        textString = "Lives: " + local().lives();
-	//        c.drawText(textString, view.getWidth() / 2 - view.halfWidth(textString), brush.getFontSpacing(), brush);
-    }
+    public void hud(Canvas c, boolean started) {}
 }

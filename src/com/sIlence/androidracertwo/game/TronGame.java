@@ -8,8 +8,9 @@ import java.util.ArrayList;
 
 public class TronGame extends Game {
 
-    protected int startKills;
-    protected int startDeaths;
+    LightRacer other;
+    int startKills;
+    int startDeaths;
 
     public TronGame(int o) {
         super(o);
@@ -31,11 +32,6 @@ public class TronGame extends Game {
 	y1 = view.height() / 2 + 5;
 	d1 = 1;
 
-	particles = new ArrayList<Particle>();
-	
-	Blockade[] blockades;
-	Life[] lives;
-
 	int nblockades, nlives;
 	nblockades = 0;
 	nlives = 0;
@@ -45,48 +41,35 @@ public class TronGame extends Game {
 	    nlives += rand.nextInt(kills) + kills / 2;
 	}
 
-	blockades = new Blockade[nblockades];
-	lives = new Life[nlives];
-
-	for (int i = 0; i < blockades.length; i++) {
-	    blockades[i] = new Blockade(view);
-	}
-	for (int i = 0; i < lives.length; i++) {
-	    lives[i] = new Life(view);
-	}
-
-        parts = new Part[4 + blockades.length + lives.length];
-
-	parts[LOCALPOS] =
-	    new LightRacer(view, 0xC004CCF1, GameView.INCREASE_DEATHS,
-			   x0, y0, d0);
-        parts[OTHERPOS] =
-	    new AIRacer(view, getOtherDifficualty(), GameView.INCREASE_KILLS,
+	particles = new ArrayList<Particle>();
+	parts = new ArrayList<Part>();
+	
+	parts.add(LOCALPOS,
+		  (Part) new LightRacer(view, 0xC004CCF1, GameView.INCREASE_DEATHS,
+				 x0, y0, d0));
+	other = new AIRacer(view, getOtherDifficualty(), GameView.INCREASE_KILLS,
 			x1, y1, d1);
-        parts[WALL1POS] =
-	    new WallRacer(view, 1, 1, 0);
-        parts[WALL2POS] =
-	    new WallRacer(view, view.width() - 1, view.height() - 1, 0);
+	parts.add((Part) other);
+        parts.add((Part) new WallRacer(view, 1, 1, 0));
+        parts.add((Part) new WallRacer(view, view.width() - 1, view.height() - 1, 0));
 
-        for (int i = 0; i < blockades.length; i++) {
-            parts[i + 4] = blockades[i];
-        }
-	for (int i = 0; i < lives.length; i++) {
-	    parts[i + blockades.length + 4] = lives[i];
-	}
+	for (int i = 0; i < nblockades; i++)
+	    parts.add((Part) new Blockade(view));
+	for (int i = 0; i < nlives; i++)
+	    parts.add((Part) new Life(view));
 
-        local().setOpps(parts);
-        other().setOpps(parts);
+	//        local().setOpps(parts);
+	//        other().setOpps(parts);
 
-        local().setLength(1);
-        other().setLength(1);
+        getLocal().setLength(1);
+        other.setLength(1);
 
         startKills = kills;
         startDeaths = deaths;
 
+	for (int i = 0; i < parts.size(); i++)
+	    parts.get(i).spawn(parts);
         for (int i = 0; i < 5; i++) update();
-        for (int i = 0; i < blockades.length; i++) blockades[i].spawn(parts);
-	for (int i = 0; i < lives.length; i++) lives[i].spawn(parts);
     }
 
     public void checkScore() {
@@ -98,20 +81,18 @@ public class TronGame extends Game {
     }
 
     public void checkCollisions() {
-	LightRacer local = local();
-	LightRacer other = other();
-	if (!local.isAlive())
-	    return;
-	if (!other.isAlive())
-	    return;
-	for (int i = 0; i < parts.length; i++) {
-	    if (parts[i].collides(local)) {
+	LightRacer local = getLocal();
+	for (int i = 0; i < parts.size(); i++) {
+	    if (!parts.get(i).isAlive())
+		continue;
+	    
+	    if (local.isAlive() && parts.get(i).collides(local)) {
 		local.die(local.getX(), local.getY(), local.getDirection());
 		setDeaths(getDeaths() + 1);
 		checkScore();
 	    }
 
-	    if (parts[i].collides(other)) {
+	    if (other.isAlive() && parts.get(i).collides(other)) {
 		other.die(other.getX(), other.getY(), other.getDirection());
 		setKills(getKills() + 1);
 		checkScore();
@@ -120,11 +101,25 @@ public class TronGame extends Game {
     }
 
     public void updateLengths() {
-        local().setLength(local().getLength() + 1);
-	other().setLength(other().getLength() + 1);
+        getLocal().setLength(getLocal().getLength() + 1);
+	other.setLength(other.getLength() + 1);
     }
 
     public boolean killTailOffScreen() {
 	return false;
+    }
+
+    public void hud(Canvas c, boolean started) {
+	int t;
+        brush.setColor(0xffffffff);
+	brush.setTextSize(view.topBorder() - 6);
+
+	if (!started)
+	    t = 0;
+	else
+	    t = getTime() / 1000;
+	c.drawText("Time: " + t, 10, view.topBorder() - 4, brush);
+        textString = getKills() + " : " + getDeaths();
+        c.drawText(textString, view.getWidth() - fromRight - view.halfWidth(textString, brush), view.topBorder() - 4, brush);
     }
 }

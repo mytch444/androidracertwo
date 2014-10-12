@@ -25,6 +25,7 @@ package com.sIlence.androidracertwo;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import java.util.Random;
+import java.util.ArrayList;
 import android.util.Log;
 
 public class Blockade extends Part {
@@ -73,7 +74,7 @@ public class Blockade extends Part {
         return false;
     }
 
-    public void spawn(Part[] parts) {
+    public void spawn(ArrayList<Part> parts) {
 	if (width == 0) width = rand.nextFloat() * view.width() * 0.6f + 1;
 	if (height == 0) height = 0.6f * view.width() / width;
 	
@@ -82,8 +83,8 @@ public class Blockade extends Part {
             y = rand.nextFloat() * (view.height() - 8) + 4;
             
             boolean good = true;
-            for (int i = 0; i < parts.length; i++) {
-                if (collides(parts[i])) {
+            for (int i = 0; i < parts.size(); i++) {
+                if (collides(parts.get(i))) {
                     good = false;
                     break;
                 }
@@ -124,9 +125,9 @@ public class Blockade extends Part {
                 stop = 20;
                 speed = 4f / anglerange + 1f + rand.nextFloat() * 0.1f - 0.5f;
 
-                view.addParticle(
-				 new Particle(view, color, x + this.x, y + this.y,
-					      O, speed, start, stop));
+                view.getParticles().add(
+				      new Particle(view, color, x + this.x, y + this.y,
+						   O, speed, start, stop));
             }
         }
     }

@@ -28,19 +28,19 @@ import android.util.Log;
 
 public class GameLoop extends Thread {
 
-    private final int wantedFps = 40;
-    private final int framePeriod = 1000 / wantedFps;
+    final int wantedFps = 40;
+    final int framePeriod = 1000 / wantedFps;
 
-    private boolean running = false;
+    boolean running = false;
 
-    private GameView view;
+    GameView view;
 
-    private Canvas canvas;
-    private long beginTime;
-    private long timeDiff;
-    private int sleepTime;
+    Canvas canvas;
+    long beginTime;
+    long timeDiff;
+    int sleepTime;
 
-    private SurfaceHolder holder;
+    SurfaceHolder holder;
     
     public GameLoop(GameView v) {
         view = v;

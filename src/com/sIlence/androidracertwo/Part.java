@@ -25,17 +25,17 @@ package com.sIlence.androidracertwo;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import java.util.Random;
+import java.util.ArrayList;
 
 public class Part {
     float x;
     float y;
-    GameView view;
     int direction;
+    GameView view;
     int color;
     int startColor;
     Random rand;
     Paint brush;
-    Part[] opps;
     long lastTurn;
     boolean alive;
 
@@ -43,18 +43,13 @@ public class Part {
         this.view = v;
         x = 0;
         y = 0;
-        direction = 1;
+        direction = 0;
         color = 0xff00ffff;
         startColor = color;
         rand = new Random();
         brush = new Paint(Paint.ANTI_ALIAS_FLAG);
-        opps = null;
         lastTurn = 0;
 	alive = true;
-    }
-
-    public void setOpps(Part[] o) {
-        opps = o.clone();
     }
 
     public boolean isAlive() {
@@ -78,13 +73,13 @@ public class Part {
     }
 
     public static int oppDirection(int di) {
-        di -= 2;
-        if (di < 0)
-	    di += 4;
+        di += 2;
+	di %= 4;
         return di;
     }
 
     public void die(int hx, int hy, int di) {}
+    public void spawn(ArrayList<Part> parts) {}
 
     public void update() {}
     public void render(Canvas c) {}

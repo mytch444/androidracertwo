@@ -37,6 +37,8 @@ public class WallRacer extends LightRacer {
         if (gap == 0)
 	    light = false;
 
+	alive = true;
+	
         linex = new float[length];
         liney = new float[length];
 
@@ -74,8 +76,7 @@ public class WallRacer extends LightRacer {
         renderLines(c);
     }
 
-    public void die(Part p, float hx, float hy, int di) {
-	//	p.downLives();
+    public void die(float hx, float hy, int di) {
 	Particle.initExplosion(view, startColor, hx, hy, di);
     }
 }

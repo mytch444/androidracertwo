@@ -69,6 +69,9 @@ public class LightRacer extends Part {
 
     @Override
     public void update() {
+	if (!isAlive())
+	    return;
+	
 	updateLength();
 	updateLine();
 	move();
@@ -92,8 +95,6 @@ public class LightRacer extends Part {
 
     public void die(float hx, float hy, int di) {
 	int start;
-	if (hx == linex[0] && hy == liney[0])
-	    alive = false;
 	/*
 	 * Something hit me so make particles and shorten line however far it needs to.
 	 */
@@ -105,19 +106,14 @@ public class LightRacer extends Part {
 	 */
 	
 	// Work out from where in my tail needs to become particles for linefall.
-        start = 0;
-	for (start = linex.length - 1; 
-	     start > 0 
+	for (start = 0;
+	     start < length
 		 && !(hx == linex[start] && hy == liney[start]); 
-	     start--);
+	     start++);
 
-        float[] lx = new float[linex.length - start];
-        float[] ly = new float[liney.length - start];
+	alive = start != 0;
 
-        System.arraycopy(linex, start, lx, 0, lx.length);
-        System.arraycopy(liney, start, ly, 0, ly.length); 
-
-	Particle.initLineFall(view, startColor, lx, ly);
+	Particle.initLineFall(view, startColor, linex, liney, start);
 
 	/*
 	 * END of line fall stuff.
@@ -125,19 +121,15 @@ public class LightRacer extends Part {
 
 	// I didn't completely die so give me the rest.
         if (start > 0) {
-            lx = linex.clone();
-            ly = liney.clone();
-
-            linex = new float[start];
-            liney = new float[start];
-
-            System.arraycopy(lx, 0, linex, 0, linex.length);
-            System.arraycopy(ly, 0, liney, 0, liney.length);
+	    for (; start < length; start++) {
+		linex[start] = 0;
+		liney[start] = 0;
+	    }
         }
     }
 
     public void updateLine() {
-        for (int i = linex.length - 1; i > 0; i--) {
+        for (int i = length - 1; i > 0; i--) {
             linex[i] = linex[i - 1];
             liney[i] = liney[i - 1];
         }
@@ -169,40 +161,58 @@ public class LightRacer extends Part {
     }
 
     public void render(Canvas c) {
+	if (!isAlive())
+	    return;
+	
 	renderLines(c);
     }
 
     public void renderLines(Canvas c) {
-        int a = 255;;
+        int a = 255;
 
-	float x = linex[0];
-	float y = liney[0];
+	float x = linex[1];
+	float y = liney[1];
 
 	brush.setColor(color);
-	for (ri = 1; ri < linex.length && !(linex[ri] == 0 && liney[ri] == 0); ri++) {
-	    if (Math.abs(x - linex[ri]) < view.width() / 2 && Math.abs(y - liney[ri]) < view.height() / 2)
+	for (ri = 1; ri < length && linex[ri] != 0 && liney[ri] != 0; ri++) {
+	    if (x == 0 || y == 0)
+		Log.d("dfjk l;as", "ummmmmmmm...... x = " + x + " y = " + y);
+	    
+	    // Last or next is not strait
+	    if (ri == length - 1 || linex[ri + 1] != x && liney[ri + 1] != y) {
 		c.drawLine(view.toPoint(x, true), view.toPoint(y, false),
 			   view.toPoint(linex[ri], true), view.toPoint(liney[ri], false), brush);
-		
+
 		x = linex[ri];
 		y = liney[ri];
+	    }
+
+	    // Next one jumps accross screen
+	    if (ri < length - 1
+		//&& !(linex[ri + 1] == 0 && liney[ri + 1] == 0)
+		&& (Math.abs(linex[ri + 1] - linex[ri]) > view.width() / 2
+		    || Math.abs(liney[ri + 1] - liney[ri]) > view.height() / 2)) {
+		ri++;
+		x = linex[ri];
+		y = liney[ri];
+	    }
 	}
 
-	if (!light) return;
-
-        for (ri = 0; ri < linex.length - 1 && linex[ri + 1] != 0 && liney[ri + 1] != 0; ri++) {
-	    if (Math.abs(linex[ri] - linex[ri + 1]) > view.width() / 2 ||
-		Math.abs(liney[ri] - liney[ri + 1]) > view.height() / 2)
-		continue;
+	if (light) {
+	    for (ri = 0; ri < length - 1 && linex[ri + 1] != 0 && liney[ri + 1] != 0; ri++) {
+		if (Math.abs(linex[ri] - linex[ri + 1]) > view.width() / 2 ||
+		    Math.abs(liney[ri] - liney[ri + 1]) > view.height() / 2)
+		    continue;
 	    
-	    front = Color.argb(a, 255, 255, 255);
-	    brush.setColor(front);
-	    c.drawLine(view.toPoint(linex[ri], true), view.toPoint(liney[ri], false),
-		       view.toPoint(linex[ri + 1], true), view.toPoint(liney[ri + 1], false), brush);
+		front = Color.argb(a, 255, 255, 255);
+		brush.setColor(front);
+		c.drawLine(view.toPoint(linex[ri], true), view.toPoint(liney[ri], false),
+			   view.toPoint(linex[ri + 1], true), view.toPoint(liney[ri + 1], false), brush);
 
-	    a -= 25;
-	    if (a < 0) break;
-        }
+		a -= 25;
+		if (a < 0) break;
+	    }
+	}
     }
 
     public boolean changeDirection(int wd) { // Change to spicific direction
@@ -220,14 +230,12 @@ public class LightRacer extends Part {
     }
 
     protected void newLine() {
-	Particle.initLineFall(view, startColor, linex, liney);
-
-        linex = new float[length];
-        liney = new float[length];
+	Particle.initLineFall(view, startColor, linex, liney, 0);
+	for (int i = 0; i < length; i++)
+	    linex[i] = liney[i] = 0;
     }
 
     public void spawn() {
-
         linex[0] = rand.nextFloat() * (view.width() - 10) + 10;
 	liney[0] = rand.nextFloat() * (view.height() - 10) + 10;
 
@@ -252,8 +260,8 @@ public class LightRacer extends Part {
     }
 
     public void spawnSpec(float x, float y, int di) {
-        linex = new float[length];
-        liney = new float[length];
+	for (int i = 0; i < length; i++)
+	    linex[i] = liney[i] = 0;
 
         lastTurn = 0;
         color = startColor;
@@ -264,7 +272,7 @@ public class LightRacer extends Part {
     }
 
     public int safestDirection() {
-        int newDi = -1;
+	/*        int newDi = -1;
         int bestClearance = 0;
 
         for (int checkingDi = 0; checkingDi < 4; checkingDi++) {
@@ -313,11 +321,12 @@ public class LightRacer extends Part {
             }
         }
 
-        return newDi;
+        return newDi;*/
+	return 0;
     }
 
     public boolean safeToTurn(int wd, int distance) {
-        int distanceChecked = 0;
+	/*        int distanceChecked = 0;
 
         x = linex[0];
         y = liney[0];
@@ -350,33 +359,33 @@ public class LightRacer extends Part {
         }
 
         return true;
+	*/
+	return true;
     }
 
     public void offScreen() {
         float nx, ny;
 
         if (liney[0] <= 0) {
-	    nx = view.width() / 2 + (view.width() / 2 - linex[0]);
+	    nx = view.width() - linex[0];
 	    ny = view.height() - 1;
-        } else if (liney[0] >= view.height() - 1) {
-	    nx = view.width() / 2 + (view.width() / 2 - linex[0]);
+        } else if (liney[0] >= view.height()) {
+	    nx = view.width() - linex[0];
 	    ny = 1;
-        } else if (linex[0] <= 1) {
+        } else if (linex[0] <= 0) {
 	    nx = view.width() - 1;
-	    ny = view.height() / 2 + (view.height() / 2 - liney[0]);
-	} else if (linex[0] >= view.width() - 1) {
+	    ny = view.height() - liney[0];
+	} else if (linex[0] >= view.width()) {
 	    nx = 1;
-	    ny = view.height() / 2 + (view.height() / 2 - liney[0]);
+	    ny = view.height() - liney[0];
         } else
 	    return;
-	
-	if (view.killTailOffScreen()) {
-	    Particle.initLineFall(view, startColor, linex, liney);
-	    linex = new float[length];
-	    liney = new float[length];
-	} else
-	    updateLine();
-	
+
+	if (view.killTailOffScreen())
+	    newLine();
+
+	Log.d("fjkdsl;a ", "setting to  x = " + nx + " y = " + ny);
+
 	linex[0] = nx;
 	liney[0] = ny;
     }
@@ -385,12 +394,10 @@ public class LightRacer extends Part {
         float x = other.getX();
         float y = other.getY();
 
-        for (int i = 1; i < linex.length; i++) {
-	    if (linex[i] == 0 && liney[i] == 0)
-		break;
+        for (int i = 1; i < length; i++) {
             if (x >= linex[i] - 0.5f && x <= linex[i] + 0.5f)
-		if (y >= liney[i] - 0.5f && y <= linex[i] + 0.5f) 
-                return true;
+		if (y >= liney[i] - 0.5f && y <= liney[i] + 0.5f) 
+		    return true;
         } 
         return false;
     }

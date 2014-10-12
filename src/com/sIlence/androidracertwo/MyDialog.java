@@ -32,9 +32,8 @@ import android.util.Log;
 
 public class MyDialog extends DialogFragment {
 
-    protected GameView view;
-
-    protected String mes, pos, neg;
+    GameView view;
+    String mes, pos, neg;
 
     public MyDialog(GameView v, String m, String p, String n) {
         super();

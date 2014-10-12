@@ -30,24 +30,24 @@ import java.lang.Math;
 import android.util.Log;
 
 public class Particle {
-    private GameView view;
-    private float mx, my;
-    private float xv, yv;
-    private int age;
-    private int start;
-    private int	life;
-    private int	a, r, g, b;
-    private Random rand;
-    private boolean alive;
-    private Paint brush;
-    private int starta;
+    static Paint brush = new Paint(Paint.ANTI_ALIAS_FLAG);
+    GameView view;
+    float mx, my;
+    float xv, yv;
+    int age;
+    int start;
+    int	life;
+    int	a, r, g, b;
+    Random rand;
+    boolean alive;
+    int starta;
 
     public Particle(GameView v, int color, float x, float y,
 		    float O, float speed,
 		    int sta, int lif) {
 	view = v;
         rand = new Random();
-        brush = new Paint(Paint.ANTI_ALIAS_FLAG);
+	//        brush = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         a = Color.alpha(color);
         r = Color.red(color);
@@ -97,50 +97,49 @@ public class Particle {
 
     /****************************** Particle layouts ***********************************/
 
-    public static void initLineFall(GameView v, int color, float[] xa, float[] ya) {
+    public static void initLineFall(GameView v, int color, float[] xa, float[] ya, int startIndex) {
 	Random rand = new Random();
-        float x0, y0, x1, y1, distance, incdec;
-	int i;
+        float x0, y0, x1, y1, distance, incdec, xd, yd, xj, yj;
+	int i, xid, yid;
 	
         for (i = 1; i < xa.length; i++) {
-            if (xa[i - 1] == 0 && ya[i - 1] == 0) break;
+            x0 = xa[startIndex + i];
+            y0 = ya[startIndex + i];
 
-            x0 = xa[i];
-            y0 = ya[i];
+            x1 = xa[startIndex + i - 1];
+            y1 = ya[startIndex + i - 1];
 
-            x1 = xa[i - 1];
-            y1 = ya[i - 1];
-
-            float xd = x1 - x0;
-            float yd = y1 - y0;
-            int xid = 1;
-            if (xd < 0) xid = -1;
-            int yid = 1;
-            if (yd < 0) yid = -1;
-            
-            if (xd > v.width() / 2 || 
-		yd > v.height() / 2)
+	    if (x0 == 0 && y0 == 0 ||
+		x1 == 0 && y1 == 0)
 		continue;
 
+            xd = x1 - x0;
+            yd = y1 - y0;
+
+	    if (Math.abs(xd) > v.width() / 2 || 
+		Math.abs(yd) > v.height() / 2)
+		continue;
+
+            xid = xd > 0 ? 1 : -1;
+            yid = yd > 0 ? 1 : -1;
+            
 	    float O, s;
 	    float xp, yp;
 	    
-            float xj = x0 - xid;
+	    xj = x0;
             do {
-                float yj = y0 - yid; 
+		yj = y0;
                 do {
-		    xp = xj + xid;
-		    yp = yj + yid;
                     O = rand.nextFloat() * (float) Math.PI * 2;
-		    s = 0.3f + rand.nextFloat() * 0.2f - 0.1f;
-		    v.addParticle(
-				  new Particle(v, color, xp, yp,
+		    s = 0.15f + rand.nextFloat() * 0.1f;
+		    v.getParticles().add(
+				  new Particle(v, color, xj, yj,
 					       O, s,
 					       i / 5, i / 5 + 20));
                     yj += yid;
-                } while (yj != y1);
+                } while ((yid > 0 && yj < y1) || (yid < 0 && yj > y1));
                 xj += xid;
-            } while (xj != x1);
+            } while ((xid > 0 && xj < x1) || (xid < 0 && xj > x1));
         }
     }
     
@@ -156,9 +155,9 @@ public class Particle {
 	Od = (float) -Math.PI;;
         for (i = 0; i < n; i++) {
 	    Od += step;
-	    speed = (float) (Math.cos(1.3 * Od) + 1.5f) * (rand.nextFloat() * 0.9f + 0.2f);
+	    speed = (float) (Math.cos(1.3 * Od) + 1.5f) * (rand.nextFloat() * 0.5f + 0.1f);
 
-            v.addParticle(new Particle(v, color, x, y,
+            v.getParticles().add(new Particle(v, color, x, y,
 				       O + Od, speed,
 				       0, 40));
 	}

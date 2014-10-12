@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class DodgeGame extends Game {
 
-    protected int level;
+    int level;
 
     public DodgeGame(int o) {
         super(o);
@@ -36,35 +36,23 @@ public class DodgeGame extends Game {
 	    nlives += rand.nextInt(level) + level / 2;
 	}
 
-	blockades = new Blockade[nblockades];
-	lives = new Life[nlives];
+        parts = new ArrayList<Part>();
 
-	for (int i = 0; i < blockades.length; i++) {
-	    blockades[i] = new Blockade(view);
-	}
-	for (int i = 0; i < lives.length; i++) {
-	    lives[i] = new Life(view);
-	}
-	    
-        parts = new Part[1 + blockades.length + lives.length];
+	parts.add(LOCALPOS,
+		  (Part) new LightRacer(view, 0xC004CCF1, GameView.INCREASE_DEATHS));
 
-	parts[LOCALPOS] =
-	    new LightRacer(view, 0xC004CCF1, GameView.INCREASE_DEATHS);
+        for (int i = 0; i < nblockades; i++)
+            parts.add((Part) new Blockade(view));
+	for (int i = 0; i < nlives; i++)
+	    parts.add((Part) new Life(view));
 
-        for (int i = 0; i < blockades.length; i++) {
-            parts[1 + i] = blockades[i];
-        }
-	for (int i = 0; i < lives.length; i++) {
-	    parts[1 + i + blockades.length] = lives[i];
-	}
+	//        local().setOpps(parts);
+        getLocal().setLength(1);
+	getLocal().spawn();
 
-        local().setOpps(parts);
-        local().setLength(1);
-	local().spawn();
-
+	for (int i = 0; i < parts.size(); i++)
+	    parts.get(i).spawn(parts);
         for (int i = 0; i < 5; i++) update();
-        for (int i = 0; i < blockades.length; i++) blockades[i].spawn(parts);
-	for (int i = 0; i < lives.length; i++) lives[i].spawn(parts);
     }
 
     public void checkScore() {
@@ -74,11 +62,11 @@ public class DodgeGame extends Game {
     }
 
     public void checkCollisions() {
-	LightRacer local = local();
+	LightRacer local = getLocal();
 	if (!local.isAlive())
 	    return;
-	for (int i = 0; i < parts.length; i++) {
-	    if (parts[i].collides(local)) {
+	for (int i = 0; i < parts.size(); i++) {
+	    if (parts.get(i).isAlive() && parts.get(i).collides(local)) {
 		local.die(local.getX(), local.getY(), local.getDirection());
 		setDeaths(getDeaths() + 1);
 		checkScore();
@@ -87,7 +75,24 @@ public class DodgeGame extends Game {
     }
 
     public void updateLengths() {
-        local().setLength(local().getLength() + 1);
+        getLocal().setLength(getLocal().getLength() + 1);
+    }
+
+    public void hud(Canvas c, boolean started) {
+	int t;
+        brush.setColor(0xffffffff);
+	brush.setTextSize(view.topBorder() - 6);
+
+	if (!started)
+	    t = 0;
+	else
+	    t = getTime() / 1000;
+	c.drawText("Time: " + t, 10, view.topBorder() - 4, brush);
+        textString = getKills() + " : " + getDeaths();
+        c.drawText(textString, view.getWidth() - fromRight - view.halfWidth(textString, brush), view.topBorder() - 4, brush);
+
+	brush.setStrokeWidth(0.0f);
+	c.drawLine(0, view.topBorder(), view.getWidth(), view.topBorder(), brush);
     }
 
     public boolean killTailOffScreen() {
@@ -100,17 +105,5 @@ public class DodgeGame extends Game {
 
     public String loseMessage() {
 	return "You survived for " + (view.getTime() / 1000) + " seconds.";
-    }
-
-    public LightRacer other() {
-        return null;
-    }
-
-    public WallRacer wall1() {
-	return null;
-    }
-
-    public WallRacer wall2() {
-	return null;
     }
 }
