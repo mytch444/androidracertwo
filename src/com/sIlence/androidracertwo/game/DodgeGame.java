@@ -8,7 +8,9 @@ import java.util.ArrayList;
 
 public class DodgeGame extends Game {
 
-    int level;
+    static int GAME_END_DELAY = 30;
+
+    int level, stopDelay;
 
     public DodgeGame(int o) {
         super(o);
@@ -16,6 +18,8 @@ public class DodgeGame extends Game {
 
     public void init() {
 	super.init();
+
+	stopDelay = 0;
 	
 	setTime(0);
 	setKills(0);
@@ -39,16 +43,14 @@ public class DodgeGame extends Game {
         parts = new ArrayList<Part>();
 
 	parts.add(LOCALPOS,
-		  (Part) new LightRacer(view, 0xC004CCF1, GameView.INCREASE_DEATHS));
+		  (Part) new LightRacer(view, 0xC004CCF1));
 
         for (int i = 0; i < nblockades; i++)
             parts.add((Part) new Blockade(view));
 	for (int i = 0; i < nlives; i++)
 	    parts.add((Part) new Life(view));
 
-	//        local().setOpps(parts);
         getLocal().setLength(1);
-	getLocal().spawn();
 
 	for (int i = 0; i < parts.size(); i++)
 	    parts.get(i).spawn(parts);
@@ -68,9 +70,21 @@ public class DodgeGame extends Game {
 	for (int i = 0; i < parts.size(); i++) {
 	    if (parts.get(i).isAlive() && parts.get(i).collides(local)) {
 		local.die(local.getX(), local.getY(), local.getDirection());
-		setDeaths(getDeaths() + 1);
-		checkScore();
+		if (stopDelay == 0) {
+		    setDeaths(getDeaths() + 1);
+		    stopDelay = GAME_END_DELAY;
+		}
 	    }
+	}
+    }
+
+    public void update() {
+	super.update();
+	if (stopDelay > 0) {
+	    time -= view.framePeriod();
+	    stopDelay--;
+	    if (stopDelay == 0)
+		checkScore();
 	}
     }
 
@@ -78,18 +92,15 @@ public class DodgeGame extends Game {
         getLocal().setLength(getLocal().getLength() + 1);
     }
 
-    public void hud(Canvas c, boolean started) {
+    public void hud(Canvas c) {
 	int t;
         brush.setColor(0xffffffff);
 	brush.setTextSize(view.topBorder() - 6);
 
-	if (!started)
-	    t = 0;
-	else
-	    t = getTime() / 1000;
+	t = getTime() / 1000;
 	c.drawText("Time: " + t, 10, view.topBorder() - 4, brush);
-        textString = getKills() + " : " + getDeaths();
-        c.drawText(textString, view.getWidth() - fromRight - view.halfWidth(textString, brush), view.topBorder() - 4, brush);
+        textString = "Level: " + getDeaths();
+        c.drawText(textString, view.getWidth() - 10 - view.textWidth(textString, brush), view.topBorder() - 4, brush);
 
 	brush.setStrokeWidth(0.0f);
 	c.drawLine(0, view.topBorder(), view.getWidth(), view.topBorder(), brush);

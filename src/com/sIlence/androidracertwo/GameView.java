@@ -42,10 +42,6 @@ import android.util.Log;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
-    public static int INCREASE_KILLS = 1;
-    public static int INCREASE_NULL = 0;
-    public static int INCREASE_DEATHS = -1;
-
     boolean pausing;
     boolean starting;
     boolean gameOver;
@@ -102,21 +98,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	pausing = false;
 	
         startcount = getTime();
-        countdown = 3;
+        countdown = 3000;
 	
 	tick();
     }
 
     public void update() {
-        if (starting || gameOver) return;
-         
-        incTime(loop.framePeriod());
+        if (starting || gameOver) return;        
         
         if (countdown > 0) {
-            if ((getTime() - startcount) / 1000 >= 4 - countdown) {
-                countdown--;
-            }
-	    if (countdown == 0) setTime(startcount);
+	    countdown -= framePeriod();
             return;
         }
      
@@ -128,15 +119,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         background(c);
         game.render(c);
-	game.hud(c, countdown == 0);
+	game.hud(c);
 
 	if (countdown > 0) {
-	    int t = getTime() / 1000;
+	    int t = countdown / 1000;
             brush.setColor(0xffffffff);
             brush.setTextSize(getHeight() / 10);
 
             String message = "" + countdown;
-            c.drawText(message, getWidth() / 2 - halfWidth(message, brush), getHeight() / 2, brush);
+            c.drawText(message, getWidth() / 2 - textWidth(message, brush) / 2, getHeight() / 2, brush);
         }
 	
 	handler.overlay(c);
@@ -180,18 +171,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         endTime = System.currentTimeMillis();
     }
 
-    public void changeScore(int scoreType) {
-        if (scoreType == INCREASE_DEATHS) {
-            incDeaths();
-        } else if (scoreType == INCREASE_KILLS) {
-            incKills();
-        }
-    }
-
-    public int halfWidth(String text, Paint p) {
+    public int textWidth(String text, Paint p) {
         Rect bounds = new Rect();
         p.getTextBounds(text, 0, text.length(), bounds);
-        return bounds.width() / 2;
+        return bounds.width();
     }
 
     public void background(Canvas c) {
@@ -326,36 +309,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         return game.getKills();
     }
 
-    public void incKills() {
-        game.setKills(game.getKills() + 1); 
-    }
-
-    public void setKills(int k) {
-        game.setKills(k); 
-    }
-
     public int getDeaths() {
         return game.getDeaths();
     }
 
-    public void incDeaths() {
-        game.setDeaths(game.getDeaths() + 1);
-    }
-
-    public void setDeaths(int d) {
-        game.setDeaths(d);
-    }
-
     public int getTime() {
         return game.getTime();
-    }
-
-    public void incTime(int a) {
-        game.setTime(game.getTime() + a);
-    }
-
-    public void setTime(int t) {
-        game.setTime(t);
     }
 
     public int framePeriod() {

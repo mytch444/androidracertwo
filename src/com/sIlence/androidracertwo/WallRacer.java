@@ -23,12 +23,13 @@
 package com.sIlence.androidracertwo;
 
 import android.graphics.Canvas;
+import java.util.ArrayList;
 import android.util.Log;
 
 public class WallRacer extends LightRacer {
 
     public WallRacer (GameView v, float x, float y, float gap) {
-        super (v, 0xC05FFE3C, GameView.INCREASE_NULL);
+        super (v, 0xC05FFE3C);
 
         direction = 3;
 
@@ -49,6 +50,8 @@ public class WallRacer extends LightRacer {
             update();
         }
     }
+
+    public void spawn(ArrayList<Part> parts) {}
 
     @Override
     public boolean changeDirection(int di) {

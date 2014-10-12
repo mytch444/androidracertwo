@@ -22,6 +22,8 @@
 
 package com.sIlence.androidracertwo;
 
+import java.util.ArrayList;
+
 public class AIRacer extends LightRacer {
 
     public static final int DIFF_CHILD = 10;
@@ -32,18 +34,25 @@ public class AIRacer extends LightRacer {
 
     int difficualty;
 
-    public AIRacer(GameView v, int d, int stc) {
-        super(v, 0xC0FFE64D, stc);
+    ArrayList<Part> parts;
+
+    public AIRacer(GameView v, int d) {
+        super(v, 0xC0FFE64D);
         startColor = color;
         difficualty = d;
     }
 
-    public AIRacer(GameView v, int d, int stc, float x, float y, int dd) {
-        this(v, d, stc);
+    public AIRacer(GameView v, int d, float x, float y, int dd) {
+        this(v, d);
 
         linex[0] = x;
         liney[0] = y;
         direction = dd;
+    }
+
+    public void spawn(ArrayList<Part> parts) {
+	super.spawn(parts);
+	this.parts = parts;
     }
 
     @Override
@@ -57,12 +66,10 @@ public class AIRacer extends LightRacer {
 	offScreen();
 	
 	int nd = -1;
-	if (rand.nextInt(16) == 1)
-	    nd = safestDirection();
-	else
-	    nd = tryToDodge();
+	if (rand.nextInt(16) == 1 || !safeToTurn(parts, direction, difficualty))
+	    nd = safestDirection(parts);
 	if (nd != -1) {
-	    final int lag = rand.nextInt(20000 / difficualty);
+	    int lag = rand.nextInt(20000 / difficualty);
 	    final int di = nd;
 	    
 	    view.postDelayed(new Runnable() {
@@ -71,12 +78,5 @@ public class AIRacer extends LightRacer {
 		    }
 		}, lag);
 	}
-    }
-    
-    private int tryToDodge() { // Try avoid other player
-        if (!safeToTurn(direction, difficualty)) {
-            return safestDirection();
-        }
-        return -1;
     }
 }

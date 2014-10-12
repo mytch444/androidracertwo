@@ -7,7 +7,10 @@ import android.util.Log;
 
 public class SnakeGame extends Game {
 
+    public static int SPAWN_DELAY = 30;
+    
     LightRacer other;
+    int localSpawnDelay, otherSpawnDelay;
     
     public SnakeGame(int o) {
         super(o);
@@ -23,23 +26,22 @@ public class SnakeGame extends Game {
         setKills(0);
         setDeaths(0);
 
+	localSpawnDelay = otherSpawnDelay = -1;
+
 	particles = new ArrayList<Particle>();
 	parts = new ArrayList<Part>();
 	
-        parts.add(LOCALPOS, (Part) new LightRacer(view, 0xC003CCF1, GameView.INCREASE_DEATHS));
-	other = new AIRacer(view, getOtherDifficualty(), GameView.INCREASE_KILLS);
+        parts.add(LOCALPOS, (Part) new LightRacer(view, 0xC003CCF1));
+	other = new AIRacer(view, getOtherDifficualty());
 	parts.add((Part) other);
         parts.add((Part) new WallRacer(view, 1, 1, getOtherDifficualty() / 4));
         parts.add((Part) new WallRacer(view, view.width() - 1, view.height() - 1, getOtherDifficualty() / 4));
 
-	//        local().setOpps(parts);
-	//        other().setOpps(parts);
-
         getLocal().setLength(LightRacer.STANDARD_LENGTH);
         other.setLength(LightRacer.STANDARD_LENGTH);
 
-        getLocal().spawn();
-        other.spawn();
+        getLocal().spawn(parts);
+        other.spawn(parts);
 
         for (int i = 0; i < 5; i++) update();
     }
@@ -68,15 +70,33 @@ public class SnakeGame extends Game {
 	    
 	    if (local.isAlive() && parts.get(i).collides(local)) {
 		local.die(local.getX(), local.getY(), local.getDirection());
+		localSpawnDelay = SPAWN_DELAY;
 		setDeaths(getDeaths() + 1);
 		checkScore();
 	    }
 
 	    if (other.isAlive() && parts.get(i).collides(other)) {
 		other.die(other.getX(), other.getY(), other.getDirection());
+		otherSpawnDelay = SPAWN_DELAY;
 		setKills(getKills() + 1);
 		checkScore();
 	    }
+	}
+    }
+
+    public void update() {
+	super.update();
+
+	if (localSpawnDelay > 0) {
+	    localSpawnDelay--;
+	    if (localSpawnDelay == 0)
+		getLocal().spawn(parts);
+	}
+
+	if (otherSpawnDelay > 0) {
+	    otherSpawnDelay--;
+	    if (otherSpawnDelay == 0)
+		other.spawn(parts);
 	}
     }
 
@@ -85,17 +105,14 @@ public class SnakeGame extends Game {
         other.setLength(getDeaths() * getDeaths() + LightRacer.STANDARD_LENGTH);
     }
 
-    public void hud(Canvas c, boolean started) {
+    public void hud(Canvas c) {
 	int t;
         brush.setColor(0xffffffff);
 	brush.setTextSize(view.topBorder() - 6);
 
-	if (!started)
-	    t = 0;
-	else
-	    t = getTime() / 1000;
+	t = getTime() / 1000;
 	c.drawText("Time: " + t, 10, view.topBorder() - 4, brush);
         textString = getKills() + " : " + getDeaths();
-        c.drawText(textString, view.getWidth() - fromRight - view.halfWidth(textString, brush), view.topBorder() - 4, brush);
+        c.drawText(textString, view.getWidth() - 10 - view.textWidth(textString, brush) / 2, view.topBorder() - 4, brush);
     }
 }

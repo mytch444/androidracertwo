@@ -26,7 +26,6 @@ public abstract class Game {
     String loseMessage;
 
     String textString;
-    int	fromRight;
     Paint brush;
 
     Random rand;
@@ -43,7 +42,6 @@ public abstract class Game {
 
     public void init() {
 	brush = new Paint(Paint.ANTI_ALIAS_FLAG);
-	fromRight = view.getWidth() / 8;
     }
 
     public void setView(GameView v) {
@@ -118,6 +116,8 @@ public abstract class Game {
 
     public void update() {
 	int i;
+
+	time += view.framePeriod();
 	
 	updateLengths();
 	for (i = 0; i < parts.size(); i++) {
@@ -146,5 +146,5 @@ public abstract class Game {
 	}
     }
 
-    public void hud(Canvas c, boolean started) {}
+    public void hud(Canvas c) {}
 }

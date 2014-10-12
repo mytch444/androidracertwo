@@ -8,9 +8,11 @@ import java.util.ArrayList;
 
 public class TronGame extends Game {
 
+    static int GAME_END_DELAY = 30;
+    
     LightRacer other;
-    int startKills;
-    int startDeaths;
+    int startKills, startDeaths;
+    int stopDelay;
 
     public TronGame(int o) {
         super(o);
@@ -21,6 +23,8 @@ public class TronGame extends Game {
 
     public void init() {
 	super.init();
+
+	stopDelay = 0;
 	
         float x0, y0, x1, y1;
 	int d0, d1;
@@ -45,9 +49,9 @@ public class TronGame extends Game {
 	parts = new ArrayList<Part>();
 	
 	parts.add(LOCALPOS,
-		  (Part) new LightRacer(view, 0xC004CCF1, GameView.INCREASE_DEATHS,
+		  (Part) new LightRacer(view, 0xC004CCF1,
 				 x0, y0, d0));
-	other = new AIRacer(view, getOtherDifficualty(), GameView.INCREASE_KILLS,
+	other = new AIRacer(view, getOtherDifficualty(),
 			x1, y1, d1);
 	parts.add((Part) other);
         parts.add((Part) new WallRacer(view, 1, 1, 0));
@@ -57,9 +61,6 @@ public class TronGame extends Game {
 	    parts.add((Part) new Blockade(view));
 	for (int i = 0; i < nlives; i++)
 	    parts.add((Part) new Life(view));
-
-	//        local().setOpps(parts);
-	//        other().setOpps(parts);
 
         getLocal().setLength(1);
         other.setLength(1);
@@ -88,15 +89,29 @@ public class TronGame extends Game {
 	    
 	    if (local.isAlive() && parts.get(i).collides(local)) {
 		local.die(local.getX(), local.getY(), local.getDirection());
-		setDeaths(getDeaths() + 1);
-		checkScore();
+		if (stopDelay == 0) {
+		    setDeaths(getDeaths() + 1);
+		    stopDelay = GAME_END_DELAY;
+		}
 	    }
 
 	    if (other.isAlive() && parts.get(i).collides(other)) {
 		other.die(other.getX(), other.getY(), other.getDirection());
-		setKills(getKills() + 1);
-		checkScore();
+		if (stopDelay == 0) {
+		    setKills(getKills() + 1);
+		    stopDelay = GAME_END_DELAY;
+		}
 	    }
+	}
+    }
+
+    public void update() {
+	super.update();
+	if (stopDelay > 0) {
+	    time -= view.framePeriod();
+	    stopDelay--;
+	    if (stopDelay == 0)
+		checkScore();
 	}
     }
 
@@ -109,17 +124,14 @@ public class TronGame extends Game {
 	return false;
     }
 
-    public void hud(Canvas c, boolean started) {
+    public void hud(Canvas c) {
 	int t;
         brush.setColor(0xffffffff);
 	brush.setTextSize(view.topBorder() - 6);
 
-	if (!started)
-	    t = 0;
-	else
-	    t = getTime() / 1000;
+	t = getTime() / 1000;
 	c.drawText("Time: " + t, 10, view.topBorder() - 4, brush);
         textString = getKills() + " : " + getDeaths();
-        c.drawText(textString, view.getWidth() - fromRight - view.halfWidth(textString, brush), view.topBorder() - 4, brush);
+        c.drawText(textString, view.getWidth() - 10 - view.textWidth(textString, brush) / 2, view.topBorder() - 4, brush);
     }
 }
