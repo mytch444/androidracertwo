@@ -38,9 +38,4 @@ public class Life extends Blockade {
     public Life(GameView v) {
         this(v, 0, 0);
     }
-
-    public void die(int hx, int hy, int di) {
-	alive = false;
-	createParticles(hx, hy, di);
-    }
 }

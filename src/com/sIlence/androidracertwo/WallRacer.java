@@ -51,7 +51,9 @@ public class WallRacer extends LightRacer {
         }
     }
 
-    public void spawn(ArrayList<Part> parts) {}
+    public void spawn(ArrayList<Part> parts) {
+
+    }
 
     @Override
     public boolean changeDirection(int di) {
@@ -79,7 +81,7 @@ public class WallRacer extends LightRacer {
         renderLines(c);
     }
 
-    public void die(float hx, float hy, int di) {
+    public void die(float hx, float hy, float di) {
 	Particle.initExplosion(view, startColor, hx, hy, di);
     }
 }

@@ -10,7 +10,7 @@ public class DodgeGame extends Game {
 
     static int GAME_END_DELAY = 30;
 
-    int level, stopDelay;
+    int level, lives, stopDelay;
 
     public DodgeGame(int o) {
         super(o);
@@ -25,6 +25,7 @@ public class DodgeGame extends Game {
 	setKills(0);
 
 	level = deaths;
+	lives = 3;
 
 	particles = new ArrayList<Particle>();
 	
@@ -33,7 +34,7 @@ public class DodgeGame extends Game {
 
 	int nblockades, nlives;
 	nblockades = 1 + getOtherDifficualty() / 20;
-	nlives = 0;
+	nlives = 1;
 
 	if (kills > 0) {
 	    nblockades += rand.nextInt(level) + level / 2;
@@ -42,15 +43,15 @@ public class DodgeGame extends Game {
 
         parts = new ArrayList<Part>();
 
-	parts.add(LOCALPOS,
-		  (Part) new LightRacer(view, 0xC004CCF1));
+	local = new LightRacer(view, 0xC004CCF1);
+	parts.add((Part) local);
 
         for (int i = 0; i < nblockades; i++)
             parts.add((Part) new Blockade(view));
 	for (int i = 0; i < nlives; i++)
 	    parts.add((Part) new Life(view));
 
-        getLocal().setLength(1);
+        local.setLength(1);
 
 	for (int i = 0; i < parts.size(); i++)
 	    parts.get(i).spawn(parts);
@@ -64,16 +65,25 @@ public class DodgeGame extends Game {
     }
 
     public void checkCollisions() {
-	LightRacer local = getLocal();
-	if (!local.isAlive())
-	    return;
 	for (int i = 0; i < parts.size(); i++) {
-	    if (parts.get(i).isAlive() && parts.get(i).collides(local)) {
-		local.die(local.getX(), local.getY(), local.getDirection());
-		if (stopDelay == 0) {
-		    setDeaths(getDeaths() + 1);
-		    stopDelay = GAME_END_DELAY;
-		}
+	    Part p = parts.get(i);
+	    if (local.isAlive() && p.isAlive() && p.collides(local))
+		handleCollision(p);
+	}
+    }
+
+    public void handleCollision(Part p) {
+	if (p.getClass() == Life.class) {
+	    p.die(local.getX(), local.getY(), local.getDirection());
+	    lives++;
+	} else if (lives > 0) {
+	    p.die(local.getX(), local.getY(), local.getDirection());
+	    lives--;
+	} else {
+	    local.die(local.getX(), local.getY(), local.getDirection());
+	    if (stopDelay == 0) {
+		setDeaths(getDeaths() + 1);
+		stopDelay = GAME_END_DELAY;
 	    }
 	}
     }
@@ -89,7 +99,7 @@ public class DodgeGame extends Game {
     }
 
     public void updateLengths() {
-        getLocal().setLength(getLocal().getLength() + 1);
+        local.setLength(local.getLength() + 1);
     }
 
     public void hud(Canvas c) {
@@ -99,10 +109,12 @@ public class DodgeGame extends Game {
 
 	t = getTime() / 1000;
 	c.drawText("Time: " + t, 10, view.topBorder() - 4, brush);
+	textString = "Lives: " + lives;
+	c.drawText(textString, view.getWidth() / 2 - view.textWidth(textString, brush) / 2, view.topBorder() - 4, brush);
         textString = "Level: " + getDeaths();
         c.drawText(textString, view.getWidth() - 10 - view.textWidth(textString, brush), view.topBorder() - 4, brush);
 
-	brush.setStrokeWidth(0.0f);
+        brush.setStrokeWidth(0f);
 	c.drawLine(0, view.topBorder(), view.getWidth(), view.topBorder(), brush);
     }
 

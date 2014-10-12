@@ -5,11 +5,11 @@
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/Part.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/GameView.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/GameLoop.class \
-/shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/InputHandler.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/game/Game.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/game/DodgeGame.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/game/SnakeGame.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/game/TronGame.class \
+/shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/InputHandler.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/MyDialog$1.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/MyDialog$2.class \
 /shared/src/androidracertwo/bin/classes/com/sIlence/androidracertwo/MyDialog.class \

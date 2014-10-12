@@ -48,8 +48,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     boolean won;
     
     int countdown;
-    int startcount;
-    long endTime;
     
     GameLoop loop;
 
@@ -58,14 +56,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     float yPartSize, xPartSize;
     boolean horizontalOrientation;
     
-    InputHandler handler;
-
-    String textString;
-
     Paint brush;
 
     Game game;
-
+    InputHandler handler;
     MyDialog dialog;
 
     public GameView(Context context, Game g, boolean usingArrows) {
@@ -77,10 +71,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         loop = new GameLoop(this);
 
 	handler = new InputHandler(this, usingArrows);
-
-        textString = "";
-
-	endTime = 0;
     }
 
     public GameView(Context context, Game g) {
@@ -97,8 +87,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         won = false;
 	pausing = false;
 	
-        startcount = getTime();
-        countdown = 3000;
+        countdown = 1000;
 	
 	tick();
     }
@@ -122,7 +111,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	game.hud(c);
 
 	if (countdown > 0) {
-	    int t = countdown / 1000;
             brush.setColor(0xffffffff);
             brush.setTextSize(getHeight() / 10);
 
@@ -168,7 +156,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         won = w;
 
         gameOver = true;
-        endTime = System.currentTimeMillis();
     }
 
     public int textWidth(String text, Paint p) {

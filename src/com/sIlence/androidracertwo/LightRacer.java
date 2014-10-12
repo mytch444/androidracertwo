@@ -19,7 +19,6 @@
  *
 */
 
-
 package com.sIlence.androidracertwo;
 
 import android.graphics.Canvas;
@@ -86,14 +85,14 @@ public class LightRacer extends Part {
         }
     }
 
-    public void die(float hx, float hy, int di) {
+    public void die(float hx, float hy, float di) {
 	int start;
 	Particle.initExplosion(view, startColor, hx, hy, di);
 
-	for (start = 0;
-	     start < length
-		 && !(hx == linex[start] && hy == liney[start]); 
-	     start++);
+	for (start = length - 1; start > 0 &&
+		 !((hx >= linex[start] - 0.5f && hx <= linex[start] + 0.5f) &&
+		   (hy >= liney[start] - 0.5f && hy <= liney[start] + 0.5f))
+		 ; start--);
 
 	alive = start != 0;
 
@@ -115,20 +114,8 @@ public class LightRacer extends Part {
     }
 
     public void move() {
-        switch (direction) {
-            case 0:
-                linex[0] += 1;
-                break;
-            case 1:
-                liney[0] += 1;
-                break;
-            case 2:
-                linex[0] -= 1;
-                break;
-            case 3: 
-                liney[0] -= 1;
-                break;
-        }
+	linex[0] += (float) Math.cos(direction * Math.PI / 2);
+	liney[0] += (float) Math.sin(direction * Math.PI / 2);
     }
 
     public float getX() {
@@ -190,6 +177,10 @@ public class LightRacer extends Part {
 	}
     }
 
+    public float getDirection() {
+        return direction * (float) Math.PI / 2;
+    }
+    
     public boolean changeDirection(int wd) {
         if ((wd == direction)
 	    || (wd == oppDirection(direction)) 
@@ -211,8 +202,8 @@ public class LightRacer extends Part {
     }
 
     public void spawn(ArrayList<Part> parts) {
-	for (int i = 0; i < length; i++)
-	    linex[i] = liney[i] = 0;
+	linex = new float[length];
+	liney = new float[length];
 
 	for (int i = 0; i < 10; i++)
 	    if (findSpawn(parts))

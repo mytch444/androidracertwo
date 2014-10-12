@@ -94,12 +94,8 @@ public class Blockade extends Part {
         }
     }
 
-    public void die(float hx, float hy, int di) {
+    public void die(float hx, float hy, float di) {
 	alive = false;
-	createParticles(hx, hy, di);
-    }
-
-    public void createParticles(float hx, float hy, int di) {
 	int start, stop;
         float anglerange, O, speed, d, xd, yd;;
 

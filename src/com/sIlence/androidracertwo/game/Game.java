@@ -9,8 +9,7 @@ import android.util.Log;
 
 public abstract class Game {
 
-    public static int LOCALPOS = 0;
-    
+    LightRacer local;
     ArrayList<Part> parts;
     ArrayList<Particle> particles;
 
@@ -49,7 +48,7 @@ public abstract class Game {
     }
     
     public LightRacer getLocal() {
-        return (LightRacer) parts.get(LOCALPOS);
+        return local;
     }
 
     public ArrayList<Part> getParts() {

@@ -99,10 +99,13 @@ public class Particle {
 
     public static void initLineFall(GameView v, int color, float[] xa, float[] ya, int startIndex) {
 	Random rand = new Random();
-        float x0, y0, x1, y1, distance, incdec, xd, yd, xj, yj;
-	int i, xid, yid;
+        float x0, y0, x1, y1, xd, yd, xj, yj, xid, yid;
+	int i;
+
+	float stepSizeX = (float) v.width() / v.getWidth() / 3;
+	float stepSizeY = (float) v.height() / v.getHeight() / 3;
 	
-        for (i = 1; i < xa.length; i++) {
+        for (i = 1; startIndex + i < xa.length; i++) {
             x0 = xa[startIndex + i];
             y0 = ya[startIndex + i];
 
@@ -120,8 +123,8 @@ public class Particle {
 		Math.abs(yd) > v.height() / 2)
 		continue;
 
-            xid = xd > 0 ? 1 : -1;
-            yid = yd > 0 ? 1 : -1;
+            xid = xd > 0 ? stepSizeX : -stepSizeX;
+            yid = yd > 0 ? stepSizeY : -stepSizeY;
             
 	    float O, s;
 	    float xp, yp;
@@ -135,7 +138,7 @@ public class Particle {
 		    v.getParticles().add(
 				  new Particle(v, color, xj, yj,
 					       O, s,
-					       i / 5, i / 5 + 20));
+					       i / 8, 20));
                     yj += yid;
                 } while ((yid > 0 && yj < y1) || (yid < 0 && yj > y1));
                 xj += xid;
@@ -143,14 +146,13 @@ public class Particle {
         }
     }
     
-    public static void initExplosion(GameView v, int color, float x, float y, int direction) {
+    public static void initExplosion(GameView v, int color, float x, float y, float O) {
 	Random rand = new Random();
 	
-	float O, Op, Od, speed, step;
+	float Op, Od, speed, step;
 	int d, i, n;
 
 	n = 150;
-	O = direction * (float) Math.PI / 2;
 	step = 2 * (float) Math.PI / n;
 	Od = (float) -Math.PI;;
         for (i = 0; i < n; i++) {

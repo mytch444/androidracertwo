@@ -64,7 +64,7 @@ public class Part {
         return y;
     }
 
-    public int getDirection() {
+    public float getDirection() {
         return direction;
     }
 
@@ -78,7 +78,7 @@ public class Part {
         return di;
     }
 
-    public void die(int hx, int hy, int di) {}
+    public void die(float hx, float hy, float di) {}
     public void spawn(ArrayList<Part> parts) {}
 
     public void update() {}

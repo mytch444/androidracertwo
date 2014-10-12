@@ -30,17 +30,18 @@ public class SnakeGame extends Game {
 
 	particles = new ArrayList<Particle>();
 	parts = new ArrayList<Part>();
-	
-        parts.add(LOCALPOS, (Part) new LightRacer(view, 0xC003CCF1));
+
+	local = new LightRacer(view, 0xC003CCF1);
+        parts.add((Part) local);
 	other = new AIRacer(view, getOtherDifficualty());
 	parts.add((Part) other);
         parts.add((Part) new WallRacer(view, 1, 1, getOtherDifficualty() / 4));
         parts.add((Part) new WallRacer(view, view.width() - 1, view.height() - 1, getOtherDifficualty() / 4));
 
-        getLocal().setLength(LightRacer.STANDARD_LENGTH);
+        local.setLength(LightRacer.STANDARD_LENGTH);
         other.setLength(LightRacer.STANDARD_LENGTH);
 
-        getLocal().spawn(parts);
+        local.spawn(parts);
         other.spawn(parts);
 
         for (int i = 0; i < 5; i++) update();
@@ -63,7 +64,6 @@ public class SnakeGame extends Game {
     }
 
     public void checkCollisions() {
-	LightRacer local = getLocal();
 	for (int i = 0; i < parts.size(); i++) {
 	    if (!parts.get(i).isAlive())
 		continue;
@@ -90,7 +90,7 @@ public class SnakeGame extends Game {
 	if (localSpawnDelay > 0) {
 	    localSpawnDelay--;
 	    if (localSpawnDelay == 0)
-		getLocal().spawn(parts);
+		local.spawn(parts);
 	}
 
 	if (otherSpawnDelay > 0) {
@@ -101,7 +101,7 @@ public class SnakeGame extends Game {
     }
 
     public void updateLengths() {
-	getLocal().setLength(getKills() * getKills() + LightRacer.STANDARD_LENGTH);
+	local.setLength(getKills() * getKills() + LightRacer.STANDARD_LENGTH);
         other.setLength(getDeaths() * getDeaths() + LightRacer.STANDARD_LENGTH);
     }
 
@@ -113,6 +113,6 @@ public class SnakeGame extends Game {
 	t = getTime() / 1000;
 	c.drawText("Time: " + t, 10, view.topBorder() - 4, brush);
         textString = getKills() + " : " + getDeaths();
-        c.drawText(textString, view.getWidth() - 10 - view.textWidth(textString, brush) / 2, view.topBorder() - 4, brush);
+        c.drawText(textString, view.getWidth() - 10 - view.textWidth(textString, brush), view.topBorder() - 4, brush);
     }
 }
