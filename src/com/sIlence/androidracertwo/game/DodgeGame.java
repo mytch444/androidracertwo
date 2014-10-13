@@ -1,3 +1,24 @@
+/*
+ *
+ * This file is part of AndroidRacerTwo
+ *
+ * AndroidRacerTwo is free software: you can redistribute it and/or modify
+ * it under the term of the GNU General Public License as published by 
+ * the Free Software Foundation, either version 3 of the Licence, or
+ * (at your option) any later version.
+ * 
+ * AndroidRacerTwo is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License 
+ * along with AndroidRacerTwo. If not, see <http://www.gnu.org/licenses/>
+ *
+ * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
+ *
+*/
+
 package com.sIlence.androidracertwo.game;
 
 import com.sIlence.androidracertwo.*;
@@ -14,6 +35,7 @@ public class DodgeGame extends Game {
 
     public DodgeGame(int o) {
         super(o);
+	lives = 3;
     }
 
     public void init() {
@@ -25,7 +47,6 @@ public class DodgeGame extends Game {
 	setKills(0);
 
 	level = deaths;
-	lives = 3;
 
 	particles = new ArrayList<Particle>();
 	
@@ -74,13 +95,13 @@ public class DodgeGame extends Game {
 
     public void handleCollision(Part p) {
 	if (p.getClass() == Life.class) {
-	    p.die(local.getX(), local.getY(), local.getDirection());
+	    p.die(local.getX(), local.getY(), local.getDirection(), false);
 	    lives++;
 	} else if (lives > 0) {
-	    p.die(local.getX(), local.getY(), local.getDirection());
+	    p.die(local.getX(), local.getY(), local.getDirection(), true);
 	    lives--;
 	} else {
-	    local.die(local.getX(), local.getY(), local.getDirection());
+	    local.die(local.getX(), local.getY(), local.getDirection(), false);
 	    if (stopDelay == 0) {
 		setDeaths(getDeaths() + 1);
 		stopDelay = GAME_END_DELAY;

@@ -19,7 +19,6 @@
  *
 */
 
-
 package com.sIlence.androidracertwo;
 
 import android.graphics.Canvas;
@@ -75,12 +74,16 @@ public class Blockade extends Part {
     }
 
     public void spawn(ArrayList<Part> parts) {
-	if (width == 0) width = rand.nextFloat() * view.width() * 0.6f + 1;
-	if (height == 0) height = 0.6f * view.width() / width;
-	
+	width = rand.nextFloat() * view.width() * 0.3f + 1;
+	height = rand.nextFloat() * view.height() * 0.3f + 1;
+
+	findSpawn(parts);
+    }
+
+    public void findSpawn(ArrayList<Part> parts) {
         for (int tries = 0; tries < 10; tries++) {
-            x = rand.nextFloat() * (view.width() - 8) + 4;
-            y = rand.nextFloat() * (view.height() - 8) + 4;
+            x = rand.nextFloat() * (view.width() - width - 8) + 4;
+            y = rand.nextFloat() * (view.height() - height - 8) + 4;
             
             boolean good = true;
             for (int i = 0; i < parts.size(); i++) {
@@ -94,32 +97,27 @@ public class Blockade extends Part {
         }
     }
 
-    public void die(float hx, float hy, float di) {
+    public void die(float hx, float hy, float di, boolean lives) {
 	alive = false;
 	int start, stop;
-        float anglerange, O, speed, d, xd, yd;;
+        float anglerange, O, speed, xd, yd, Oo;
 
-        anglerange = 0;
-       
-        for (float x = 0; x < width; x++) {
-            for (float y = 0; y < height; y++) {
+	float stepSizeX = (float) view.width() / view.getWidth();
+	float stepSizeY = (float) view.height() / view.getHeight();
+	
+        for (float x = 0; x < width; x += stepSizeX) {
+            for (float y = 0; y < height; y += stepSizeY) {
                 
                 xd = this.x + x - hx;
                 yd = this.y + y - hy;
-		d = (float) Math.sqrt(xd * xd + yd * yd);
 
-		if (d < 20) {
-		    anglerange = 
-			(float) -(Math.PI / 100) * (d - 20) * (d + 20);
-		    O = di * (float) Math.PI / 2 + anglerange;
-		    start = (int) (anglerange / 10) + (int) d / 5;
-		} else {
-		    O = rand.nextFloat() * 2 * (float) Math.PI;
-		    start = (int) d / 3;
-		}
+		speed = 0.3f;
+		//		    speed = (float) ((-0.4 / (2 * Math.PI)) * Oo + 0.4) + 0.05f;
+		
+		O = (float) Math.atan(yd / xd);
 
-                stop = 20;
-                speed = 4f / anglerange + 1f + rand.nextFloat() * 0.1f - 0.5f;
+		start = 0;//(int) ((Math.abs(O - di)) * 10);
+                stop = 30;
 
                 view.getParticles().add(
 				      new Particle(view, color, x + this.x, y + this.y,

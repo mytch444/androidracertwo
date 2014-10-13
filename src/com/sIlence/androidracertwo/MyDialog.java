@@ -19,7 +19,6 @@
  *
 */
 
-
 package com.sIlence.androidracertwo;
 
 import android.app.DialogFragment;

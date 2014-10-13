@@ -19,7 +19,6 @@
  *
 */
 
-
 package com.sIlence.androidracertwo;
 
 import android.graphics.Canvas;
@@ -78,7 +77,7 @@ public class Part {
         return di;
     }
 
-    public void die(float hx, float hy, float di) {}
+    public void die(float hx, float hy, float di, boolean lives) {}
     public void spawn(ArrayList<Part> parts) {}
 
     public void update() {}

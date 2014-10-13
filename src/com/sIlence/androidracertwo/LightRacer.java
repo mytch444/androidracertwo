@@ -85,7 +85,7 @@ public class LightRacer extends Part {
         }
     }
 
-    public void die(float hx, float hy, float di) {
+    public void die(float hx, float hy, float di, boolean lives) {
 	int start;
 	Particle.initExplosion(view, startColor, hx, hy, di);
 
@@ -94,7 +94,10 @@ public class LightRacer extends Part {
 		   (hy >= liney[start] - 0.5f && hy <= liney[start] + 0.5f))
 		 ; start--);
 
-	alive = start != 0;
+	if (linex[0] == hx && liney[0] == hy && !lives) {
+	    alive = false;
+	    start = 0;
+	}
 
 	Particle.initLineFall(view, startColor, linex, liney, start);
 
@@ -313,9 +316,6 @@ public class LightRacer extends Part {
     }
 
     public boolean collides(Part other) {
-	if (!isAlive())
-	    return false;
-	
         float x = other.getX();
         float y = other.getY();
 

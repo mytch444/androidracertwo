@@ -19,7 +19,6 @@
  *
 */
 
-
 package com.sIlence.androidracertwo;
 
 import android.graphics.Canvas;
@@ -81,7 +80,7 @@ public class WallRacer extends LightRacer {
         renderLines(c);
     }
 
-    public void die(float hx, float hy, float di) {
+    public void die(float hx, float hy, float di, boolean lives) {
 	Particle.initExplosion(view, startColor, hx, hy, di);
     }
 }

@@ -19,12 +19,12 @@
  *
 */
 
-
 package com.sIlence.androidracertwo;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import java.util.Random;
+import java.util.ArrayList;
 import android.util.Log;
 
 public class Life extends Blockade {
@@ -37,5 +37,11 @@ public class Life extends Blockade {
 
     public Life(GameView v) {
         this(v, 0, 0);
+    }
+
+    public void spawn(ArrayList<Part> parts) {
+	width = 10;
+	height = 10;
+	findSpawn(parts);
     }
 }

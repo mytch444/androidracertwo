@@ -1,3 +1,24 @@
+/*
+ *
+ * This file is part of AndroidRacerTwo
+ *
+ * AndroidRacerTwo is free software: you can redistribute it and/or modify
+ * it under the term of the GNU General Public License as published by 
+ * the Free Software Foundation, either version 3 of the Licence, or
+ * (at your option) any later version.
+ * 
+ * AndroidRacerTwo is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License 
+ * along with AndroidRacerTwo. If not, see <http://www.gnu.org/licenses/>
+ *
+ * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
+ *
+*/
+
 package com.sIlence.androidracertwo.game;
 
 import com.sIlence.androidracertwo.*;
@@ -20,6 +41,8 @@ public class TronGame extends Game {
 
         winMessage = "Round Over\nYou won";
         loseMessage = "Round Over\nYou Lost";
+
+	localLives = otherLives = 0;
     }
 
     public void init() {
@@ -40,8 +63,6 @@ public class TronGame extends Game {
 	int nblockades, nlives;
 	nblockades = 0;
 	nlives = 0;
-
-	localLives = otherLives = 1;	
 
 	if (kills > 0) {
 	    nblockades += rand.nextInt(kills) + kills / 2;
@@ -98,30 +119,30 @@ public class TronGame extends Game {
     public void handleCollision(Part p, boolean localL) {
 	if (p.getClass() == Life.class) {
 	    if (localL) {
-		p.die(local.getX(), local.getY(), local.getDirection());
+		p.die(local.getX(), local.getY(), local.getDirection(), false);
 		localLives++;
 	    } else {
-		p.die(other.getX(), other.getY(), other.getDirection());
+		p.die(other.getX(), other.getY(), other.getDirection(), false);
 		otherLives++;		
 	    }
 	} else if (localL && localLives > 0) {
-	    p.die(local.getX(), local.getY(), local.getDirection());
+	    p.die(local.getX(), local.getY(), local.getDirection(), true);
 	    localLives--;
 	} else if (!localL && otherLives > 0) {
-	    p.die(other.getX(), other.getY(), other.getDirection());
+	    p.die(other.getX(), other.getY(), other.getDirection(), true);
 	    otherLives--;
 	} else if (localL) {
-	    local.die(local.getX(), local.getY(), local.getDirection());
+	    local.die(local.getX(), local.getY(), local.getDirection(), false);
 	    if (stopDelay == 0) {
 		setDeaths(getDeaths() + 1);
 		stopDelay = GAME_END_DELAY;
 	    }
 	} else if (!localL) {
-	  other.die(other.getX(), other.getY(), other.getDirection());
-	  if (stopDelay == 0) {
-	      setKills(getKills() + 1);
-	      stopDelay = GAME_END_DELAY;
-	  }
+	    other.die(other.getX(), other.getY(), other.getDirection(), false);
+	    if (stopDelay == 0) {
+		setKills(getKills() + 1);
+		stopDelay = GAME_END_DELAY;
+	    }
 	}
     }
 

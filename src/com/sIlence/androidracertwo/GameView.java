@@ -54,7 +54,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     float width, height;
     float topBorder, bottomBorder, leftBorder, rightBorder;
     float yPartSize, xPartSize;
-    boolean horizontalOrientation;
     
     Paint brush;
 
@@ -217,16 +216,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	
         brush = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-	if (getWidth() > getHeight()) {
-	    width = getHeight() / 3;
-	    height = getWidth() / 3;
-	    horizontalOrientation = true;
-	} else {
-	    width = getWidth() / 3;
-	    height = getHeight() / 3;
-	    horizontalOrientation = false;
-	}
-	
+	width = getWidth() / 3;
+	height = getHeight() / 3;
+
 	leftBorder = 0;
 	rightBorder = 0;
 	bottomBorder = 0;
@@ -234,7 +226,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 	xPartSize = (getWidth() - leftBorder() - rightBorder()) / width();
 	yPartSize = (getHeight() - topBorder() - bottomBorder()) / height();
-	
+
 	handler.init();
 
 	game.setView(this);
@@ -282,7 +274,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public float toPoint(float p, boolean x) {
-	if (x ^ horizontalOrientation)
+	if (x)
 	    return leftBorder() + p * xPartSize;
 	else
 	    return topBorder() + p * yPartSize;

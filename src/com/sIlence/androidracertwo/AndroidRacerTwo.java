@@ -19,7 +19,6 @@
  *
 */
 
-
 package com.sIlence.androidracertwo;
 
 import com.sIlence.androidracertwo.game.*;
@@ -44,12 +43,11 @@ public class AndroidRacerTwo extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     public void menu() {
-        unlockOrientation();
-
         final Context context = this;
 
         setContentView(R.layout.main);
@@ -152,43 +150,14 @@ public class AndroidRacerTwo extends Activity {
 	else {
 	    openGame(view);
 	}
-	
-        unlockOrientation();
     }
 
     public void openGame(final GameView newView) {
-        lockOrientation(); 
         runOnUiThread(new Runnable() {
             public void run() {	
                 view = newView;
                 setContentView(view);
             }
         });
-    }
-
-    public void lockOrientation() {
-        int orientation = getResources().getConfiguration().orientation;
-        int rotation = getWindowManager().getDefaultDisplay().getRotation();
-
-        if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90) {
-            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            }
-            else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            }
-        }
-        else if (rotation == Surface.ROTATION_180 || rotation == Surface.ROTATION_270) {
-            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
-            }
-            else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-            }
-        }
-    }
-
-    public void unlockOrientation() {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
     }
 }
