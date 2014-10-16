@@ -30,26 +30,18 @@ import java.lang.Math;
 import android.util.Log;
 
 public class Particle extends Part {
-    static Paint brush = new Paint(Paint.ANTI_ALIAS_FLAG);
-    //    GameView view;
-    float mx, my;
     float xv, yv;
     float w, h;
     int age;
     int start;
     int	life;
     int	a, r, g, b;
-    Random rand;
-    boolean alive;
     int starta;
 
     public Particle(GameView v, int color, float x, float y, float width, float height,
 		    float O, float speed,
 		    int sta, int lif) {
 	super(v);
-	view = v;
-        rand = new Random();
-	//        brush = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         a = Color.alpha(color);
         r = Color.red(color);
@@ -57,8 +49,8 @@ public class Particle extends Part {
         b = Color.blue(color);
         starta = a;
         
-        mx = x;
-        my = y;
+        this.x = x;
+        this.y = y;
 
 	w = width;
 	h = height;
@@ -68,6 +60,7 @@ public class Particle extends Part {
         age = 0;
         alive = true;
 
+	direction = (int) O;
         xv = (float) Math.cos(O) * speed;
         yv = (float) Math.sin(O) * speed;
     }
@@ -78,15 +71,14 @@ public class Particle extends Part {
 	this(v, color, x, y, 0, 0, O, speed, sta, lif);
     }
 
-
     public void update() {
         if (!alive) return;
             
         age++;
 
         if (age > start && age < start + life) {
-            mx += -(xv / (life * life)) * ((age - start) + life) * ((age - start) - life);
-	    my += -(yv / (life * life)) * ((age - start) + life) * ((age - start) - life);
+            x += -(xv / (life * life)) * ((age - start) + life) * ((age - start) - life);
+	    y += -(yv / (life * life)) * ((age - start) + life) * ((age - start) - life);
         }
 
 	a = //(int) (255 / (age));
@@ -94,9 +86,9 @@ public class Particle extends Part {
         if (a < 20) alive = false;
 
 	// Ohh sweet mother of lag this should be interesting.
-	for (int i = 0; i < view.getParts().size; i++) {
+	for (int i = 0; i < view.getParts().size(); i++) {
 	    Part p = view.getParts().get(i);
-	    if (p.isAlive() && collides(p)) {
+	    if (p.isAlive() && p.collides(this)) {
 		xv = -xv;
 		yv = -yv;
 		break;
@@ -109,14 +101,10 @@ public class Particle extends Part {
 
         brush.setColor(Color.argb(a, r, g, b));
 	if (w == 0 || h == 0)
-	    c.drawPoint(view.toPoint(mx, true), view.toPoint(my, false), brush);
+	    c.drawPoint(view.toPoint(x, true), view.toPoint(y, false), brush);
 	else
-	    c.drawRect(view.toPoint(mx, true), view.toPoint(my, false),
-		       view.toPoint(mx + w, true), view.toPoint(my + h, false), brush);
-    }
-
-    public boolean isAlive() {
-        return alive;
+	    c.drawRect(view.toPoint(x, true), view.toPoint(y, false),
+		       view.toPoint(x + w, true), view.toPoint(y + h, false), brush);
     }
 
     /****************************** Particle layouts ***********************************/

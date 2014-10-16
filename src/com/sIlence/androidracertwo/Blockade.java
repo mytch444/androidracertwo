@@ -135,8 +135,8 @@ public class Blockade extends Part {
 	float speed, O, xd, yd, xp, yp;
 	boolean left, up;
 	
-	float w = 0.6f;
-	float h = 0.6f;
+	float w = 0.3f;
+	float h = 0.3f;
         for (float x = 0; x < width; x += w) {
             for (float y = 0; y < height; y += h) {
 		xp = this.x + x;
