@@ -39,6 +39,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import java.util.ArrayList;
+import java.util.Random;
 import android.util.Log;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
@@ -57,6 +58,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     
     Paint brush;
 
+    Random rand;
+
     Game game;
     InputHandler handler;
     MyDialog dialog;
@@ -66,6 +69,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         getHolder().addCallback(this);
         setFocusable(true);
 
+	rand = new Random();
+	
         game = g;
         loop = new GameLoop(this);
 
@@ -165,15 +170,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         brush.setStyle(Paint.Style.FILL);
         c.drawRect(0, 0, getWidth(), getHeight(), brush);
 
-        brush.setColor(0x206FC0DF);
-        brush.setStyle(Paint.Style.STROKE);
+        brush.setColor(0x246FC0DF);
 
         for (float x = 0; x < getWidth(); x += 70) {
-            c.drawLine(x, topBorder(), x, getHeight(), brush);
+	    c.drawLine(x, topBorder(), x, getHeight(), brush);
         }
+	
         for (float y = topBorder(); y < getHeight(); y += 70) {
-            c.drawLine(0, y, getWidth(), y, brush);
-        }
+	    c.drawLine(0, y, getWidth(), y, brush);
+	}
     }
 
     @Override
@@ -201,13 +206,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 	game.setView(this);
 
-	pausing = false;
+	pausing = true;
 	
 	if (game.getParts() == null) {
 	    newGame();
 	    showDialog(new NewGameDialog(this, game.startMessage(), false));
-	} else {
-	    pausing = true;
 	}
 
 	tick();
@@ -274,11 +277,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	return bottomBorder;
     }
 
-    public float toPoint(float p, boolean x) {
-	if (x)
-	    return leftBorder() + p * xPartSize;
-	else
-	    return topBorder() + p * yPartSize;
+    public float toXPoint(float p) {
+	return leftBorder + p * xPartSize;
+    }
+
+    public float toYPoint(float p) {
+	return topBorder + p * yPartSize;
     }
 
     /*
@@ -323,5 +327,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public boolean killTailOffScreen() {
 	return game.killTailOffScreen();
+    }
+
+    public Random getRand() {
+	return rand;
+    }
+
+    public Paint getPaint() {
+	return brush;
     }
 }

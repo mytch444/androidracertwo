@@ -37,8 +37,17 @@ public class Particle extends Part {
     int	life;
     int	a, r, g, b;
     int starta;
+    int bounced;
 
-    public Particle(GameView v, int color, float x, float y, float width, float height,
+    public static float width(GameView v) {
+	return v.width() / v.getWidth() * 2;
+    }
+
+    public static float height(GameView v) {
+	return v.height() / v.getHeight() * 2;
+    }
+    
+    public Particle(GameView v, int color, float x, float y,
 		    float O, float speed,
 		    int sta, int lif) {
 	super(v);
@@ -52,28 +61,20 @@ public class Particle extends Part {
         this.x = x;
         this.y = y;
 
-	w = width;
-	h = height;
+	w = width(v);
+	h = height(v);
 
         start = sta;
-        life = rand.nextInt(lif) + lif / 2;
+        life = lif;//(int) (v.getRand().nextFloat() * lif) + lif / 2;
         age = 0;
-        alive = true;
 
-	direction = (int) O;
+	bounced = 0;
+
         xv = (float) Math.cos(O) * speed;
         yv = (float) Math.sin(O) * speed;
     }
 
-    public Particle(GameView v, int color, float x, float y,
-		    float O, float speed,
-		    int sta, int lif) {
-	this(v, color, x, y, 0, 0, O, speed, sta, lif);
-    }
-
     public void update() {
-        if (!alive) return;
-            
         age++;
 
         if (age > start && age < start + life) {
@@ -81,43 +82,46 @@ public class Particle extends Part {
 	    y += -(yv / (life * life)) * ((age - start) + life) * ((age - start) - life);
         }
 
-	a = //(int) (255 / (age));
-	    (int) -(((float) starta / ((start + life) * (start + life))) * (age + (start + life)) * (age - (start + life)));
-        if (a < 20) alive = false;
+	a = (int) -(((float) starta / ((start + life) * (start + life))) * (age + (start + life)) * (age - (start + life)));
+        if (a < 30) alive = false;
 
+	color = Color.argb(a, r, g, b);
+	/*
 	// Ohh sweet mother of lag this should be interesting.
-	for (int i = 0; i < view.getParts().size(); i++) {
-	    Part p = view.getParts().get(i);
-	    if (p.isAlive() && p.collides(this)) {
-		xv = -xv;
-		yv = -yv;
-		break;
+	if (bounced == 0) {
+	    for (int i = 0; i < view.getParts().size(); i++) {
+		Part p = view.getParts().get(i);
+		if (p.isAlive() && p.collides(this)) {
+		    bounced = 5;
+		    xv = -xv;
+		    yv = -yv;
+		    break;
+		}
 	    }
-	}
+	} else
+	    bounced--;
+	*/
     }
 
     public void render (Canvas c) {
-        if (!alive) return;
-
-        brush.setColor(Color.argb(a, r, g, b));
-	if (w == 0 || h == 0)
-	    c.drawPoint(view.toPoint(x, true), view.toPoint(y, false), brush);
-	else
-	    c.drawRect(view.toPoint(x, true), view.toPoint(y, false),
-		       view.toPoint(x + w, true), view.toPoint(y + h, false), brush);
+        brush.setColor(color);
+	c.drawRect(view.toXPoint(x), view.toYPoint(y),
+		   view.toXPoint(x + w), view.toYPoint(y + h), brush);
     }
 
     /****************************** Particle layouts ***********************************/
 
     public static void initLineFall(GameView v, int color, float[] xa, float[] ya, int startIndex) {
-	Random rand = new Random();
         float x0, y0, x1, y1, xd, yd, xj, yj, xid, yid;
 	int i;
 
-	float stepSizeX = (float) v.width() / v.getWidth() / 3;
-	float stepSizeY = (float) v.height() / v.getHeight() / 3;
+	float stepSizeX = width(v);
+	float stepSizeY = height(v);
 	
         for (i = 1; startIndex + i < xa.length; i++) {
+	    if (startIndex + i - 1 < 0)
+		continue;
+	    
             x0 = xa[startIndex + i];
             y0 = ya[startIndex + i];
 
@@ -145,12 +149,12 @@ public class Particle extends Part {
             do {
 		yj = y0;
                 do {
-                    O = rand.nextFloat() * (float) Math.PI * 2;
-		    s = 0.15f + rand.nextFloat() * 0.1f;
+                    O = v.getRand().nextFloat() * (float) Math.PI * 2;
+		    s = 0.15f + v.getRand().nextFloat() * 0.1f;
 		    v.getParticles().add(
 				  new Particle(v, color, xj, yj,
 					       O, s,
-					       i / 8, 20));
+					       i < 160 ? i / 8 : 20, 20));
                     yj += yid;
                 } while ((yid > 0 && yj < y1) || (yid < 0 && yj > y1));
                 xj += xid;
@@ -159,21 +163,18 @@ public class Particle extends Part {
     }
     
     public static void initExplosion(GameView v, int color, float x, float y, float O) {
-	Random rand = new Random();
-	
-	float Op, Od, speed, step;
-	int d, i, n;
+	double Od, step;
+	float speed;
+	int n;
 
-	n = 150;
-	step = 2 * (float) Math.PI / n;
-	Od = (float) -Math.PI;;
-        for (i = 0; i < n; i++) {
-	    Od += step;
-	    speed = (float) (Math.cos(1.3 * Od) + 1.5f) * (rand.nextFloat() * 0.5f + 0.1f);
+	n = 60;
+	step = 2 * Math.PI / n;
+        for (Od = -Math.PI; Od < Math.PI; Od += step) {
+	    speed = (float) (Math.cos(1.3 * Od) + 1.5f) * (v.getRand().nextFloat() * 0.5f + 0.1f);
 
             v.getParticles().add(new Particle(v, color, x, y,
-				       O + Od, speed,
-				       0, 40));
+					      O + (float) Od, speed,
+					      0, 40));
 	}
     }
 }

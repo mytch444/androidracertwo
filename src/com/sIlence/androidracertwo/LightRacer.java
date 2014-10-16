@@ -35,8 +35,9 @@ public class LightRacer extends Part {
     int length;
 
     int ri, a, front, bx, by;
-
     boolean light;
+
+    long lastTurn;
 
     public LightRacer(GameView v, int c) {
         super(v);
@@ -44,10 +45,11 @@ public class LightRacer extends Part {
         linex = new float[STANDARD_LENGTH];
         liney = new float[STANDARD_LENGTH];
         length = STANDARD_LENGTH;
-        direction = rand.nextInt(4);
-        color = c;
+	
+        direction = getRand().nextInt(4);
+
+	color = c;
         startColor = color;
-        brush.setStrokeWidth(0f);
         light = true;
     }
 
@@ -99,7 +101,12 @@ public class LightRacer extends Part {
 	    start = 0;
 	}
 
-	Particle.initLineFall(view, startColor, linex, liney, start);
+	if (start > 4)
+	    start -= 2;
+
+	Particle.initLineFall(view, startColor, linex, liney,
+			      // It looks nice to have the last few also go up in pixels.
+			      start > 4 ? start - 2 : start);
 
         if (start > 0) {
 	    for (; start < linex.length; start++) {
@@ -139,40 +146,43 @@ public class LightRacer extends Part {
     public void renderLines(Canvas c) {
 	float x = linex[1];
 	float y = liney[1];
+	float dist;
 
+	//	brush.setStrokeWidth(0f);
 	brush.setColor(color);
 	for (ri = 1; ri < linex.length && linex[ri] != 0 && liney[ri] != 0; ri++) {
 	    // Last or next is not strait
 	    if (ri == linex.length - 1 || linex[ri + 1] != x && liney[ri + 1] != y) {
-		c.drawLine(view.toPoint(x, true), view.toPoint(y, false),
-			   view.toPoint(linex[ri], true), view.toPoint(liney[ri], false), brush);
+		c.drawLine(view.toXPoint(x), view.toYPoint(y),
+			   view.toXPoint(linex[ri]), view.toYPoint(liney[ri]), brush);
 
 		x = linex[ri];
 		y = liney[ri];
 	    }
 
 	    // Next one jumps accross screen
-	    if (ri < linex.length - 1
-		//&& !(linex[ri + 1] == 0 && liney[ri + 1] == 0)
-		&& (Math.abs(linex[ri + 1] - linex[ri]) > view.width() / 2
-		    || Math.abs(liney[ri + 1] - liney[ri]) > view.height() / 2)) {
-		ri++;
-		x = linex[ri];
-		y = liney[ri];
+	    if (ri < linex.length - 1) {
+		dist = (linex[ri] - linex[ri + 1]) * (linex[ri] - linex[ri + 1])
+		    + (liney[ri] - liney[ri + 1]) * (liney[ri] - liney[ri + 1]);
+		if (dist > (view.width() / 2) * (view.width() / 2)) {
+		    ri++;
+		    x = linex[ri];
+		    y = liney[ri];
+		}
 	    }
 	}
 
 	if (light) {
 	    int a = 255;
 	    for (ri = 0; ri < linex.length - 1 && linex[ri + 1] != 0 && liney[ri + 1] != 0; ri++) {
-		if (Math.abs(linex[ri] - linex[ri + 1]) > view.width() / 2 ||
-		    Math.abs(liney[ri] - liney[ri + 1]) > view.height() / 2)
+		dist = (linex[ri] - linex[ri + 1]) * (linex[ri] - linex[ri + 1])
+		    + (liney[ri] - liney[ri + 1]) * (liney[ri] - liney[ri + 1]);
+		if (dist > (view.width() / 2) * (view.width() / 2))
 		    continue;
-	    
 		front = Color.argb(a, 255, 255, 255);
 		brush.setColor(front);
-		c.drawLine(view.toPoint(linex[ri], true), view.toPoint(liney[ri], false),
-			   view.toPoint(linex[ri + 1], true), view.toPoint(liney[ri + 1], false), brush);
+		c.drawLine(view.toXPoint(linex[ri]), view.toYPoint(liney[ri]),
+			   view.toXPoint(linex[ri + 1]), view.toYPoint(liney[ri + 1]), brush);
 
 		a -= 25;
 		if (a < 0) break;
@@ -220,8 +230,8 @@ public class LightRacer extends Part {
     }
 
     public boolean findSpawn(ArrayList<Part> parts) {
-        linex[0] = rand.nextFloat() * (view.width() - 10) + 5;
-	liney[0] = rand.nextFloat() * (view.height() - 10) + 5;
+        linex[0] = getRand().nextFloat() * (view.width() - 10) + 5;
+	liney[0] = getRand().nextFloat() * (view.height() - 10) + 5;
 
 	for (int i = 0; i < 4; i++)
 	    if (!safeToTurn(parts, i, 100))

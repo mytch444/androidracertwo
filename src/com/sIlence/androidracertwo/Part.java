@@ -30,25 +30,20 @@ public class Part {
     float x;
     float y;
     int direction;
+
     GameView view;
+
     int color;
     int startColor;
-    Random rand;
-    Paint brush;
-    long lastTurn;
+    
     boolean alive;
 
+    Paint brush;
+
     public Part(GameView v) {
-        this.view = v;
-        x = 0;
-        y = 0;
-        direction = 0;
-        color = 0xff00ffff;
-        startColor = color;
-        rand = new Random();
-        brush = new Paint(Paint.ANTI_ALIAS_FLAG);
-        lastTurn = 0;
+	view = v;
 	alive = true;
+	brush = v.getPaint();
     }
 
     public boolean isAlive() {
@@ -71,17 +66,49 @@ public class Part {
         return false;
     }
 
-    public static int oppDirection(int di) {
-        di += 2;
-	di %= 4;
-        return di;
-    }
-
     public void die(float hx, float hy, float di, boolean lives) {}
     public void spawn(ArrayList<Part> parts) {}
 
     public void update() {}
     public void render(Canvas c) {}
 
-    public void stop() {}
+    public Random getRand() {
+	return view.getRand();
+    }
+
+    public static int oppDirection(int di) {
+        di += 2;
+	di %= 4;
+        return di;
+    }
+    
+    public static float directionFromDifferences(float xd, float yd) {
+	double O;
+	float tmp;
+	int m;
+	
+	boolean left = xd <= 0;
+	boolean up = yd <= 0;
+
+	if (!left && !up) {
+	    O = 0;
+	    m = 1;
+	} else if (left && !up) {
+	    O = Math.PI;
+	    m = -1;
+	    xd = -xd;
+	} else if (left && up) {
+	    O = Math.PI;
+	    m = 1;
+	    xd = -xd;
+	    yd = -yd;
+	} else if (!left && up) {
+	    O = 2 * Math.PI;
+	    m = -1;
+	    yd = -yd;
+	} else // Damn java.
+	    return 0;
+	
+	return (float) (O + m * Math.atan(yd / xd));
+    }
 }

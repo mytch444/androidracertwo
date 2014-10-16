@@ -35,9 +35,6 @@ public class SnakeGame extends Game {
     
     public SnakeGame(int o) {
         super(o);
-
-        winMessage = "Game Over \nYou Won";
-        loseMessage = "Game Over \nYou Lost";
     }
 
     public void init() {
@@ -137,6 +134,14 @@ public class SnakeGame extends Game {
         c.drawText(textString, view.getWidth() - 10 - view.textWidth(textString, brush), view.topBorder() - 4, brush);
     }
 
+    public String winMessage() {
+	return "Game Over\nYou Won!";
+    }
+
+    public String loseMessage() {
+	return "Game Over\nYou Lost!";
+    }
+    
     public String startMessage() {
 	return "You Are Blue.\nMake Yellow Crash.";
     }

@@ -65,10 +65,10 @@ public class AIRacer extends LightRacer {
 	offScreen();
 	
 	int nd = -1;
-	if (rand.nextInt(16) == 1 || !safeToTurn(parts, direction, difficualty))
+	if (getRand().nextInt(16) == 1 || !safeToTurn(parts, direction, difficualty))
 	    nd = safestDirection(parts);
 	if (nd != -1) {
-	    int lag = rand.nextInt(20000 / difficualty);
+	    int lag = getRand().nextInt(20000 / difficualty);
 	    final int di = nd;
 	    
 	    view.postDelayed(new Runnable() {

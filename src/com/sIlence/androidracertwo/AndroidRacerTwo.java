@@ -35,6 +35,8 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.util.Log;
 
+import android.os.Debug;
+
 public class AndroidRacerTwo extends Activity {
 
     GameView view;
@@ -98,6 +100,8 @@ public class AndroidRacerTwo extends Activity {
 	Log.d("TAG", "onstop()");
         if (view != null) view.stop();
 
+	Debug.stopMethodTracing();
+	
         super.onStop();
         onDestroy();
     }
@@ -114,6 +118,7 @@ public class AndroidRacerTwo extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle b) {
+	Log.d("TAG", "onSaveInstanceState()");
         if (view != null) {
 	    view.stop();
             view.killDialog();
@@ -145,6 +150,8 @@ public class AndroidRacerTwo extends Activity {
 
 	super.onStart();
 
+	Debug.startMethodTracing("racer");
+
 	if (view == null)
 	    menu();
 	else {
@@ -154,7 +161,7 @@ public class AndroidRacerTwo extends Activity {
 
     public void openGame(final GameView newView) {
         runOnUiThread(new Runnable() {
-            public void run() {	
+            public void run() {
                 view = newView;
                 setContentView(view);
             }

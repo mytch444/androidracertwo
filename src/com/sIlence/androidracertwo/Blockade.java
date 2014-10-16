@@ -51,9 +51,10 @@ public class Blockade extends Part {
     public void render(Canvas c) {
         if (!isAlive())
 	    return;
+
 	brush.setColor(color);
-	c.drawRect(view.toPoint(x, true), view.toPoint(y, false),
-		   view.toPoint(x + width, true), view.toPoint(y + height, false), brush);
+	c.drawRect(view.toXPoint(x), view.toYPoint(y),
+		   view.toXPoint(x + width), view.toYPoint(y + height), brush);
     }
 
     public boolean collides(Part other) {
@@ -74,16 +75,16 @@ public class Blockade extends Part {
     }
 
     public void spawn(ArrayList<Part> parts) {
-	width = rand.nextFloat() * view.width() * 0.3f + 1;
-	height = rand.nextFloat() * view.height() * 0.3f + 1;
+	width = getRand().nextFloat() * view.width() * 0.3f + 1;
+	height = getRand().nextFloat() * view.height() * 0.3f + 1;
 
 	findSpawn(parts);
     }
 
     public void findSpawn(ArrayList<Part> parts) {
         for (int tries = 0; tries < 10; tries++) {
-            x = rand.nextFloat() * (view.width() - width - 8) + 4;
-            y = rand.nextFloat() * (view.height() - height - 8) + 4;
+            x = getRand().nextFloat() * (view.width() - width - 8) + 4;
+            y = getRand().nextFloat() * (view.height() - height - 8) + 4;
             
             boolean good = true;
             for (int i = 0; i < parts.size(); i++) {
@@ -96,36 +97,6 @@ public class Blockade extends Part {
             if (good) break;
         }
     }
-
-    public float directionFromDifferences(float xd, float yd) {
-	double O;
-	float tmp;
-	int m;
-	
-	boolean left = xd <= 0;
-	boolean up = yd <= 0;
-	
-	if (!left && !up) {
-	    O = 0;
-	    m = 1;
-	} else if (left && !up) {
-	    O = Math.PI;
-	    m = -1;
-	    xd = -xd;
-	} else if (left && up) {
-	    O = Math.PI;
-	    m = 1;
-	    xd = -xd;
-	    yd = -yd;
-	} else if (!left && up) {
-	    O = 2 * Math.PI;
-	    m = -1;
-	    yd = -yd;
-	} else // Damn java.
-	    return 0;
-	
-	return (float) (O + m * Math.atan(yd / xd));
-    }
     
     public void die(float hx, float hy, float di, boolean lives) {
 	alive = false;
@@ -135,8 +106,8 @@ public class Blockade extends Part {
 	float speed, O, xd, yd, xp, yp;
 	boolean left, up;
 	
-	float w = 0.3f;
-	float h = 0.3f;
+	float w = Particle.width(view);
+	float h = Particle.height(view);
         for (float x = 0; x < width; x += w) {
             for (float y = 0; y < height; y += h) {
 		xp = this.x + x;
@@ -160,7 +131,7 @@ public class Blockade extends Part {
                 stop = 30;
 		
                 view.getParticles().add(
-					new Particle(view, color, xp, yp, w, h,
+					new Particle(view, color, xp, yp,
 						     O, speed, start, stop));
             }
         }

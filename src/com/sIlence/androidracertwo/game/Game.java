@@ -42,9 +42,6 @@ public abstract class Game {
 
     GameView view;
 
-    String winMessage;
-    String loseMessage;
-
     String textString;
     Paint brush;
 
@@ -93,11 +90,15 @@ public abstract class Game {
     public void updateLengths() {}
 
     public String winMessage() {
-        return winMessage;
+        return "You won!!\nWhat you won I have no idea.";
     }
 
     public String loseMessage() {
-        return loseMessage;
+        return "You lost!!\n What you lost I have no idea.";
+    }
+
+    public String startMessage() {
+	return "You have as good of an idea as I do as to what you should do. Try pressing begin (but that may not exist so do whatever), then find the person that gave you this and scream at them. Unless it's me. Then I'm just enlightening you with this messsage and the lack of a start message was completely intentional. Good luck.";
     }
 
     public int getKills() {
@@ -132,10 +133,6 @@ public abstract class Game {
         return rand;
     }
 
-    public String startMessage() {
-	return "You have as good of an idea as I of what you should do. Try pressing begin (but that may not exist so do whatever) and find the person that gave you this and scream at them. Unless it's me. Then I'm just enlightening you with this messsage and the lack of a start message was completely intentional. Good luck.";
-    }
-    
     public void checkCollisions() {}
 
     public void update() {
@@ -145,7 +142,11 @@ public abstract class Game {
 	
 	updateLengths();
 	for (i = 0; i < parts.size(); i++) {
-	    parts.get(i).update();
+	    Part p = parts.get(i);
+	    if (!p.isAlive())
+		parts.remove(p);
+	    else
+		p.update();
 	}
 
 	for (i = 0; i < particles.size(); i++) {

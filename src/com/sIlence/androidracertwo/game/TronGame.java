@@ -39,9 +39,6 @@ public class TronGame extends Game {
     public TronGame(int o) {
         super(o);
 
-        winMessage = "Round Over\nYou won";
-        loseMessage = "Round Over\nYou Lost";
-
 	localLives = otherLives = 0;
     }
 
@@ -178,6 +175,14 @@ public class TronGame extends Game {
         c.drawText(textString, view.getWidth() - 10 - view.textWidth(textString, brush), view.topBorder() - 4, brush);
     }
 
+    public String winMessage() {
+	return "Round Over\nYou Won!";
+    }
+
+    public String loseMessage() {
+	return "Round Over\nYou Lost!";
+    }
+    
     public String startMessage() {
 	return "You are blue. Make yellow crash. The blue objects are lives, the others surprises. Good luck.";
     }
