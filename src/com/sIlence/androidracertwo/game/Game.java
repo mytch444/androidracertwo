@@ -131,6 +131,10 @@ public abstract class Game {
     public Random rand() {
         return rand;
     }
+
+    public String startMessage() {
+	return "You have as good of an idea as I of what you should do. Try pressing begin (but that may not exist so do whatever) and find the person that gave you this and scream at them. Unless it's me. Then I'm just enlightening you with this messsage and the lack of a start message was completely intentional. Good luck.";
+    }
     
     public void checkCollisions() {}
 

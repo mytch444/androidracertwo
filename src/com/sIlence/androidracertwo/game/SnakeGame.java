@@ -136,4 +136,8 @@ public class SnakeGame extends Game {
         textString = getKills() + " : " + getDeaths();
         c.drawText(textString, view.getWidth() - 10 - view.textWidth(textString, brush), view.topBorder() - 4, brush);
     }
+
+    public String startMessage() {
+	return "You Are Blue.\nMake Yellow Crash.";
+    }
 }

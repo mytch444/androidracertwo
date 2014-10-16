@@ -177,4 +177,8 @@ public class TronGame extends Game {
         textString = getKills() + " : " + getDeaths();
         c.drawText(textString, view.getWidth() - 10 - view.textWidth(textString, brush), view.topBorder() - 4, brush);
     }
+
+    public String startMessage() {
+	return "You are blue. Make yellow crash. The blue objects are lives, the others surprises. Good luck.";
+    }
 }

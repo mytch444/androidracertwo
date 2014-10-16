@@ -19,15 +19,17 @@
  *
 */
 
-package com.sIlence.androidracertwo;
+package com.sIlence.androidracertwo.dialog;
 
-public class NewGameDialog extends MyDialog {
-    
-    public NewGameDialog(GameView v, String m, String p, String n) {
-        super(v, m, p, n);
+import com.sIlence.androidracertwo.GameView;
+
+public class PauseDialog extends MyDialog {
+
+    public PauseDialog(GameView v) {
+        super(v, "Paused", "Resume", "Exit");
     }
 
     public void pos() {
-        view.newGame();
+        view.start();
     }
 }

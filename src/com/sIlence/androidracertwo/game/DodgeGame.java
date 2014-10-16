@@ -150,4 +150,8 @@ public class DodgeGame extends Game {
     public String loseMessage() {
 	return "You survived for " + (view.getTime() / 1000) + " seconds.";
     }
+
+    public String startMessage() {
+	return "See how long you can stay alive for.\nEach level gets harder.";
+    }
 }

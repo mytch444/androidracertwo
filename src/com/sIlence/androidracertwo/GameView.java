@@ -22,6 +22,7 @@
 package com.sIlence.androidracertwo;
 
 import com.sIlence.androidracertwo.game.*;
+import com.sIlence.androidracertwo.dialog.*;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -43,7 +44,6 @@ import android.util.Log;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     boolean pausing;
-    boolean starting;
     boolean gameOver;
     boolean won;
     
@@ -76,12 +76,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	this(context, g, false);
     }
 
-    protected void newGame() {
+    public void newGame() {
 	stop();
 	
         game.init();
 
-	starting = true;
         gameOver = false;
         won = false;
 	pausing = false;
@@ -92,7 +91,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        if (starting || gameOver) return;        
+        if (gameOver) return;        
         
         if (countdown > 0) {
 	    countdown -= framePeriod();
@@ -100,6 +99,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
      
         game.update();
+
+	messages();
     }
 
     public void render(Canvas c) {
@@ -118,20 +119,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
 	
 	handler.overlay(c);
-        messages();
     }
 
     public void messages() {
-        if (gameOver) {
+	if (gameOver) {
             if (won) {
-                dialog(new NewGameDialog(this, game.winMessage(), "New Game", "Exit"));
-            } else {
-                dialog(new NewGameDialog(this, game.loseMessage(), "New Game", "Exit"));
+                showDialog(new NewGameDialog(this, game.winMessage()));
+	    } else {
+                showDialog(new NewGameDialog(this, game.loseMessage()));
             }
-        } else if (starting) {
-            dialog(new PauseDialog(this, "You Are Blue\nSwipe To Turn\nMake Yellow Crash\nTap To Play", "Start", "Exit"));
-        } else if (!loop.running() || pausing) {
-            dialog(new PauseDialog(this, "Paused", "Resume", "Exit"));
+	} else if (pausing) {
+	    showDialog(new PauseDialog(this));
         }
     }
 
@@ -144,7 +142,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         return ft;
     }
 
-    public void dialog(MyDialog d) {
+    public void showDialog(MyDialog d) {
 	stop();
 	FragmentTransaction ft = cleanupFragments();
 	dialog = d;
@@ -153,7 +151,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void gameOver(boolean w) {
         won = w;
-
         gameOver = true;
     }
 
@@ -184,33 +181,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	return handler.onTouchEvent(e);
     }
 
-    public void pause() {
-        pausing = true;
-    }
-
-    public void stop() {
-	pausing = false;
-	loop.stopLoop();
-    }
-
-    public void start() {
-	stop();
-
-	starting = false;
-        
-	loop = new GameLoop(this);
-        loop.start();
-    }
-
-    public void tick() {
-	loop.tick();
-    }
-    
-    public boolean isPaused() {
-        if (gameOver) return true;
-        return loop.running();
-    }
-
     public void surfaceCreated(SurfaceHolder arg0) {
 	Log.d("TAG", "surfaceCreated");
 	
@@ -230,12 +200,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	handler.init();
 
 	game.setView(this);
-	pause();
+
+	pausing = false;
 	
-	if (game.getParts() == null)
+	if (game.getParts() == null) {
 	    newGame();
-	else
-	    tick();
+	    showDialog(new NewGameDialog(this, game.startMessage(), false));
+	} else {
+	    pausing = true;
+	}
+
+	tick();
     }
 
     public void surfaceDestroyed(SurfaceHolder arg0) {
@@ -244,6 +219,32 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {}
+
+
+    public void pause() {
+        pausing = true;
+    }
+
+    public void stop() {
+	pausing = false;
+	loop.stopLoop();
+    }
+
+    public void start() {
+	stop();
+
+	loop = new GameLoop(this);
+        loop.start();
+    }
+
+    public void tick() {
+	loop.tick();
+    }
+    
+    public boolean isPaused() {
+        if (gameOver) return true;
+        return loop.running();
+    }
 
     /*
      * Positioning.

@@ -19,8 +19,10 @@
  *
 */
 
-package com.sIlence.androidracertwo;
+package com.sIlence.androidracertwo.dialog;
 
+import com.sIlence.androidracertwo.GameView;
+import com.sIlence.androidracertwo.AndroidRacerTwo;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;

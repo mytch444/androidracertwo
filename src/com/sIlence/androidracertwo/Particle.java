@@ -29,9 +29,9 @@ import java.util.Random;
 import java.lang.Math;
 import android.util.Log;
 
-public class Particle {
+public class Particle extends Part {
     static Paint brush = new Paint(Paint.ANTI_ALIAS_FLAG);
-    GameView view;
+    //    GameView view;
     float mx, my;
     float xv, yv;
     float w, h;
@@ -46,6 +46,7 @@ public class Particle {
     public Particle(GameView v, int color, float x, float y, float width, float height,
 		    float O, float speed,
 		    int sta, int lif) {
+	super(v);
 	view = v;
         rand = new Random();
 	//        brush = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -91,6 +92,16 @@ public class Particle {
 	a = //(int) (255 / (age));
 	    (int) -(((float) starta / ((start + life) * (start + life))) * (age + (start + life)) * (age - (start + life)));
         if (a < 20) alive = false;
+
+	// Ohh sweet mother of lag this should be interesting.
+	for (int i = 0; i < view.getParts().size; i++) {
+	    Part p = view.getParts().get(i);
+	    if (p.isAlive() && collides(p)) {
+		xv = -xv;
+		yv = -yv;
+		break;
+	    }
+	}
     }
 
     public void render (Canvas c) {
@@ -107,8 +118,6 @@ public class Particle {
     public boolean isAlive() {
         return alive;
     }
-
-
 
     /****************************** Particle layouts ***********************************/
 
