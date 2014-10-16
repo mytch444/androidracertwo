@@ -89,7 +89,7 @@ public class LightRacer extends Part {
 	int start;
 	Particle.initExplosion(view, startColor, hx, hy, di);
 
-	for (start = length - 1; start > 0 &&
+	for (start = linex.length - 1; start > 0 &&
 		 !((hx >= linex[start] - 0.5f && hx <= linex[start] + 0.5f) &&
 		   (hy >= liney[start] - 0.5f && hy <= liney[start] + 0.5f))
 		 ; start--);
@@ -102,7 +102,7 @@ public class LightRacer extends Part {
 	Particle.initLineFall(view, startColor, linex, liney, start);
 
         if (start > 0) {
-	    for (; start < length; start++) {
+	    for (; start < linex.length; start++) {
 		linex[start] = 0;
 		liney[start] = 0;
 	    }
@@ -110,7 +110,7 @@ public class LightRacer extends Part {
     }
 
     public void updateLine() {
-        for (int i = length - 1; i > 0; i--) {
+        for (int i = linex.length - 1; i > 0; i--) {
             linex[i] = linex[i - 1];
             liney[i] = liney[i - 1];
         }
@@ -141,9 +141,9 @@ public class LightRacer extends Part {
 	float y = liney[1];
 
 	brush.setColor(color);
-	for (ri = 1; ri < length && linex[ri] != 0 && liney[ri] != 0; ri++) {
+	for (ri = 1; ri < linex.length && linex[ri] != 0 && liney[ri] != 0; ri++) {
 	    // Last or next is not strait
-	    if (ri == length - 1 || linex[ri + 1] != x && liney[ri + 1] != y) {
+	    if (ri == linex.length - 1 || linex[ri + 1] != x && liney[ri + 1] != y) {
 		c.drawLine(view.toPoint(x, true), view.toPoint(y, false),
 			   view.toPoint(linex[ri], true), view.toPoint(liney[ri], false), brush);
 
@@ -152,7 +152,7 @@ public class LightRacer extends Part {
 	    }
 
 	    // Next one jumps accross screen
-	    if (ri < length - 1
+	    if (ri < linex.length - 1
 		//&& !(linex[ri + 1] == 0 && liney[ri + 1] == 0)
 		&& (Math.abs(linex[ri + 1] - linex[ri]) > view.width() / 2
 		    || Math.abs(liney[ri + 1] - liney[ri]) > view.height() / 2)) {
@@ -164,7 +164,7 @@ public class LightRacer extends Part {
 
 	if (light) {
 	    int a = 255;
-	    for (ri = 0; ri < length - 1 && linex[ri + 1] != 0 && liney[ri + 1] != 0; ri++) {
+	    for (ri = 0; ri < linex.length - 1 && linex[ri + 1] != 0 && liney[ri + 1] != 0; ri++) {
 		if (Math.abs(linex[ri] - linex[ri + 1]) > view.width() / 2 ||
 		    Math.abs(liney[ri] - liney[ri + 1]) > view.height() / 2)
 		    continue;
@@ -181,7 +181,7 @@ public class LightRacer extends Part {
     }
 
     public float getDirection() {
-        return direction * (float) Math.PI / 2;
+        return (float) direction * (float) Math.PI / 2f;
     }
     
     public boolean changeDirection(int wd) {
@@ -200,7 +200,7 @@ public class LightRacer extends Part {
 
     protected void newLine() {
 	Particle.initLineFall(view, startColor, linex, liney, 0);
-	for (int i = 0; i < length; i++)
+	for (int i = 0; i < linex.length; i++)
 	    linex[i] = liney[i] = 0;
     }
 
@@ -322,7 +322,7 @@ public class LightRacer extends Part {
 	if (linex == null || liney == null)
 	    Log.d("fdjaskl f", "what the actuall fuck!");
 	
-        for (int i = 1; i < length; i++) {
+        for (int i = 1; i < linex.length; i++) {
             if (x >= linex[i] - 0.5f && x <= linex[i] + 0.5f)
 		if (y >= liney[i] - 0.5f && y <= liney[i] + 0.5f) 
 		    return true;

@@ -97,31 +97,71 @@ public class Blockade extends Part {
         }
     }
 
+    public float directionFromDifferences(float xd, float yd) {
+	double O;
+	float tmp;
+	int m;
+	
+	boolean left = xd <= 0;
+	boolean up = yd <= 0;
+	
+	if (!left && !up) {
+	    O = 0;
+	    m = 1;
+	} else if (left && !up) {
+	    O = Math.PI;
+	    m = -1;
+	    xd = -xd;
+	} else if (left && up) {
+	    O = Math.PI;
+	    m = 1;
+	    xd = -xd;
+	    yd = -yd;
+	} else if (!left && up) {
+	    O = 2 * Math.PI;
+	    m = -1;
+	    yd = -yd;
+	} else // Damn java.
+	    return 0;
+	
+	return (float) (O + m * Math.atan(yd / xd));
+    }
+    
     public void die(float hx, float hy, float di, boolean lives) {
 	alive = false;
-	int start, stop;
-        float anglerange, O, speed, xd, yd, Oo;
-
-	float stepSizeX = (float) view.width() / view.getWidth();
-	float stepSizeY = (float) view.height() / view.getHeight();
 	
-        for (float x = 0; x < width; x += stepSizeX) {
-            for (float y = 0; y < height; y += stepSizeY) {
-                
-                xd = this.x + x - hx;
-                yd = this.y + y - hy;
-
-		speed = 0.3f;
-		//		    speed = (float) ((-0.4 / (2 * Math.PI)) * Oo + 0.4) + 0.05f;
+	int start, stop;
+        double Od;
+	float speed, O, xd, yd, xp, yp;
+	boolean left, up;
+	
+	float w = 0.6f;
+	float h = 0.6f;
+        for (float x = 0; x < width; x += w) {
+            for (float y = 0; y < height; y += h) {
+		xp = this.x + x;
+		yp = this.y + y;
 		
-		O = (float) Math.atan(yd / xd);
+		xd = xp - hx;
+		yd = yp - hy;
+		
+		O = directionFromDifferences(xd, yd);
 
-		start = 0;//(int) ((Math.abs(O - di)) * 10);
+		if (di > O)
+		    Od = di - O;
+		else
+		    Od = O - di;
+		if (Od > Math.PI)
+		    Od = 2 * Math.PI - Od;
+
+		speed = 1.2f * (float) Math.pow(0.1, (2 * Od) / Math.PI);
+
+		start = (int) Math.hypot(xd, yd) / 2;
                 stop = 30;
-
+		
                 view.getParticles().add(
-				      new Particle(view, color, x + this.x, y + this.y,
-						   O, speed, start, stop));
+					new Particle(view, color, xp, yp, w, h,
+						     O, speed, start, stop));
             }
         }
     }

@@ -34,6 +34,7 @@ public class Particle {
     GameView view;
     float mx, my;
     float xv, yv;
+    float w, h;
     int age;
     int start;
     int	life;
@@ -42,7 +43,7 @@ public class Particle {
     boolean alive;
     int starta;
 
-    public Particle(GameView v, int color, float x, float y,
+    public Particle(GameView v, int color, float x, float y, float width, float height,
 		    float O, float speed,
 		    int sta, int lif) {
 	view = v;
@@ -58,6 +59,9 @@ public class Particle {
         mx = x;
         my = y;
 
+	w = width;
+	h = height;
+
         start = sta;
         life = rand.nextInt(lif) + lif / 2;
         age = 0;
@@ -66,6 +70,13 @@ public class Particle {
         xv = (float) Math.cos(O) * speed;
         yv = (float) Math.sin(O) * speed;
     }
+
+    public Particle(GameView v, int color, float x, float y,
+		    float O, float speed,
+		    int sta, int lif) {
+	this(v, color, x, y, 0, 0, O, speed, sta, lif);
+    }
+
 
     public void update() {
         if (!alive) return;
@@ -86,7 +97,11 @@ public class Particle {
         if (!alive) return;
 
         brush.setColor(Color.argb(a, r, g, b));
-        c.drawPoint(view.toPoint(mx, true), view.toPoint(my, false), brush);
+	if (w == 0 || h == 0)
+	    c.drawPoint(view.toPoint(mx, true), view.toPoint(my, false), brush);
+	else
+	    c.drawRect(view.toPoint(mx, true), view.toPoint(my, false),
+		       view.toPoint(mx + w, true), view.toPoint(my + h, false), brush);
     }
 
     public boolean isAlive() {
