@@ -17,10 +17,11 @@
  *
  * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
  *
-*/
+ */
 
 package com.sIlence.androidracertwo;
 
+import com.sIlence.androidracertwo.game.Game;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import java.util.Random;
@@ -31,19 +32,19 @@ public class Part {
     float y;
     int direction;
 
-    GameView view;
+    Game game;
 
     int color;
     int startColor;
-    
+
     boolean alive;
 
     Paint brush;
 
-    public Part(GameView v) {
-	view = v;
-	alive = true;
-	brush = v.getPaint();
+    public Part(Game g) {
+        game = g;
+        alive = true;
+        brush = g.getView().getPaint();
     }
 
     public boolean isAlive() {
@@ -73,42 +74,42 @@ public class Part {
     public void render(Canvas c) {}
 
     public Random getRand() {
-	return view.getRand();
+        return game.getRand();
     }
 
     public static int oppDirection(int di) {
         di += 2;
-	di %= 4;
+        di %= 4;
         return di;
     }
-    
-    public static float directionFromDifferences(float xd, float yd) {
-	double O;
-	float tmp;
-	int m;
-	
-	boolean left = xd <= 0;
-	boolean up = yd <= 0;
 
-	if (!left && !up) {
-	    O = 0;
-	    m = 1;
-	} else if (left && !up) {
-	    O = Math.PI;
-	    m = -1;
-	    xd = -xd;
-	} else if (left && up) {
-	    O = Math.PI;
-	    m = 1;
-	    xd = -xd;
-	    yd = -yd;
-	} else if (!left && up) {
-	    O = 2 * Math.PI;
-	    m = -1;
-	    yd = -yd;
-	} else // Damn java.
-	    return 0;
-	
-	return (float) (O + m * Math.atan(yd / xd));
+    public static float directionFromDifferences(float xd, float yd) {
+        double O;
+        float tmp;
+        int m;
+
+        boolean left = xd <= 0;
+        boolean up = yd <= 0;
+
+        if (!left && !up) {
+            O = 0;
+            m = 1;
+        } else if (left && !up) {
+            O = Math.PI;
+            m = -1;
+            xd = -xd;
+        } else if (left && up) {
+            O = Math.PI;
+            m = 1;
+            xd = -xd;
+            yd = -yd;
+        } else if (!left && up) {
+            O = 2 * Math.PI;
+            m = -1;
+            yd = -yd;
+        } else // Damn java.
+            return 0;
+
+        return (float) (O + m * Math.atan(yd / xd));
     }
 }

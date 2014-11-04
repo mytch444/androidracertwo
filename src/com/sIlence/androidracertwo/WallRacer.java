@@ -17,28 +17,29 @@
  *
  * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
  *
-*/
+ */
 
 package com.sIlence.androidracertwo;
 
+import com.sIlence.androidracertwo.game.Game;
 import android.graphics.Canvas;
 import java.util.ArrayList;
 import android.util.Log;
 
 public class WallRacer extends LightRacer {
 
-    public WallRacer (GameView v, float x, float y, float gap) {
-        super (v, 0xC05FFE3C);
+    public WallRacer (Game g, float x, float y, float gap) {
+        super (g, 0xC05FFE3C);
 
         direction = 3;
 
-        length = (int) (view.width() + view.height() - gap - 2);
+        length = (int) (game.width() + game.height() - gap - 2);
 
         if (gap == 0)
-	    light = false;
+            light = false;
 
-	alive = true;
-	
+        alive = true;
+
         linex = new float[length];
         liney = new float[length];
 
@@ -62,17 +63,17 @@ public class WallRacer extends LightRacer {
 
     @Override
     public void update() {
-	offScreen();
+        offScreen();
         move();
         updateLine();
     }
 
     @Override
     public void offScreen() {
-        if (linex[0] < 2 && liney[0] > view.height() / 2) changeDirection(3);
-        else if (liney[0] < 2 && linex[0] < view.width() / 2) changeDirection(0);
-        else if (linex[0] > view.width() - 2 && liney[0] < view.height() / 2) changeDirection(1);
-        else if (liney[0] > view.height() - 2 && linex[0] > view.width() / 2) changeDirection(2);
+        if (linex[0] < 2 && liney[0] > game.height() / 2) changeDirection(3);
+        else if (liney[0] < 2 && linex[0] < game.width() / 2) changeDirection(0);
+        else if (linex[0] > game.width() - 2 && liney[0] < game.height() / 2) changeDirection(1);
+        else if (liney[0] > game.height() - 2 && linex[0] > game.width() / 2) changeDirection(2);
     }
 
     @Override
@@ -81,6 +82,6 @@ public class WallRacer extends LightRacer {
     }
 
     public void die(float hx, float hy, float di, boolean lives) {
-	Particle.initExplosion(view, startColor, hx, hy, di);
+        Particle.initExplosion(game, startColor, hx, hy, di);
     }
 }

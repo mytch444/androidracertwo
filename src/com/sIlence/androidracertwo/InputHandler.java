@@ -17,7 +17,7 @@
  *
  * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
  *
-*/
+ */
 
 package com.sIlence.androidracertwo;
 
@@ -38,95 +38,95 @@ public class InputHandler {
     private GameView view;
 
     public InputHandler(GameView v, boolean a) {
-	view = v;
-	usingArrows = a;
+        view = v;
+        usingArrows = a;
         brush = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
     public void init() {
-	if (usingArrows) {
-	    int arrowWidth = view.getWidth() / 5;
-	    
-	    arrows = new Rect[4];
-	    arrows[3] =
-		new Rect(
-			 view.getWidth() / 2 - arrowWidth / 2,
-			 view.getHeight() - arrowWidth * 2 - 20,
-			 view.getWidth() / 2 + arrowWidth / 2,
-			 view.getHeight() - arrowWidth - 20
-			 );
-	    arrows[1] =
-		new Rect(
-			 view.getWidth() / 2 - arrowWidth / 2,
-			 view.getHeight() - arrowWidth - 10,
-			 view.getWidth() / 2 + arrowWidth / 2,
-			 view.getHeight() - 10
-			 );
-	    arrows[0] =
-		new Rect(
-			 view.getWidth() / 2 + arrowWidth / 2 + 10,
-			 view.getHeight() - arrowWidth - 10,
-			 view.getWidth() / 2 + arrowWidth / 2 + arrowWidth + 10,
-			 view.getHeight() - 10
-			 );
-	    arrows[2] =
-		new Rect(
-			 view.getWidth() / 2 - arrowWidth / 2 - arrowWidth - 10,
-			 view.getHeight() - arrowWidth - 10,
-			 view.getWidth() / 2 - arrowWidth / 2 - 10,
-			 view.getHeight() - 10
-			 );			 
-	}
+        if (usingArrows) {
+            int arrowWidth = view.getWidth() / 5;
+
+            arrows = new Rect[4];
+            arrows[3] =
+                new Rect(
+                        view.getWidth() / 2 - arrowWidth / 2,
+                        view.getHeight() - arrowWidth * 2 - 20,
+                        view.getWidth() / 2 + arrowWidth / 2,
+                        view.getHeight() - arrowWidth - 20
+                        );
+            arrows[1] =
+                new Rect(
+                        view.getWidth() / 2 - arrowWidth / 2,
+                        view.getHeight() - arrowWidth - 10,
+                        view.getWidth() / 2 + arrowWidth / 2,
+                        view.getHeight() - 10
+                        );
+            arrows[0] =
+                new Rect(
+                        view.getWidth() / 2 + arrowWidth / 2 + 10,
+                        view.getHeight() - arrowWidth - 10,
+                        view.getWidth() / 2 + arrowWidth / 2 + arrowWidth + 10,
+                        view.getHeight() - 10
+                        );
+            arrows[2] =
+                new Rect(
+                        view.getWidth() / 2 - arrowWidth / 2 - arrowWidth - 10,
+                        view.getHeight() - arrowWidth - 10,
+                        view.getWidth() / 2 - arrowWidth / 2 - 10,
+                        view.getHeight() - 10
+                        );			 
+        }
     }
-    
+
     public void overlay(Canvas c) {
-	if (usingArrows) {
-	    brush.setColor(0xffaaaaaa);
-	    brush.setStyle(Paint.Style.STROKE);
-	    
-	    for (int i = 0; i < arrows.length; i++) {
-		c.drawRect(arrows[i], brush);
-	    }
-	}
+        if (usingArrows) {
+            brush.setColor(0xffaaaaaa);
+            brush.setStyle(Paint.Style.STROKE);
+
+            for (int i = 0; i < arrows.length; i++) {
+                c.drawRect(arrows[i], brush);
+            }
+        }
     }
-    
+
     public boolean onTouchEvent(MotionEvent e) {
-	if (usingArrows) {
-	    for (int i = 0; i < arrows.length; i++) {
-		if (arrows[i].contains((int) e.getX(), (int) e.getY())) {
-		    view.getLocal().changeDirection(i);
-		}
-	    }
-	} else {
-	    if (e.getAction() == MotionEvent.ACTION_DOWN) {
-		x = e.getX();
-		y = e.getY();
-	    } else if (e.getAction() == MotionEvent.ACTION_MOVE) {
-		xDiff = e.getX() - x;
-		yDiff = e.getY() - y;
-		x = e.getX();
-		y = e.getY();
-		
-		int g = vertorhorz(xDiff, yDiff);
-		if (g == 0) {
-		    if (xDiff > 0 && view.getLocal().changeDirection(0));
-		    if (xDiff < 0 && view.getLocal().changeDirection(2));
-		} else if (g == 1) {
-		    if (yDiff < 0 && view.getLocal().changeDirection(3));
-		    if (yDiff > 0 && view.getLocal().changeDirection(1));
-		}
-	    }
-	}
-	return true;
+        if (usingArrows) {
+            for (int i = 0; i < arrows.length; i++) {
+                if (arrows[i].contains((int) e.getX(), (int) e.getY())) {
+                    view.getGame().changeDirection(i);
+                }
+            }
+        } else {
+            if (e.getAction() == MotionEvent.ACTION_DOWN) {
+                x = e.getX();
+                y = e.getY();
+            } else if (e.getAction() == MotionEvent.ACTION_MOVE) {
+                xDiff = e.getX() - x;
+                yDiff = e.getY() - y;
+                x = e.getX();
+                y = e.getY();
+
+                int g = vertorhorz(xDiff, yDiff);
+                if (g == 0) {
+                    if (xDiff > 0 && view.getGame().changeDirection(0));
+                    if (xDiff < 0 && view.getGame().changeDirection(2));
+                } else if (g == 1) {
+                    if (yDiff < 0 && view.getGame().changeDirection(3));
+                    if (yDiff > 0 && view.getGame().changeDirection(1));
+                }
+            }
+        }
+        return true;
     }
-    
+
     protected int vertorhorz(float x, float y) {
-	if (x < 0) x = -x;
-	if (y < 0) y = -y;
-	
-	if (x > y) return 0;
-	if (y > x) return 1;
-	return -1;
+        if (x < 0) x = -x;
+        if (y < 0) y = -y;
+
+        if (x > y) return 0;
+        if (y > x) return 1;
+        return -1;
     }
 }
 

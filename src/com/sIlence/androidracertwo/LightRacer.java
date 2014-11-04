@@ -17,10 +17,11 @@
  *
  * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
  *
-*/
+ */
 
 package com.sIlence.androidracertwo;
 
+import com.sIlence.androidracertwo.game.Game;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.view.Surface;
@@ -39,22 +40,22 @@ public class LightRacer extends Part {
 
     long lastTurn;
 
-    public LightRacer(GameView v, int c) {
-        super(v);
+    public LightRacer(Game g, int c) {
+        super(g);
 
         linex = new float[STANDARD_LENGTH];
         liney = new float[STANDARD_LENGTH];
         length = STANDARD_LENGTH;
-	
+
         direction = getRand().nextInt(4);
 
-	color = c;
+        color = c;
         startColor = color;
         light = true;
     }
 
-    public LightRacer(GameView v, int c, float x, float y, int d) {
-        this(v, c);
+    public LightRacer(Game g, int c, float x, float y, int d) {
+        this(g, c);
 
         linex[0] = x;
         liney[0] = y;
@@ -63,13 +64,13 @@ public class LightRacer extends Part {
 
     @Override
     public void update() {
-	if (!isAlive())
-	    return;
-	
-	updateLength();
-	updateLine();
-	move();
-	offScreen();
+        if (!isAlive())
+            return;
+
+        updateLength();
+        updateLine();
+        move();
+        offScreen();
     }
 
     public void updateLength() {
@@ -88,31 +89,32 @@ public class LightRacer extends Part {
     }
 
     public void die(float hx, float hy, float di, boolean lives) {
-	int start;
-	Particle.initExplosion(view, startColor, hx, hy, di);
+        int start;
+    
+        Particle.initExplosion(game, startColor, hx, hy, di);
 
-	for (start = linex.length - 1; start > 0 &&
-		 !((hx >= linex[start] - 0.5f && hx <= linex[start] + 0.5f) &&
-		   (hy >= liney[start] - 0.5f && hy <= liney[start] + 0.5f))
-		 ; start--);
+        for (start = linex.length - 1; start > 0 &&
+                !((hx >= linex[start] - 0.5f && hx <= linex[start] + 0.5f) &&
+                    (hy >= liney[start] - 0.5f && hy <= liney[start] + 0.5f))
+                ; start--);
 
-	if (linex[0] == hx && liney[0] == hy && !lives) {
-	    alive = false;
-	    start = 0;
-	}
+        if (linex[0] == hx && liney[0] == hy && !lives) {
+            alive = false;
+            start = 0;
+        }
 
-	if (start > 4)
-	    start -= 2;
+        if (start > 4)
+            start -= 2;
 
-	Particle.initLineFall(view, startColor, linex, liney,
-			      // It looks nice to have the last few also go up in pixels.
-			      start > 4 ? start - 2 : start);
+        Particle.initLineFall(game, startColor, linex, liney,
+                // It looks nice to have the last few also go up in pixels.
+                start > 4 ? start - 2 : start);
 
         if (start > 0) {
-	    for (; start < linex.length; start++) {
-		linex[start] = 0;
-		liney[start] = 0;
-	    }
+            for (; start < linex.length; start++) {
+                linex[start] = 0;
+                liney[start] = 0;
+            }
         }
     }
 
@@ -124,134 +126,134 @@ public class LightRacer extends Part {
     }
 
     public void move() {
-	linex[0] += (float) Math.cos(direction * Math.PI / 2);
-	liney[0] += (float) Math.sin(direction * Math.PI / 2);
+        linex[0] += (float) Math.cos(direction * Math.PI / 2);
+        liney[0] += (float) Math.sin(direction * Math.PI / 2);
     }
 
     public float getX() {
-	return linex[0];
+        return linex[0];
     }
 
     public float getY() {
-	return liney[0];
+        return liney[0];
     }
 
     public void render(Canvas c) {
-	if (!isAlive())
-	    return;
-	
-	renderLines(c);
+        if (!isAlive())
+            return;
+
+        renderLines(c);
     }
 
     public void renderLines(Canvas c) {
-	float x = linex[1];
-	float y = liney[1];
-	float dist;
+        float x = linex[1];
+        float y = liney[1];
+        float dist;
 
-	//	brush.setStrokeWidth(0f);
-	brush.setColor(color);
-	for (ri = 1; ri < linex.length && linex[ri] != 0 && liney[ri] != 0; ri++) {
-	    // Last or next is not strait
-	    if (ri == linex.length - 1 || linex[ri + 1] != x && liney[ri + 1] != y) {
-		c.drawLine(view.toXPoint(x), view.toYPoint(y),
-			   view.toXPoint(linex[ri]), view.toYPoint(liney[ri]), brush);
+        //	brush.setStrokeWidth(0f);
+        brush.setColor(color);
+        for (ri = 1; ri < linex.length && linex[ri] != 0 && liney[ri] != 0; ri++) {
+            // Last or next is not strait
+            if (ri == linex.length - 1 || linex[ri + 1] != x && liney[ri + 1] != y) {
+                c.drawLine(game.getView().toXPoint(x), game.getView().toYPoint(y),
+                        game.getView().toXPoint(linex[ri]), game.getView().toYPoint(liney[ri]), brush);
 
-		x = linex[ri];
-		y = liney[ri];
-	    }
+                x = linex[ri];
+                y = liney[ri];
+            }
 
-	    // Next one jumps accross screen
-	    if (ri < linex.length - 1) {
-		dist = (linex[ri] - linex[ri + 1]) * (linex[ri] - linex[ri + 1])
-		    + (liney[ri] - liney[ri + 1]) * (liney[ri] - liney[ri + 1]);
-		if (dist > (view.width() / 2) * (view.width() / 2)) {
-		    ri++;
-		    x = linex[ri];
-		    y = liney[ri];
-		}
-	    }
-	}
+            // Next one jumps accross screen
+            if (ri < linex.length - 1) {
+                dist = (linex[ri] - linex[ri + 1]) * (linex[ri] - linex[ri + 1])
+                    + (liney[ri] - liney[ri + 1]) * (liney[ri] - liney[ri + 1]);
+                if (dist > (game.width() / 2) * (game.width() / 2)) {
+                    ri++;
+                    x = linex[ri];
+                    y = liney[ri];
+                }
+            }
+        }
 
-	if (light) {
-	    int a = 255;
-	    for (ri = 0; ri < linex.length - 1 && linex[ri + 1] != 0 && liney[ri + 1] != 0; ri++) {
-		dist = (linex[ri] - linex[ri + 1]) * (linex[ri] - linex[ri + 1])
-		    + (liney[ri] - liney[ri + 1]) * (liney[ri] - liney[ri + 1]);
-		if (dist > (view.width() / 2) * (view.width() / 2))
-		    continue;
-		front = Color.argb(a, 255, 255, 255);
-		brush.setColor(front);
-		c.drawLine(view.toXPoint(linex[ri]), view.toYPoint(liney[ri]),
-			   view.toXPoint(linex[ri + 1]), view.toYPoint(liney[ri + 1]), brush);
+        if (light) {
+            int a = 255;
+            for (ri = 0; ri < linex.length - 1 && linex[ri + 1] != 0 && liney[ri + 1] != 0; ri++) {
+                dist = (linex[ri] - linex[ri + 1]) * (linex[ri] - linex[ri + 1])
+                    + (liney[ri] - liney[ri + 1]) * (liney[ri] - liney[ri + 1]);
+                if (dist > (game.width() / 2) * (game.width() / 2))
+                    continue;
+                front = Color.argb(a, 255, 255, 255);
+                brush.setColor(front);
+                c.drawLine(game.getView().toXPoint(linex[ri]), game.getView().toYPoint(liney[ri]),
+                        game.getView().toXPoint(linex[ri + 1]), game.getView().toYPoint(liney[ri + 1]), brush);
 
-		a -= 25;
-		if (a < 0) break;
-	    }
-	}
+                a -= 25;
+                if (a < 0) break;
+            }
+        }
     }
 
     public float getDirection() {
         return (float) direction * (float) Math.PI / 2f;
     }
-    
+
     public boolean changeDirection(int wd) {
         if ((wd == direction)
-	    || (wd == oppDirection(direction)) 
-	    || (lastTurn + view.turnDelay() * view.framePeriod() > view.getTime())
-	    ) {
+                || (wd == oppDirection(direction)) 
+                || (lastTurn + game.getView().turnDelay() * game.getView().framePeriod() > game.getView().getTime())
+           ) {
             return false;
         } else { // Can turn this way
             direction = wd;
-            lastTurn = view.getTime();
+            lastTurn = game.getView().getTime();
 
             return true;
         }
     }
 
     protected void newLine() {
-	Particle.initLineFall(view, startColor, linex, liney, 0);
-	for (int i = 0; i < linex.length; i++)
-	    linex[i] = liney[i] = 0;
+        Particle.initLineFall(game, startColor, linex, liney, 0);
+        for (int i = 0; i < linex.length; i++)
+            linex[i] = liney[i] = 0;
     }
 
     public void spawn(ArrayList<Part> parts) {
-	linex = new float[length];
-	liney = new float[length];
+        linex = new float[length];
+        liney = new float[length];
 
-	for (int i = 0; i < 10; i++)
-	    if (findSpawn(parts))
-		break;
+        for (int i = 0; i < 10; i++)
+            if (findSpawn(parts))
+                break;
 
-	direction = safestDirection(parts);
-	color = startColor;
+        direction = safestDirection(parts);
+        color = startColor;
 
-	lastTurn = 0;
-	alive = true;
+        lastTurn = 0;
+        alive = true;
     }
 
     public boolean findSpawn(ArrayList<Part> parts) {
-        linex[0] = getRand().nextFloat() * (view.width() - 10) + 5;
-	liney[0] = getRand().nextFloat() * (view.height() - 10) + 5;
+        linex[0] = getRand().nextFloat() * (game.width() - 10) + 5;
+        liney[0] = getRand().nextFloat() * (game.height() - 10) + 5;
 
-	for (int i = 0; i < 4; i++)
-	    if (!safeToTurn(parts, i, 100))
-		return false;
+        for (int i = 0; i < 4; i++)
+            if (!safeToTurn(parts, i, 100))
+                return false;
 
-	return true;
+        return true;
     }
 
     public int safestDirection(ArrayList<Part> parts) {
-	int newDi = -1;
+        int newDi = -1;
         int bestClearance = 0;
 
-	x = linex[0];
-	y = liney[0];
-	
+        x = linex[0];
+        y = liney[0];
+
         for (int checkingDi = 0; checkingDi < 4; checkingDi++) {
-	    clearancetesting:
-            for (int clearance = 1; clearance < view.height(); clearance++) {
-		linex[0] = x + (float) Math.cos(Math.PI / 2 * checkingDi) * clearance;
-		liney[0] = y + (float) Math.sin(Math.PI / 2 * checkingDi) * clearance;
+clearancetesting:
+            for (int clearance = 1; clearance < game.height(); clearance++) {
+                linex[0] = x + (float) Math.cos(Math.PI / 2 * checkingDi) * clearance;
+                liney[0] = y + (float) Math.sin(Math.PI / 2 * checkingDi) * clearance;
 
                 if (clearance > bestClearance) {
                     newDi = checkingDi;
@@ -259,20 +261,20 @@ public class LightRacer extends Part {
                 }
 
                 for (int i = 0; i < parts.size(); i++) {
-		    if (parts.get(i) != this && parts.get(i).collides(this)) {
+                    if (parts.get(i) != this && parts.get(i).collides(this)) {
                         if (clearance > bestClearance) {
                             newDi = checkingDi;
                             bestClearance = clearance;
                         }
 
-			break clearancetesting;
+                        break clearancetesting;
                     }
                 }
             }
         }
 
-	linex[0] = x;
-	liney[0] = y;
+        linex[0] = x;
+        liney[0] = y;
 
         return newDi;
     }
@@ -282,21 +284,21 @@ public class LightRacer extends Part {
         y = liney[0];
 
         for (int distanceChecked = 0; distanceChecked < distance; distanceChecked++) {
-	    linex[0] = x + (float) Math.cos(Math.PI / 2 * wd) * distanceChecked;
-	    liney[0] = y + (float) Math.sin(Math.PI / 2 * wd) * distanceChecked;
+            linex[0] = x + (float) Math.cos(Math.PI / 2 * wd) * distanceChecked;
+            liney[0] = y + (float) Math.sin(Math.PI / 2 * wd) * distanceChecked;
 
-	    for (int i = 0; i < parts.size(); i++) {
+            for (int i = 0; i < parts.size(); i++) {
                 if (parts.get(i).collides(this)) {
-		    linex[0] = x;
-		    liney[0] = y;
+                    linex[0] = x;
+                    liney[0] = y;
                     return false;
                 }
             }
         }
 
-	linex[0] = x;
-	liney[0] = y;
-	
+        linex[0] = x;
+        liney[0] = y;
+
         return true;
     }
 
@@ -304,38 +306,38 @@ public class LightRacer extends Part {
         float nx, ny;
 
         if (liney[0] <= 0) {
-	    nx = view.width() - linex[0];
-	    ny = view.height() - 1;
-        } else if (liney[0] >= view.height()) {
-	    nx = view.width() - linex[0];
-	    ny = 1;
+            nx = game.width() - linex[0];
+            ny = game.height() - 1;
+        } else if (liney[0] >= game.height()) {
+            nx = game.width() - linex[0];
+            ny = 1;
         } else if (linex[0] <= 0) {
-	    nx = view.width() - 1;
-	    ny = view.height() - liney[0];
-	} else if (linex[0] >= view.width()) {
-	    nx = 1;
-	    ny = view.height() - liney[0];
+            nx = game.width() - 1;
+            ny = game.height() - liney[0];
+        } else if (linex[0] >= game.width()) {
+            nx = 1;
+            ny = game.height() - liney[0];
         } else
-	    return;
+            return;
 
-	if (view.killTailOffScreen())
-	    newLine();
+        if (game.killTailOffScreen())
+            newLine();
 
-	linex[0] = nx;
-	liney[0] = ny;
+        linex[0] = nx;
+        liney[0] = ny;
     }
 
     public boolean collides(Part other) {
         float x = other.getX();
         float y = other.getY();
 
-	if (linex == null || liney == null)
-	    Log.d("fdjaskl f", "what the actuall fuck!");
-	
+        if (linex == null || liney == null)
+            Log.d("fdjaskl f", "what the actuall fuck!");
+
         for (int i = 1; i < linex.length; i++) {
             if (x >= linex[i] - 0.5f && x <= linex[i] + 0.5f)
-		if (y >= liney[i] - 0.5f && y <= liney[i] + 0.5f) 
-		    return true;
+                if (y >= liney[i] - 0.5f && y <= liney[i] + 0.5f) 
+                    return true;
         } 
         return false;
     }

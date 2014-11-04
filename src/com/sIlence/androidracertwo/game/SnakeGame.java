@@ -17,7 +17,7 @@
  *
  * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
  *
-*/
+ */
 
 package com.sIlence.androidracertwo.game;
 
@@ -29,32 +29,32 @@ import android.util.Log;
 public class SnakeGame extends Game {
 
     public static int SPAWN_DELAY = 30;
-    
+
     LightRacer other;
     int localSpawnDelay, otherSpawnDelay;
-    
+
     public SnakeGame(int o) {
         super(o);
     }
 
     public void init() {
-	super.init();
-	
+        super.init();
+
         setTime(0);
         setKills(0);
         setDeaths(0);
 
-	localSpawnDelay = otherSpawnDelay = -1;
+        localSpawnDelay = otherSpawnDelay = -1;
 
-	particles = new ArrayList<Particle>();
-	parts = new ArrayList<Part>();
+        particles = new ArrayList<Particle>();
+        parts = new ArrayList<Part>();
 
-	local = new LightRacer(view, 0xC003CCF1);
+        local = new LightRacer(this, 0xC003CCF1);
         parts.add((Part) local);
-	other = new AIRacer(view, getOtherDifficualty());
-	parts.add((Part) other);
-        parts.add((Part) new WallRacer(view, 1, 1, getOtherDifficualty() / 4));
-        parts.add((Part) new WallRacer(view, view.width() - 1, view.height() - 1, getOtherDifficualty() / 4));
+        other = new AIRacer(this);
+        parts.add((Part) other);
+        parts.add((Part) new WallRacer(this, 1, 1, getDifficualty() * 10));
+        parts.add((Part) new WallRacer(this, width() - 1, height() - 1, getDifficualty() * 10));
 
         local.setLength(LightRacer.STANDARD_LENGTH);
         other.setLength(LightRacer.STANDARD_LENGTH);
@@ -66,7 +66,7 @@ public class SnakeGame extends Game {
     }
 
     public void checkScore() {
-	int score;
+        int score;
         if (getKills() >= 10 && getKills() - 2 >= getDeaths()) {
             if (getDeaths() > 0) {
                 score = (int) (10000 / (getTime() / 1000) * ((float) getKills() / getDeaths()));
@@ -82,67 +82,67 @@ public class SnakeGame extends Game {
     }
 
     public void checkCollisions() {
-	for (int i = 0; i < parts.size(); i++) {
-	    if (!parts.get(i).isAlive())
-		continue;
-	    
-	    if (local.isAlive() && parts.get(i).collides(local)) {
-		local.die(local.getX(), local.getY(), local.getDirection(), false);
-		localSpawnDelay = SPAWN_DELAY;
-		setDeaths(getDeaths() + 1);
-		checkScore();
-	    }
+        for (int i = 0; i < parts.size(); i++) {
+            if (!parts.get(i).isAlive())
+                continue;
 
-	    if (other.isAlive() && parts.get(i).collides(other)) {
-		other.die(other.getX(), other.getY(), other.getDirection(), false);
-		otherSpawnDelay = SPAWN_DELAY;
-		setKills(getKills() + 1);
-		checkScore();
-	    }
-	}
+            if (local.isAlive() && parts.get(i).collides(local)) {
+                local.die(local.getX(), local.getY(), local.getDirection(), false);
+                localSpawnDelay = SPAWN_DELAY;
+                setDeaths(getDeaths() + 1);
+                checkScore();
+            }
+
+            if (other.isAlive() && parts.get(i).collides(other)) {
+                other.die(other.getX(), other.getY(), other.getDirection(), false);
+                otherSpawnDelay = SPAWN_DELAY;
+                setKills(getKills() + 1);
+                checkScore();
+            }
+        }
     }
 
     public void update() {
-	super.update();
+        super.update();
 
-	if (localSpawnDelay > 0) {
-	    localSpawnDelay--;
-	    if (localSpawnDelay == 0)
-		local.spawn(parts);
-	}
+        if (localSpawnDelay > 0) {
+            localSpawnDelay--;
+            if (localSpawnDelay == 0)
+                local.spawn(parts);
+        }
 
-	if (otherSpawnDelay > 0) {
-	    otherSpawnDelay--;
-	    if (otherSpawnDelay == 0)
-		other.spawn(parts);
-	}
+        if (otherSpawnDelay > 0) {
+            otherSpawnDelay--;
+            if (otherSpawnDelay == 0)
+                other.spawn(parts);
+        }
     }
 
     public void updateLengths() {
-	local.setLength(getKills() * getKills() + LightRacer.STANDARD_LENGTH);
+        local.setLength(getKills() * getKills() + LightRacer.STANDARD_LENGTH);
         other.setLength(getDeaths() * getDeaths() + LightRacer.STANDARD_LENGTH);
     }
 
     public void hud(Canvas c) {
-	int t;
+        int t;
         brush.setColor(0xffffffff);
-	brush.setTextSize(view.topBorder() - 6);
+        brush.setTextSize(view.topBorder() - 6);
 
-	t = getTime() / 1000;
-	c.drawText("Time: " + t, 10, view.topBorder() - 4, brush);
+        t = getTime() / 1000;
+        c.drawText("Time: " + t, 10, view.topBorder() - 4, brush);
         textString = getKills() + " : " + getDeaths();
         c.drawText(textString, view.getWidth() - 10 - view.textWidth(textString, brush), view.topBorder() - 4, brush);
     }
 
     public String winMessage() {
-	return "Game Over\nYou Won!";
+        return "Game Over\nYou Won!";
     }
 
     public String loseMessage() {
-	return "Game Over\nYou Lost!";
+        return "Game Over\nYou Lost!";
     }
-    
+
     public String startMessage() {
-	return "You Are Blue.\nMake Yellow Crash.";
+        return "You Are Blue.\nMake Yellow Crash.";
     }
 }

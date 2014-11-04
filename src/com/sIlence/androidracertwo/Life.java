@@ -17,10 +17,11 @@
  *
  * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
  *
-*/
+ */
 
 package com.sIlence.androidracertwo;
 
+import com.sIlence.androidracertwo.game.Game;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import java.util.Random;
@@ -29,19 +30,19 @@ import android.util.Log;
 
 public class Life extends Blockade {
 
-    public Life(GameView v, int x, int y) {
-        super(v, x, y, 10, 10);
+    public Life(Game g, int x, int y) {
+        super(g, x, y, 10, 10);
         color = 0xff0000ff;
         startColor = color;
     }
 
-    public Life(GameView v) {
-        this(v, 0, 0);
+    public Life(Game g) {
+        this(g, 0, 0);
     }
 
     public void spawn(ArrayList<Part> parts) {
-	width = 10;
-	height = 10;
-	findSpawn(parts);
+        width = 10;
+        height = 10;
+        findSpawn(parts);
     }
 }

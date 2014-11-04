@@ -17,7 +17,7 @@
  *
  * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
  *
-*/
+ */
 
 package com.sIlence.androidracertwo;
 
@@ -47,18 +47,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     boolean pausing;
     boolean gameOver;
     boolean won;
-    
+
     int countdown;
-    
+
     GameLoop loop;
 
-    float width, height;
     float topBorder, bottomBorder, leftBorder, rightBorder;
     float yPartSize, xPartSize;
-    
-    Paint brush;
 
-    Random rand;
+    Paint brush;
 
     Game game;
     InputHandler handler;
@@ -69,43 +66,41 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         getHolder().addCallback(this);
         setFocusable(true);
 
-	rand = new Random();
-	
         game = g;
         loop = new GameLoop(this);
 
-	handler = new InputHandler(this, usingArrows);
+        handler = new InputHandler(this, usingArrows);
     }
 
     public GameView(Context context, Game g) {
-	this(context, g, false);
+        this(context, g, false);
     }
 
     public void newGame() {
-	stop();
-	
+        stop();
+
         game.init();
 
         gameOver = false;
         won = false;
-	pausing = false;
-	
+        pausing = false;
+
         countdown = 1000;
-	
-	tick();
+
+        tick();
     }
 
     public void update() {
         if (gameOver) return;        
-        
+
         if (countdown > 0) {
-	    countdown -= framePeriod();
+            countdown -= framePeriod();
             return;
         }
-     
+
         game.update();
 
-	messages();
+        messages();
     }
 
     public void render(Canvas c) {
@@ -113,28 +108,28 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         background(c);
         game.render(c);
-	game.hud(c);
+        game.hud(c);
 
-	if (countdown > 0) {
+        if (countdown > 0) {
             brush.setColor(0xffffffff);
             brush.setTextSize(getHeight() / 10);
 
             String message = "" + countdown;
             c.drawText(message, getWidth() / 2 - textWidth(message, brush) / 2, getHeight() / 2, brush);
         }
-	
-	handler.overlay(c);
+
+        handler.overlay(c);
     }
 
     public void messages() {
-	if (gameOver) {
+        if (gameOver) {
             if (won) {
                 showDialog(new NewGameDialog(this, game.winMessage()));
-	    } else {
+            } else {
                 showDialog(new NewGameDialog(this, game.loseMessage()));
             }
-	} else if (pausing) {
-	    showDialog(new PauseDialog(this));
+        } else if (pausing) {
+            showDialog(new PauseDialog(this));
         }
     }
 
@@ -148,10 +143,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void showDialog(MyDialog d) {
-	stop();
-	FragmentTransaction ft = cleanupFragments();
-	dialog = d;
-	dialog.show(ft, "dialog");
+        stop();
+        FragmentTransaction ft = cleanupFragments();
+        dialog = d;
+        dialog.show(ft, "dialog");
     }
 
     public void gameOver(boolean w) {
@@ -173,52 +168,49 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         brush.setColor(0x246FC0DF);
 
         for (float x = 0; x < getWidth(); x += 70) {
-	    c.drawLine(x, topBorder(), x, getHeight(), brush);
+            c.drawLine(x, topBorder(), x, getHeight(), brush);
         }
-	
+
         for (float y = topBorder(); y < getHeight(); y += 70) {
-	    c.drawLine(0, y, getWidth(), y, brush);
-	}
+            c.drawLine(0, y, getWidth(), y, brush);
+        }
     }
 
     @Override
     public boolean onTouchEvent (MotionEvent e) {
-	return handler.onTouchEvent(e);
+        return handler.onTouchEvent(e);
     }
 
     public void surfaceCreated(SurfaceHolder arg0) {
-	Log.d("TAG", "surfaceCreated");
-	
+        Log.d("TAG", "surfaceCreated");
+
         brush = new Paint(Paint.ANTI_ALIAS_FLAG);
+        
+        game.setView(this);
 
-	width = getWidth() / 3;
-	height = getHeight() / 3;
+        leftBorder = 0;
+        rightBorder = 0;
+        bottomBorder = 0;
+        topBorder = 20;
 
-	leftBorder = 0;
-	rightBorder = 0;
-	bottomBorder = 0;
-	topBorder = 20;
+        xPartSize = (getWidth() - leftBorder() - rightBorder()) / game.width();
+        yPartSize = (getHeight() - topBorder() - bottomBorder()) / game.height();
 
-	xPartSize = (getWidth() - leftBorder() - rightBorder()) / width();
-	yPartSize = (getHeight() - topBorder() - bottomBorder()) / height();
+        handler.init();
 
-	handler.init();
+        pausing = true;
 
-	game.setView(this);
+        if (game.getParts() == null) {
+            newGame();
+            showDialog(new NewGameDialog(this, game.startMessage(), false));
+        }
 
-	pausing = true;
-	
-	if (game.getParts() == null) {
-	    newGame();
-	    showDialog(new NewGameDialog(this, game.startMessage(), false));
-	}
-
-	tick();
+        tick();
     }
 
     public void surfaceDestroyed(SurfaceHolder arg0) {
-	Log.d("TAG", "surfaceDestroyed");
-	stop();
+        Log.d("TAG", "surfaceDestroyed");
+        stop();
     }
 
     public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {}
@@ -229,21 +221,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void stop() {
-	pausing = false;
-	loop.stopLoop();
+        pausing = false;
+        loop.stopLoop();
     }
 
     public void start() {
-	stop();
+        stop();
 
-	loop = new GameLoop(this);
+        loop = new GameLoop(this);
         loop.start();
     }
 
     public void tick() {
-	loop.tick();
+        loop.tick();
     }
-    
+
     public boolean isPaused() {
         if (gameOver) return true;
         return loop.running();
@@ -253,49 +245,33 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
      * Positioning.
      */
 
-    public float width() {
-	return width;
-    }
-
-    public float height() {
-	return height;
-    }
-
     public float leftBorder() {
-	return leftBorder;
+        return leftBorder;
     }
 
     public float rightBorder() {
-	return rightBorder;
+        return rightBorder;
     }
 
     public float topBorder() {
-	return topBorder;
+        return topBorder;
     }
 
     public float bottomBorder() {
-	return bottomBorder;
+        return bottomBorder;
     }
 
     public float toXPoint(float p) {
-	return leftBorder + p * xPartSize;
+        return leftBorder + p * xPartSize;
     }
 
     public float toYPoint(float p) {
-	return topBorder + p * yPartSize;
+        return topBorder + p * yPartSize;
     }
 
     /*
      * End of positioning.
      */    
-
-    public int getKills() {
-        return game.getKills();
-    }
-
-    public int getDeaths() {
-        return game.getDeaths();
-    }
 
     public int getTime() {
         return game.getTime();
@@ -305,35 +281,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         return loop.framePeriod();
     }
 
-    public LightRacer getLocal() {
-        return game.getLocal();
-    }
-
-    public ArrayList<Part> getParts() {
-	return game.getParts();
-    }
-
-    public ArrayList<Particle> getParticles() {
-	return game.getParticles();
-    }
-
     public void killDialog() {
-	if (dialog != null) dialog.dismiss();
+        if (dialog != null) dialog.dismiss();
     }
 
     public int turnDelay() {
         return 5;
     }
 
-    public boolean killTailOffScreen() {
-	return game.killTailOffScreen();
-    }
-
-    public Random getRand() {
-	return rand;
-    }
-
     public Paint getPaint() {
-	return brush;
+        return brush;
+    }
+
+    public Game getGame() {
+        return game;
     }
 }

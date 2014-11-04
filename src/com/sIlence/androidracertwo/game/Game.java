@@ -17,7 +17,7 @@
  *
  * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
  *
-*/
+ */
 
 package com.sIlence.androidracertwo.game;
 
@@ -30,15 +30,23 @@ import android.util.Log;
 
 public abstract class Game {
 
+    public static int DIFFICUALTY_CHILD     = 1;
+    public static int DIFFICUALTY_EASY      = 2;
+    public static int DIFFICUALTY_MEDIUM    = 3;
+    public static int DIFFICUALTY_HARD      = 4;
+    public static int DIFFICUALTY_INSANE    = 5;
+
     LightRacer local;
     ArrayList<Part> parts;
     ArrayList<Particle> particles;
 
-    int otherDifficualty;
+    int difficualty;
 
     int kills;
     int deaths;
     int time;
+
+    float width, height;
 
     GameView view;
 
@@ -48,23 +56,48 @@ public abstract class Game {
     Random rand;
 
     public Game(int o) {
-        otherDifficualty = o;
+        difficualty = o;
 
         kills = 0;
         deaths = 0;
         time = 0;
 
+        width = height = 0;
+
         rand = new Random();
     }
 
+    public Game(int o, int w, int h) {
+        this(o);
+        width = w;
+        height = h;
+    }
+
     public void init() {
-	brush = new Paint(Paint.ANTI_ALIAS_FLAG);
+        brush = new Paint(Paint.ANTI_ALIAS_FLAG);
+    }
+
+    public float width() {
+        return width;
+    }
+
+    public float height() {
+        return height;
     }
 
     public void setView(GameView v) {
-	view = v;
+        view = v;
+
+        if (width == 0 || height == 0) {
+            width = view.getWidth() / 3;
+            height = view.getHeight() / 3;
+        }
     }
-    
+
+    public GameView getView() {
+        return view;
+    }
+
     public LightRacer getLocal() {
         return local;
     }
@@ -74,15 +107,11 @@ public abstract class Game {
     }
 
     public ArrayList<Particle> getParticles() {
-	return particles;
+        return particles;
     }
 
-    public int getOtherDifficualty() {
-        return otherDifficualty;
-    }
-
-    public GameView view() {
-        return view;
+    public int getDifficualty() {
+        return difficualty;
     }
 
     public void checkScore() {}
@@ -98,7 +127,7 @@ public abstract class Game {
     }
 
     public String startMessage() {
-	return "You have as good of an idea as I do as to what you should do. Try pressing begin (but that may not exist so do whatever), then find the person that gave you this and scream at them. Unless it's me. Then I'm just enlightening you with this messsage and the lack of a start message was completely intentional. Good luck.";
+        return "You have as good of an idea as I do as to what you should do. Try pressing begin (but that may not exist so do whatever), then find the person that gave you this and scream at them. Unless it's me. Then I'm just enlightening you with this messsage and the lack of a start message was completely intentional. Good luck.";
     }
 
     public int getKills() {
@@ -126,49 +155,53 @@ public abstract class Game {
     }
 
     public boolean killTailOffScreen() {
-	return true;
+        return true;
     }
 
-    public Random rand() {
+    public Random getRand() {
         return rand;
+    }
+
+    public Boolean changeDirection(int i) {
+        return local.changeDirection(i);
     }
 
     public void checkCollisions() {}
 
     public void update() {
-	int i;
+        int i;
 
-	time += view.framePeriod();
-	
-	updateLengths();
-	for (i = 0; i < parts.size(); i++) {
-	    Part p = parts.get(i);
-	    if (!p.isAlive())
-		parts.remove(p);
-	    else
-		p.update();
-	}
+        time += view.framePeriod();
 
-	for (i = 0; i < particles.size(); i++) {
-	    Particle p = particles.get(i);
-	    if (!p.isAlive())
-		particles.remove(p);
-	    else
-		p.update();
-	}
+        updateLengths();
+        for (i = 0; i < parts.size(); i++) {
+            Part p = parts.get(i);
+            if (!p.isAlive())
+                parts.remove(p);
+            else
+                p.update();
+        }
 
-	checkCollisions();
+        for (i = 0; i < particles.size(); i++) {
+            Particle p = particles.get(i);
+            if (!p.isAlive())
+                particles.remove(p);
+            else
+                p.update();
+        }
+
+        checkCollisions();
     }
 
     public void render(Canvas c) {
-	int i;
+        int i;
         for (i = 0; i < parts.size(); i++) {
-	    parts.get(i).render(c);
-	}
+            parts.get(i).render(c);
+        }
 
-	for (i = 0; i < particles.size(); i++) {
-	    particles.get(i).render(c);
-	}
+        for (i = 0; i < particles.size(); i++) {
+            particles.get(i).render(c);
+        }
     }
 
     public void hud(Canvas c) {}

@@ -17,32 +17,27 @@
  *
  * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
  *
-*/
+ */
 
 package com.sIlence.androidracertwo;
 
+import com.sIlence.androidracertwo.game.Game;
 import java.util.ArrayList;
 
 public class AIRacer extends LightRacer {
-
-    public static final int DIFF_CHILD = 10;
-    public static final int DIFF_EASY = 30;
-    public static final int DIFF_MEDI = 50;
-    public static final int DIFF_HARD = 100;
-    public static final int DIFF_INSANE = 300;
 
     int difficualty;
 
     ArrayList<Part> parts;
 
-    public AIRacer(GameView v, int d) {
-        super(v, 0xC0FFE64D);
+    public AIRacer(Game g) {
+        super(g, 0xC0FFE64D);
+        difficualty = g.getDifficualty() * 20;
         startColor = color;
-        difficualty = d;
     }
 
-    public AIRacer(GameView v, int d, float x, float y, int dd) {
-        this(v, d);
+    public AIRacer(Game g, float x, float y, int dd) {
+        this(g);
 
         linex[0] = x;
         liney[0] = y;
@@ -50,32 +45,32 @@ public class AIRacer extends LightRacer {
     }
 
     public void spawn(ArrayList<Part> parts) {
-	super.spawn(parts);
-	this.parts = parts;
+        super.spawn(parts);
+        this.parts = parts;
     }
 
     @Override
     public void update() {
-	if (!isAlive())
-	    return;
-	
-	updateLength();
-	updateLine();
-	move();
-	offScreen();
-	
-	int nd = -1;
-	if (getRand().nextInt(16) == 1 || !safeToTurn(parts, direction, difficualty))
-	    nd = safestDirection(parts);
-	if (nd != -1) {
-	    int lag = getRand().nextInt(20000 / difficualty);
-	    final int di = nd;
-	    
-	    view.postDelayed(new Runnable() {
-		    public void run() {
-			changeDirection(di);
-		    }
-		}, lag);
-	}
+        if (!isAlive())
+            return;
+
+        updateLength();
+        updateLine();
+        move();
+        offScreen();
+
+        int nd = -1;
+        if (getRand().nextInt(16) == 1 || !safeToTurn(parts, direction, difficualty))
+            nd = safestDirection(parts);
+        if (nd != -1) {
+            int lag = getRand().nextInt(20000 / difficualty);
+            final int di = nd;
+
+            game.getView().postDelayed(new Runnable() {
+                public void run() {
+                    changeDirection(di);
+                }
+            }, lag);
+        }
     }
 }

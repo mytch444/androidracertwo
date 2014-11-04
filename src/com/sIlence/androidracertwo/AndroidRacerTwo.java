@@ -17,7 +17,7 @@
  *
  * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
  *
-*/
+ */
 
 package com.sIlence.androidracertwo;
 
@@ -45,7 +45,7 @@ public class AndroidRacerTwo extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
@@ -56,31 +56,31 @@ public class AndroidRacerTwo extends Activity {
 
         Button play = (Button) findViewById(R.id.play);
         play.setOnClickListener(new OnClickListener() {
-		public void onClick(android.view.View arg0) {
-		    openGame(new GameView(context, new SnakeGame(AIRacer.DIFF_MEDI)));
-		}
-	    });
+            public void onClick(android.view.View arg0) {
+                openGame(new GameView(context, new SnakeGame(Game.DIFFICUALTY_MEDIUM)));
+            }
+        });
 
         Button tron = (Button) findViewById(R.id.tron);
         tron.setOnClickListener(new OnClickListener() {
-		public void onClick(android.view.View arg0) {
-		    openGame(new GameView(context, new TronGame(AIRacer.DIFF_MEDI)));
-		}
-	    });
+            public void onClick(android.view.View arg0) {
+                openGame(new GameView(context, new TronGame(Game.DIFFICUALTY_MEDIUM)));
+            }
+        });
 
-	Button trondpad = (Button) findViewById(R.id.trondpad);
-	trondpad.setOnClickListener(new OnClickListener() {
-		public void onClick(android.view.View arg0) {
-		    openGame(new GameView(context, new TronGame(AIRacer.DIFF_MEDI), true));
-		}
-	    });
+        Button trondpad = (Button) findViewById(R.id.trondpad);
+        trondpad.setOnClickListener(new OnClickListener() {
+            public void onClick(android.view.View arg0) {
+                openGame(new GameView(context, new TronGame(Game.DIFFICUALTY_MEDIUM), true));
+            }
+        });
 
-	Button dodge = (Button) findViewById(R.id.dodge);
-	dodge.setOnClickListener(new OnClickListener() {
-		public void onClick(android.view.View arg0) {
-		    openGame(new GameView(context, new DodgeGame(AIRacer.DIFF_MEDI)));
-		}
-	    });
+        Button dodge = (Button) findViewById(R.id.dodge);
+        dodge.setOnClickListener(new OnClickListener() {
+            public void onClick(android.view.View arg0) {
+                openGame(new GameView(context, new DodgeGame(Game.DIFFICUALTY_MEDIUM)));
+            }
+        });
 
     }
 
@@ -97,18 +97,18 @@ public class AndroidRacerTwo extends Activity {
 
     @Override
     protected void onStop() {
-	Log.d("TAG", "onstop()");
+        Log.d("TAG", "onstop()");
         if (view != null) view.stop();
 
-	Debug.stopMethodTracing();
-	
+        Debug.stopMethodTracing();
+
         super.onStop();
         onDestroy();
     }
 
     @Override
     protected void onPause() {
-	Log.d("TAG", "onpause()");
+        Log.d("TAG", "onpause()");
         if (view != null && !view.isPaused()) {
             view.stop();
         }
@@ -118,9 +118,9 @@ public class AndroidRacerTwo extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle b) {
-	Log.d("TAG", "onSaveInstanceState()");
+        Log.d("TAG", "onSaveInstanceState()");
         if (view != null) {
-	    view.stop();
+            view.stop();
             view.killDialog();
         }
 
@@ -129,34 +129,34 @@ public class AndroidRacerTwo extends Activity {
 
     @Override
     protected void onResume() {
-	Log.d("TAG", "onresume()");
+        Log.d("TAG", "onresume()");
 
-	if (view != null) {
-	    view.tick();
-	}
+        if (view != null) {
+            view.tick();
+        }
         super.onResume();
     }
 
     @Override
     protected void onRestart() {
-	Log.d("TAG", "onrestart()");
-	
+        Log.d("TAG", "onrestart()");
+
         super.onRestart();
     }
 
     @Override
     protected void onStart() {
-	Log.d("TAG", "onstart()");
+        Log.d("TAG", "onstart()");
 
-	super.onStart();
+        super.onStart();
 
-	Debug.startMethodTracing("racer");
+        Debug.startMethodTracing("racer");
 
-	if (view == null)
-	    menu();
-	else {
-	    openGame(view);
-	}
+        if (view == null)
+            menu();
+        else {
+            openGame(view);
+        }
     }
 
     public void openGame(final GameView newView) {

@@ -17,10 +17,11 @@
  *
  * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
  *
-*/
+ */
 
 package com.sIlence.androidracertwo;
 
+import com.sIlence.androidracertwo.game.Game;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import java.util.Random;
@@ -31,8 +32,8 @@ public class Blockade extends Part {
 
     float width, height;
 
-    public Blockade(GameView v, float x, float y, float w, float h) {
-        super(v);
+    public Blockade(Game g, float x, float y, float w, float h) {
+        super(g);
         this.x = x;
         this.y = y;
         color = 0xff888888;
@@ -42,19 +43,19 @@ public class Blockade extends Part {
         height = h;
     }
 
-    public Blockade(GameView v) {
-        this(v, 0, 0, 0, 0);
+    public Blockade(Game g) {
+        this(g, 0, 0, 0, 0);
     }
 
     public void update() {}
 
     public void render(Canvas c) {
         if (!isAlive())
-	    return;
+            return;
 
-	brush.setColor(color);
-	c.drawRect(view.toXPoint(x), view.toYPoint(y),
-		   view.toXPoint(x + width), view.toYPoint(y + height), brush);
+        brush.setColor(color);
+        c.drawRect(game.getView().toXPoint(x), game.getView().toYPoint(y),
+                game.getView().toXPoint(x + width), game.getView().toYPoint(y + height), brush);
     }
 
     public boolean collides(Part other) {
@@ -75,17 +76,17 @@ public class Blockade extends Part {
     }
 
     public void spawn(ArrayList<Part> parts) {
-	width = getRand().nextFloat() * view.width() * 0.3f + 1;
-	height = getRand().nextFloat() * view.height() * 0.3f + 1;
+        width = getRand().nextFloat() * game.width() * 0.3f + 1;
+        height = getRand().nextFloat() * game.height() * 0.3f + 1;
 
-	findSpawn(parts);
+        findSpawn(parts);
     }
 
     public void findSpawn(ArrayList<Part> parts) {
         for (int tries = 0; tries < 10; tries++) {
-            x = getRand().nextFloat() * (view.width() - width - 8) + 4;
-            y = getRand().nextFloat() * (view.height() - height - 8) + 4;
-            
+            x = getRand().nextFloat() * (game.width() - width - 8) + 4;
+            y = getRand().nextFloat() * (game.height() - height - 8) + 4;
+
             boolean good = true;
             for (int i = 0; i < parts.size(); i++) {
                 if (collides(parts.get(i))) {
@@ -97,42 +98,41 @@ public class Blockade extends Part {
             if (good) break;
         }
     }
-    
+
     public void die(float hx, float hy, float di, boolean lives) {
-	alive = false;
-	
-	int start, stop;
+        alive = false;
+
+        int start;
         double Od;
-	float speed, O, xd, yd, xp, yp;
-	boolean left, up;
-	
-	float w = Particle.width(view);
-	float h = Particle.height(view);
+        float speed, O, xd, yd, xp, yp;
+        boolean left, up;
+
+        float w = Particle.width(game);
+        float h = Particle.height(game);
         for (float x = 0; x < width; x += w) {
             for (float y = 0; y < height; y += h) {
-		xp = this.x + x;
-		yp = this.y + y;
-		
-		xd = xp - hx;
-		yd = yp - hy;
-		
-		O = directionFromDifferences(xd, yd);
+                xp = this.x + x;
+                yp = this.y + y;
 
-		if (di > O)
-		    Od = di - O;
-		else
-		    Od = O - di;
-		if (Od > Math.PI)
-		    Od = 2 * Math.PI - Od;
+                xd = xp - hx;
+                yd = yp - hy;
 
-		speed = 1.2f * (float) Math.pow(0.1, (2 * Od) / Math.PI);
+                O = directionFromDifferences(xd, yd);
 
-		start = (int) Math.hypot(xd, yd) / 2;
-                stop = 30;
-		
-                view.getParticles().add(
-					new Particle(view, color, xp, yp,
-						     O, speed, start, stop));
+                if (di > O)
+                    Od = di - O;
+                else
+                    Od = O - di;
+                if (Od > Math.PI)
+                    Od = 2 * Math.PI - Od;
+
+                speed = 1.2f * (float) Math.pow(0.1, (2 * Od) / Math.PI);
+
+                start = (int) Math.hypot(xd, yd) / 2;
+
+                game.getParticles().add(
+                        new Particle(game, color, xp, yp,
+                            O, speed, start, 20));
             }
         }
     }

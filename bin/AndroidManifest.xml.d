@@ -1,2 +1,2 @@
-/shared/src/androidracertwo/bin/AndroidManifest.xml : \
-/shared/src/androidracertwo/AndroidManifest.xml \
+/home/nilp/src/androidracertwo/bin/AndroidManifest.xml : \
+/home/nilp/src/androidracertwo/AndroidManifest.xml \
