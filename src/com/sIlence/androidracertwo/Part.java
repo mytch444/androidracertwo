@@ -90,31 +90,37 @@ public class Part {
 
     public static float directionFromDifferences(int xd, int yd) {
         double O;
-        float tmp;
         int m;
 
         boolean left = xd <= 0;
         boolean up = yd <= 0;
 
-        if (!left && !up) {
-            O = 0;
-            m = 1;
-        } else if (left && !up) {
-            O = Math.PI;
-            m = -1;
-            xd = -xd;
-        } else if (left && up) {
-            O = Math.PI;
-            m = 1;
-            xd = -xd;
-            yd = -yd;
-        } else if (!left && up) {
-            O = 2 * Math.PI;
-            m = -1;
-            yd = -yd;
-        } else // Damn java.
-            return 0;
+        if (xd == 0) {
+            if (up)
+                return (float) (3 * Math.PI / 2);
+            else
+                return (float) (Math.PI / 2);
+        } else {
+            if (!left && !up) {
+                O = 0;
+                m = 1;
+            } else if (left && !up) {
+                O = Math.PI;
+                m = -1;
+                xd = -xd;
+            } else if (left && up) {
+                O = Math.PI;
+                m = 1;
+                xd = -xd;
+                yd = -yd;
+            } else if (!left && up) {
+                O = 2 * Math.PI;
+                m = -1;
+                yd = -yd;
+            } else // Damn java.
+                return 0;
 
-        return (float) (O + m * Math.atan(yd / xd));
+            return (float) (O + m * Math.atan(yd / xd));
+        }
     }
 }

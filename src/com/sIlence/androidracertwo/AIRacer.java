@@ -39,8 +39,8 @@ public class AIRacer extends LightRacer {
     public AIRacer(Game g, int x, int y, float d) {
         this(g);
 
-        linex[0] = x;
-        liney[0] = y;
+        linex.set(0, x);
+        liney.set(0, y);
         direction = d;
     }
 
@@ -55,7 +55,6 @@ public class AIRacer extends LightRacer {
             return;
 
         updateLength();
-        updateLine();
         move();
         offScreen();
 

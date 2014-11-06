@@ -29,10 +29,8 @@ import android.util.Log;
 public class WallRacer extends LightRacer {
 
     public WallRacer (Game g, int x, int y, int gap) {
-        super (g, 0xC05FFE3C);
-
-        direction = 3f * (float) Math.PI / 2f;
-
+        super (g, 0xC05FFE3C, x, y, 3f * (float) Math.PI / 2f);
+        
         length = (game.width() + game.height() - gap - 2) / speed;
 
         Log.d("fdsa", "set length to " + length);
@@ -42,24 +40,18 @@ public class WallRacer extends LightRacer {
 
         alive = true;
 
-        linex = new int[length];
-        liney = new int[length];
-
-        linex[0] = x;
-        liney[0] = y;
-
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++)
             update();
-        }
     }
 
-    public void spawn(ArrayList<Part> parts) {
-
-    }
+    public void spawn(ArrayList<Part> parts) {}
 
     @Override
     public boolean changeDirection(float di) {
         direction = di;
+        linex.add(1, linex.get(0));
+        liney.add(1, liney.get(0));
+
         return true;
     }
 
@@ -67,20 +59,15 @@ public class WallRacer extends LightRacer {
     public void update() {
         offScreen();
         move();
-        updateLine();
+        updateLength();
     }
 
     @Override
     public void offScreen() {
-        if (linex[0] < 2 && liney[0] > game.height() / 2) changeDirection(3f * (float) Math.PI / 2f);
-        else if (liney[0] < 2 && linex[0] < game.width() / 2) changeDirection(0);
-        else if (linex[0] > game.width() - 2 && liney[0] < game.height() / 2) changeDirection((float) Math.PI / 2f);
-        else if (liney[0] > game.height() - 2 && linex[0] > game.width() / 2) changeDirection((float) Math.PI);
-    }
-
-    @Override
-    public void render(Canvas c) {
-        renderLines(c);
+        if (linex.get(0) < 2 && liney.get(0) > game.height() / 2) changeDirection(3f * (float) Math.PI / 2f);
+        else if (liney.get(0) < 2 && linex.get(0) < game.width() / 2) changeDirection(0);
+        else if (linex.get(0) > game.width() - 2 && liney.get(0) < game.height() / 2) changeDirection((float) Math.PI / 2f);
+        else if (liney.get(0) > game.height() - 2 && linex.get(0) > game.width() / 2) changeDirection((float) Math.PI);
     }
 
     public void die(int hx, int hy, float di, boolean lives) {

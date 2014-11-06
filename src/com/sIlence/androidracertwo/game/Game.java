@@ -91,6 +91,8 @@ public abstract class Game {
         if (width == 0 || height == 0) {
             width = (view.getWidth() - view.leftBorder() - view.rightBorder()) / 3;// * 33;
             height = (view.getHeight() - view.topBorder() - view.bottomBorder()) / 3;// * 33;
+
+            Log.d("fdsa", "Setting game size to [" + width + "," + height + "]");
         }
     }
 
