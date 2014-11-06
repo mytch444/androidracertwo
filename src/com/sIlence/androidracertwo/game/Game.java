@@ -46,7 +46,7 @@ public abstract class Game {
     int deaths;
     int time;
 
-    float width, height;
+    int width, height;
 
     GameView view;
 
@@ -61,7 +61,7 @@ public abstract class Game {
         kills = 0;
         deaths = 0;
         time = 0;
-
+        
         width = height = 0;
 
         rand = new Random();
@@ -77,11 +77,11 @@ public abstract class Game {
         brush = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
-    public float width() {
+    public int width() {
         return width;
     }
 
-    public float height() {
+    public int height() {
         return height;
     }
 
@@ -89,8 +89,8 @@ public abstract class Game {
         view = v;
 
         if (width == 0 || height == 0) {
-            width = view.getWidth() / 3;
-            height = view.getHeight() / 3;
+            width = (view.getWidth() - view.leftBorder() - view.rightBorder()) / 3;// * 33;
+            height = (view.getHeight() - view.topBorder() - view.bottomBorder()) / 3;// * 33;
         }
     }
 
@@ -162,8 +162,11 @@ public abstract class Game {
         return rand;
     }
 
-    public Boolean changeDirection(int i) {
-        return local.changeDirection(i);
+    public boolean changeDirection(float d) {
+        if (local != null)
+            return local.changeDirection(d);
+        else
+            return false;
     }
 
     public void checkCollisions() {}

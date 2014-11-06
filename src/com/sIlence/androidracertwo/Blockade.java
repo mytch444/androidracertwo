@@ -30,9 +30,9 @@ import android.util.Log;
 
 public class Blockade extends Part {
 
-    float width, height;
+    int width, height;
 
-    public Blockade(Game g, float x, float y, float w, float h) {
+    public Blockade(Game g, int x, int y, int w, int h) {
         super(g);
         this.x = x;
         this.y = y;
@@ -59,13 +59,13 @@ public class Blockade extends Part {
     }
 
     public boolean collides(Part other) {
-        float x = other.getX();
-        float y = other.getY();
+        int x = other.getX();
+        int y = other.getY();
 
-        float x0 = this.x;
-        float y0 = this.y;
-        float x1 = x0 + width;
-        float y1 = y0 + height;
+        int x0 = this.x;
+        int y0 = this.y;
+        int x1 = x0 + width;
+        int y1 = y0 + height;
 
         if ((x0 >= x && x >= x1) || (x0 <= x && x <= x1)) {
             if ((y0 >= y && y >= y1) || (y0 <= y && y <= y1)) {
@@ -76,16 +76,16 @@ public class Blockade extends Part {
     }
 
     public void spawn(ArrayList<Part> parts) {
-        width = getRand().nextFloat() * game.width() * 0.3f + 1;
-        height = getRand().nextFloat() * game.height() * 0.3f + 1;
+        width = (int) (getRand().nextFloat() * game.width() * 0.3f + 1);
+        height = (int) (getRand().nextFloat() * game.height() * 0.3f + 1);
 
         findSpawn(parts);
     }
 
     public void findSpawn(ArrayList<Part> parts) {
         for (int tries = 0; tries < 10; tries++) {
-            x = getRand().nextFloat() * (game.width() - width - 8) + 4;
-            y = getRand().nextFloat() * (game.height() - height - 8) + 4;
+            x = (int) (getRand().nextFloat() * (game.width() - width - 8) + 4);
+            y = (int) (getRand().nextFloat() * (game.height() - height - 8) + 4);
 
             boolean good = true;
             for (int i = 0; i < parts.size(); i++) {
@@ -99,18 +99,19 @@ public class Blockade extends Part {
         }
     }
 
-    public void die(float hx, float hy, float di, boolean lives) {
+    public void die(int hx, int hy, float di, boolean lives) {
         alive = false;
 
         int start;
         double Od;
-        float speed, O, xd, yd, xp, yp;
+        float O;
+        int speed, xd, yd, xp, yp;
         boolean left, up;
 
-        float w = Particle.width(game);
-        float h = Particle.height(game);
-        for (float x = 0; x < width; x += w) {
-            for (float y = 0; y < height; y += h) {
+        int w = Particle.width(game);
+        int h = Particle.height(game);
+        for (int x = 0; x < width; x += w) {
+            for (int y = 0; y < height; y += h) {
                 xp = this.x + x;
                 yp = this.y + y;
 
@@ -126,7 +127,7 @@ public class Blockade extends Part {
                 if (Od > Math.PI)
                     Od = 2 * Math.PI - Od;
 
-                speed = 1.2f * (float) Math.pow(0.1, (2 * Od) / Math.PI);
+                speed = (int) (120 * Math.pow(0.1, (2 * Od) / Math.PI));
 
                 start = (int) Math.hypot(xd, yd) / 2;
 

@@ -94,7 +94,7 @@ public class InputHandler {
         if (usingArrows) {
             for (int i = 0; i < arrows.length; i++) {
                 if (arrows[i].contains((int) e.getX(), (int) e.getY())) {
-                    view.getGame().changeDirection(i);
+                    view.getGame().changeDirection(i * (float) Math.PI / 2);
                 }
             }
         } else {
@@ -110,10 +110,10 @@ public class InputHandler {
                 int g = vertorhorz(xDiff, yDiff);
                 if (g == 0) {
                     if (xDiff > 0 && view.getGame().changeDirection(0));
-                    if (xDiff < 0 && view.getGame().changeDirection(2));
+                    if (xDiff < 0 && view.getGame().changeDirection((float) Math.PI));
                 } else if (g == 1) {
-                    if (yDiff < 0 && view.getGame().changeDirection(3));
-                    if (yDiff > 0 && view.getGame().changeDirection(1));
+                    if (yDiff < 0 && view.getGame().changeDirection(3f * (float) Math.PI / 2f));
+                    if (yDiff > 0 && view.getGame().changeDirection((float) Math.PI / 2));
                 }
             }
         }

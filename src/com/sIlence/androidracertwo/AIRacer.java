@@ -32,16 +32,16 @@ public class AIRacer extends LightRacer {
 
     public AIRacer(Game g) {
         super(g, 0xC0FFE64D);
-        difficualty = g.getDifficualty() * 20;
+        difficualty = g.getDifficualty() * 10;
         startColor = color;
     }
 
-    public AIRacer(Game g, float x, float y, int dd) {
+    public AIRacer(Game g, int x, int y, float d) {
         this(g);
 
         linex[0] = x;
         liney[0] = y;
-        direction = dd;
+        direction = d;
     }
 
     public void spawn(ArrayList<Part> parts) {
@@ -59,12 +59,12 @@ public class AIRacer extends LightRacer {
         move();
         offScreen();
 
-        int nd = -1;
-        if (getRand().nextInt(16) == 1 || !safeToTurn(parts, direction, difficualty))
+        float nd = -1;
+        if (getRand().nextInt(16) == 1 || (game.getTime() % 10 == 0 && !safeToTurn(parts, direction, difficualty)))
             nd = safestDirection(parts);
         if (nd != -1) {
             int lag = getRand().nextInt(20000 / difficualty);
-            final int di = nd;
+            final float di = nd;
 
             game.getView().postDelayed(new Runnable() {
                 public void run() {

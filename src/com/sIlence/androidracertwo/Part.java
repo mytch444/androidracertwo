@@ -26,11 +26,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import java.util.Random;
 import java.util.ArrayList;
+import android.util.Log;
 
 public class Part {
-    float x;
-    float y;
-    int direction;
+    int x, y, speed;
+    float direction;
 
     Game game;
 
@@ -51,12 +51,16 @@ public class Part {
         return alive;
     }
 
-    public float getX() {
+    public int getX() {
         return x;
     }
 
-    public float getY() {
+    public int getY() {
         return y;
+    }
+
+    public int getSpeed() {
+        return speed;
     }
 
     public float getDirection() {
@@ -67,7 +71,7 @@ public class Part {
         return false;
     }
 
-    public void die(float hx, float hy, float di, boolean lives) {}
+    public void die(int hx, int hy, float di, boolean lives) {}
     public void spawn(ArrayList<Part> parts) {}
 
     public void update() {}
@@ -77,13 +81,14 @@ public class Part {
         return game.getRand();
     }
 
-    public static int oppDirection(int di) {
-        di += 2;
-        di %= 4;
+    public static float oppDirection(float di) {
+        di += (float) Math.PI;
+        if (di > Math.PI * 2)
+            di -= Math.PI * 2;
         return di;
     }
 
-    public static float directionFromDifferences(float xd, float yd) {
+    public static float directionFromDifferences(int xd, int yd) {
         double O;
         float tmp;
         int m;

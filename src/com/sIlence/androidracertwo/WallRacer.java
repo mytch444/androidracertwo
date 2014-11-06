@@ -28,20 +28,22 @@ import android.util.Log;
 
 public class WallRacer extends LightRacer {
 
-    public WallRacer (Game g, float x, float y, float gap) {
+    public WallRacer (Game g, int x, int y, int gap) {
         super (g, 0xC05FFE3C);
 
-        direction = 3;
+        direction = 3f * (float) Math.PI / 2f;
 
-        length = (int) (game.width() + game.height() - gap - 2);
+        length = (game.width() + game.height() - gap - 2) / speed;
+
+        Log.d("fdsa", "set length to " + length);
 
         if (gap == 0)
             light = false;
 
         alive = true;
 
-        linex = new float[length];
-        liney = new float[length];
+        linex = new int[length];
+        liney = new int[length];
 
         linex[0] = x;
         liney[0] = y;
@@ -56,7 +58,7 @@ public class WallRacer extends LightRacer {
     }
 
     @Override
-    public boolean changeDirection(int di) {
+    public boolean changeDirection(float di) {
         direction = di;
         return true;
     }
@@ -70,10 +72,10 @@ public class WallRacer extends LightRacer {
 
     @Override
     public void offScreen() {
-        if (linex[0] < 2 && liney[0] > game.height() / 2) changeDirection(3);
+        if (linex[0] < 2 && liney[0] > game.height() / 2) changeDirection(3f * (float) Math.PI / 2f);
         else if (liney[0] < 2 && linex[0] < game.width() / 2) changeDirection(0);
-        else if (linex[0] > game.width() - 2 && liney[0] < game.height() / 2) changeDirection(1);
-        else if (liney[0] > game.height() - 2 && linex[0] > game.width() / 2) changeDirection(2);
+        else if (linex[0] > game.width() - 2 && liney[0] < game.height() / 2) changeDirection((float) Math.PI / 2f);
+        else if (liney[0] > game.height() - 2 && linex[0] > game.width() / 2) changeDirection((float) Math.PI);
     }
 
     @Override
@@ -81,7 +83,7 @@ public class WallRacer extends LightRacer {
         renderLines(c);
     }
 
-    public void die(float hx, float hy, float di, boolean lives) {
+    public void die(int hx, int hy, float di, boolean lives) {
         Particle.initExplosion(game, startColor, hx, hy, di);
     }
 }

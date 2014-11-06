@@ -47,15 +47,15 @@ public class TronGame extends Game {
 
         stopDelay = 0;
 
-        float x0, y0, x1, y1;
-        int d0, d1;
+        int x0, y0, x1, y1;
+        float d0, d1;
 
-        x0 = x1 = width() / 2;
+        x0 = x1 = (int) (width() / 2);
 
         y0 = height() / 2 - 5;
-        d0 = 3;
+        d0 = 3 * (float) Math.PI / 2;
         y1 = height() / 2 + 5;
-        d1 = 1;
+        d1 = (float) Math.PI / 2;
 
         int nblockades, nlives;
         nblockades = 0;

@@ -40,6 +40,8 @@ public class SnakeGame extends Game {
     public void init() {
         super.init();
 
+        Log.d("jkfds", "initiating game!");
+
         setTime(0);
         setKills(0);
         setDeaths(0);
@@ -49,20 +51,33 @@ public class SnakeGame extends Game {
         particles = new ArrayList<Particle>();
         parts = new ArrayList<Part>();
 
+        Log.d("fdas", "makeing parts");
         local = new LightRacer(this, 0xC003CCF1);
         parts.add((Part) local);
+        Log.d("fdas", "made lightracer");
         other = new AIRacer(this);
         parts.add((Part) other);
+        Log.d("fdas", "made other");
         parts.add((Part) new WallRacer(this, 1, 1, getDifficualty() * 10));
+        Log.d("fdsa", "made wall1");
         parts.add((Part) new WallRacer(this, width() - 1, height() - 1, getDifficualty() * 10));
+        Log.d("fdsa", "made wall2");
+
+        Log.d("fjksdl", "setting lengths!");
 
         local.setLength(LightRacer.STANDARD_LENGTH);
         other.setLength(LightRacer.STANDARD_LENGTH);
 
+        Log.d("fdsa", "spawning!");
+
         local.spawn(parts);
         other.spawn(parts);
 
+        Log.d("fdsa", "updating...");
+
         for (int i = 0; i < 5; i++) update();
+
+        Log.d("fdsa", "READY!");
     }
 
     public void checkScore() {
@@ -107,14 +122,20 @@ public class SnakeGame extends Game {
 
         if (localSpawnDelay > 0) {
             localSpawnDelay--;
-            if (localSpawnDelay == 0)
+            if (localSpawnDelay == 0) {
+                local = new LightRacer(this, 0xC003CCF1);
                 local.spawn(parts);
+                parts.add((Part) local);
+            }
         }
 
         if (otherSpawnDelay > 0) {
             otherSpawnDelay--;
-            if (otherSpawnDelay == 0)
+            if (otherSpawnDelay == 0) {
+                other = new AIRacer(this);
                 other.spawn(parts);
+                parts.add((Part) other);
+            }
         }
     }
 

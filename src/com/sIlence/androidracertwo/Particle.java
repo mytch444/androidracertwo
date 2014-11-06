@@ -31,8 +31,8 @@ import java.lang.Math;
 import android.util.Log;
 
 public class Particle extends Part {
-    float xv, yv;
-    float w, h;
+    int xv, yv;
+    int w, h;
     int age;
     int start;
     int	life;
@@ -40,15 +40,15 @@ public class Particle extends Part {
     int starta;
     int bounced;
 
-    public static float width(Game g) {
+    public static int width(Game g) {
         return g.width() / g.getView().getWidth() * 2;
     }
 
-    public static float height(Game g) {
+    public static int height(Game g) {
         return g.height() / g.getView().getHeight() * 2;
     }
 
-    public Particle(Game game, int color, float x, float y,
+    public Particle(Game game, int color, int x, int y,
             float O, float speed,
             int sta, int lif) {
         super(game);
@@ -71,8 +71,8 @@ public class Particle extends Part {
 
         bounced = 0;
 
-        xv = (float) Math.cos(O) * speed;
-        yv = (float) Math.sin(O) * speed;
+        xv = (int) (Math.cos(O) * speed);
+        yv = (int) (Math.sin(O) * speed);
     }
 
     public void update() {
@@ -112,12 +112,14 @@ public class Particle extends Part {
 
     /****************************** Particle layouts ***********************************/
 
-    public static void initLineFall(Game g, int color, float[] xa, float[] ya, int startIndex) {
-        float x0, y0, x1, y1, xd, yd, xj, yj, xid, yid;
+    public static void initLineFall(Game g, int color, int[] xa, int[] ya, int startIndex) {
+        int x0, y0, x1, y1, xd, yd, xj, yj, xid, yid, s;
+        float O;
+        float xp, yp;
         int i;
 
-        float stepSizeX = width(g);
-        float stepSizeY = height(g);
+        int stepSizeX = width(g);
+        int stepSizeY = height(g);
 
         for (i = 1; startIndex + i < xa.length; i++) {
             if (startIndex + i - 1 < 0)
@@ -143,15 +145,12 @@ public class Particle extends Part {
             xid = xd > 0 ? stepSizeX : -stepSizeX;
             yid = yd > 0 ? stepSizeY : -stepSizeY;
 
-            float O, s;
-            float xp, yp;
-
             xj = x0;
             do {
                 yj = y0;
                 do {
                     O = g.getRand().nextFloat() * (float) Math.PI * 2;
-                    s = 0.15f + g.getRand().nextFloat() * 0.1f;
+                    s = 15 + (int) (g.getRand().nextFloat() * 10);
                     g.getParticles().add(
                             new Particle(g, color, xj, yj,
                                 O, s,
@@ -163,7 +162,7 @@ public class Particle extends Part {
         }
     }
 
-    public static void initExplosion(Game g, int color, float x, float y, float O) {
+    public static void initExplosion(Game g, int color, int x, int y, float O) {
         double Od, step;
         float speed;
         int n;
@@ -171,7 +170,7 @@ public class Particle extends Part {
         n = 100;
         step = Math.PI / n;
         for (Od = -Math.PI / 2; Od < Math.PI / 2; Od += step) {
-            speed = (float) (Math.cos(1.3 * Od) + 1.5f) * (g.getRand().nextFloat() * 0.5f + 0.1f);
+            speed = (int) ((Math.cos(1.3 * Od) + 1.5f) * (g.getRand().nextFloat() * 0.5f + 0.1f) * 100);
 
             g.getParticles().add(new Particle(g, color, x, y,
                         O + (float) Od, speed,

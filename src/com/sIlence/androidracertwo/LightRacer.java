@@ -31,11 +31,11 @@ import android.util.Log;
 public class LightRacer extends Part {
     public static final int STANDARD_LENGTH = 70;
 
-    float[] linex;
-    float[] liney;
+    int[] linex;
+    int[] liney;
     int length;
 
-    int ri, a, front, bx, by;
+    int ri, a, front;
     boolean light;
 
     long lastTurn;
@@ -43,18 +43,20 @@ public class LightRacer extends Part {
     public LightRacer(Game g, int c) {
         super(g);
 
-        linex = new float[STANDARD_LENGTH];
-        liney = new float[STANDARD_LENGTH];
+        speed = 3;
+
+        linex = new int[STANDARD_LENGTH];
+        liney = new int[STANDARD_LENGTH];
         length = STANDARD_LENGTH;
 
-        direction = getRand().nextInt(4);
+        direction = 0;
 
         color = c;
         startColor = color;
         light = true;
     }
 
-    public LightRacer(Game g, int c, float x, float y, int d) {
+    public LightRacer(Game g, int c, int x, int y, float d) {
         this(g, c);
 
         linex[0] = x;
@@ -75,11 +77,11 @@ public class LightRacer extends Part {
 
     public void updateLength() {
         if (length != linex.length) {
-            float[] tempx = linex.clone();
-            float[] tempy = liney.clone();
+            int[] tempx = linex.clone();
+            int[] tempy = liney.clone();
 
-            linex = new float[length];
-            liney = new float[length];
+            linex = new int[length];
+            liney = new int[length];
 
             int l = (linex.length > tempx.length) ? tempx.length : linex.length;
 
@@ -88,7 +90,8 @@ public class LightRacer extends Part {
         }
     }
 
-    public void die(float hx, float hy, float di, boolean lives) {
+    @Override
+    public void die(int hx, int hy, float di, boolean lives) {
         int start;
     
         Particle.initExplosion(game, startColor, hx, hy, di);
@@ -126,15 +129,15 @@ public class LightRacer extends Part {
     }
 
     public void move() {
-        linex[0] += (float) Math.cos(direction * Math.PI / 2);
-        liney[0] += (float) Math.sin(direction * Math.PI / 2);
+        linex[0] += (int) (Math.cos(direction) * speed);
+        liney[0] += (int) (Math.sin(direction) * speed);
     }
 
-    public float getX() {
+    public int getX() {
         return linex[0];
     }
 
-    public float getY() {
+    public int getY() {
         return liney[0];
     }
 
@@ -146,9 +149,9 @@ public class LightRacer extends Part {
     }
 
     public void renderLines(Canvas c) {
-        float x = linex[1];
-        float y = liney[1];
-        float dist;
+        int x = linex[1];
+        int y = liney[1];
+        int dist;
 
         //	brush.setStrokeWidth(0f);
         brush.setColor(color);
@@ -177,9 +180,9 @@ public class LightRacer extends Part {
         if (light) {
             int a = 255;
             for (ri = 0; ri < linex.length - 1 && linex[ri + 1] != 0 && liney[ri + 1] != 0; ri++) {
-                dist = (linex[ri] - linex[ri + 1]) * (linex[ri] - linex[ri + 1])
-                    + (liney[ri] - liney[ri + 1]) * (liney[ri] - liney[ri + 1]);
-                if (dist > (game.width() / 2) * (game.width() / 2))
+                if ((linex[ri] - linex[ri + 1]) * (linex[ri] - linex[ri + 1])
+                        + (liney[ri] - liney[ri + 1]) * (liney[ri] - liney[ri + 1])
+                        > (game.width() / 2) * (game.width() / 2))
                     continue;
                 front = Color.argb(a, 255, 255, 255);
                 brush.setColor(front);
@@ -192,11 +195,7 @@ public class LightRacer extends Part {
         }
     }
 
-    public float getDirection() {
-        return (float) direction * (float) Math.PI / 2f;
-    }
-
-    public boolean changeDirection(int wd) {
+    public boolean changeDirection(float wd) {
         if ((wd == direction)
                 || (wd == oppDirection(direction)) 
                 || (lastTurn + game.getView().turnDelay() * game.getView().framePeriod() > game.getView().getTime())
@@ -217,8 +216,8 @@ public class LightRacer extends Part {
     }
 
     public void spawn(ArrayList<Part> parts) {
-        linex = new float[length];
-        liney = new float[length];
+        linex = new int[length];
+        liney = new int[length];
 
         for (int i = 0; i < 10; i++)
             if (findSpawn(parts))
@@ -229,31 +228,35 @@ public class LightRacer extends Part {
 
         lastTurn = 0;
         alive = true;
+        
+        Log.d("ffdsa", "found spawn! " + linex[0] + "," + liney[0] + " going " + direction);
     }
 
     public boolean findSpawn(ArrayList<Part> parts) {
-        linex[0] = getRand().nextFloat() * (game.width() - 10) + 5;
-        liney[0] = getRand().nextFloat() * (game.height() - 10) + 5;
+        linex[0] = (int) (getRand().nextFloat() * (game.width() - 10) + 5);
+        liney[0] = (int) (getRand().nextFloat() * (game.height() - 10) + 5);
 
         for (int i = 0; i < 4; i++)
-            if (!safeToTurn(parts, i, 100))
+            if (!safeToTurn(parts, i * (float) Math.PI / 2, speed * 10))
                 return false;
 
         return true;
     }
 
-    public int safestDirection(ArrayList<Part> parts) {
-        int newDi = -1;
+    public float safestDirection(ArrayList<Part> parts) {
+        float newDi, checkingDi;
         int bestClearance = 0;
+        boolean collided;
+        int clearance;
 
         x = linex[0];
         y = liney[0];
 
-        for (int checkingDi = 0; checkingDi < 4; checkingDi++) {
-clearancetesting:
-            for (int clearance = 1; clearance < game.height(); clearance++) {
-                linex[0] = x + (float) Math.cos(Math.PI / 2 * checkingDi) * clearance;
-                liney[0] = y + (float) Math.sin(Math.PI / 2 * checkingDi) * clearance;
+        newDi = 0;
+        for (checkingDi = 0; checkingDi <= (float) Math.PI * 2; checkingDi += (float) Math.PI / 2) {
+            for (clearance = 1, collided = false; !collided && clearance < game.height(); clearance += speed) {
+                linex[0] = x + (int) Math.cos(checkingDi) * clearance;
+                liney[0] = y + (int) Math.sin(checkingDi) * clearance;
 
                 if (clearance > bestClearance) {
                     newDi = checkingDi;
@@ -267,7 +270,8 @@ clearancetesting:
                             bestClearance = clearance;
                         }
 
-                        break clearancetesting;
+                        collided = true;
+                        break;
                     }
                 }
             }
@@ -279,13 +283,13 @@ clearancetesting:
         return newDi;
     }
 
-    public boolean safeToTurn(ArrayList<Part> parts, int wd, int distance) {
+    public boolean safeToTurn(ArrayList<Part> parts, float wd, int distance) {
         x = linex[0];
         y = liney[0];
 
         for (int distanceChecked = 0; distanceChecked < distance; distanceChecked++) {
-            linex[0] = x + (float) Math.cos(Math.PI / 2 * wd) * distanceChecked;
-            liney[0] = y + (float) Math.sin(Math.PI / 2 * wd) * distanceChecked;
+            linex[0] = x + (int) Math.cos(wd) * distanceChecked;
+            liney[0] = y + (int) Math.sin(wd) * distanceChecked;
 
             for (int i = 0; i < parts.size(); i++) {
                 if (parts.get(i).collides(this)) {
@@ -303,7 +307,7 @@ clearancetesting:
     }
 
     public void offScreen() {
-        float nx, ny;
+        int nx, ny;
 
         if (liney[0] <= 0) {
             nx = game.width() - linex[0];
@@ -328,17 +332,13 @@ clearancetesting:
     }
 
     public boolean collides(Part other) {
-        float x = other.getX();
-        float y = other.getY();
+        int x = other.getX();
+        int y = other.getY();
 
-        if (linex == null || liney == null)
-            Log.d("fdjaskl f", "what the actuall fuck!");
-
-        for (int i = 1; i < linex.length; i++) {
-            if (x >= linex[i] - 0.5f && x <= linex[i] + 0.5f)
-                if (y >= liney[i] - 0.5f && y <= liney[i] + 0.5f) 
+        for (int i = 1; i < linex.length; i++)
+            if (x == linex[i])
+                if (y == liney[i])
                     return true;
-        } 
         return false;
     }
 

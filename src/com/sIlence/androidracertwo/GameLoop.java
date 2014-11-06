@@ -17,7 +17,7 @@
  *
  * Copyright: 2013 Mytchel Hammond <mytchel.hammond@gmail.com>
  *
-*/
+ */
 
 package com.sIlence.androidracertwo;
 
@@ -40,12 +40,12 @@ public class GameLoop extends Thread {
     int sleepTime;
 
     SurfaceHolder holder;
-    
+
     public GameLoop(GameView v) {
         view = v;
         running = false;
 
-	holder = view.getHolder();
+        holder = view.getHolder();
     }
 
     public int framePeriod() {
@@ -53,46 +53,46 @@ public class GameLoop extends Thread {
     }
 
     public void run() {
-	while (running) {
-	    tick();
-	}
+        while (running) {
+            tick();
+        }
     }
-    
+
     public void tick() {
-	canvas = null;
-	try {
-	    canvas = holder.lockCanvas(null);
-	    synchronized (holder) {
-		beginTime = System.currentTimeMillis();
-		
-		view.update();
-		view.render(canvas);
+        canvas = null;
+        try {
+            canvas = holder.lockCanvas(null);
+            synchronized (holder) {
+                beginTime = System.currentTimeMillis();
 
-		timeDiff = System.currentTimeMillis() - beginTime;
-		sleepTime = (int) (framePeriod - timeDiff);
+                view.update();
+                view.render(canvas);
 
-		if (sleepTime > 0) {
-		    try {
-			Thread.sleep(sleepTime);
-		    } catch (Exception e) {};
-		}
-	    }
-	} finally {
-	    if (canvas != null) {
-		holder.unlockCanvasAndPost(canvas);
-	    }
-	}
+                timeDiff = System.currentTimeMillis() - beginTime;
+                sleepTime = (int) (framePeriod - timeDiff);
+
+                if (sleepTime > 0) {
+                    try {
+                        Thread.sleep(sleepTime);
+                    } catch (Exception e) {};
+                }
+            }
+        } finally {
+            if (canvas != null) {
+                holder.unlockCanvasAndPost(canvas);
+            }
+        }
     }
 
     public boolean running() {
-	return running;
+        return running;
     }
 
     public void start() {
-	running = true;
-	super.start();
+        running = true;
+        super.start();
     }
-    
+
     public void stopLoop() {
         running = false;
     }

@@ -121,7 +121,6 @@ public class AndroidRacerTwo extends Activity {
         Log.d("TAG", "onSaveInstanceState()");
         if (view != null) {
             view.stop();
-            view.killDialog();
         }
 
         super.onSaveInstanceState(b);

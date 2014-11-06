@@ -52,7 +52,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     GameLoop loop;
 
-    float topBorder, bottomBorder, leftBorder, rightBorder;
+    int topBorder, bottomBorder, leftBorder, rightBorder;
     float yPartSize, xPartSize;
 
     Paint brush;
@@ -99,8 +99,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         game.update();
-
-        messages();
     }
 
     public void render(Canvas c) {
@@ -119,6 +117,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         handler.overlay(c);
+       
+        messages();
     }
 
     public void messages() {
@@ -186,21 +186,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         brush = new Paint(Paint.ANTI_ALIAS_FLAG);
         
-        game.setView(this);
-
         leftBorder = 0;
         rightBorder = 0;
         bottomBorder = 0;
         topBorder = 20;
+        
+        game.setView(this);
 
-        xPartSize = (getWidth() - leftBorder() - rightBorder()) / game.width();
-        yPartSize = (getHeight() - topBorder() - bottomBorder()) / game.height();
+        xPartSize = (float) (getWidth() - leftBorder() - rightBorder()) / (float) game.width();
+        yPartSize = (float) (getHeight() - topBorder() - bottomBorder()) / (float) game.height();
 
         handler.init();
 
         pausing = true;
 
-        if (game.getParts() == null) {
+        if (game.getParts() == null || countdown > 0) {
             newGame();
             showDialog(new NewGameDialog(this, game.startMessage(), false));
         }
@@ -223,6 +223,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void stop() {
         pausing = false;
         loop.stopLoop();
+        killDialog();
     }
 
     public void start() {
@@ -245,27 +246,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
      * Positioning.
      */
 
-    public float leftBorder() {
+    public int leftBorder() {
         return leftBorder;
     }
 
-    public float rightBorder() {
+    public int rightBorder() {
         return rightBorder;
     }
 
-    public float topBorder() {
+    public int topBorder() {
         return topBorder;
     }
 
-    public float bottomBorder() {
+    public int bottomBorder() {
         return bottomBorder;
     }
 
-    public float toXPoint(float p) {
+    public float toXPoint(int p) {
         return leftBorder + p * xPartSize;
     }
 
-    public float toYPoint(float p) {
+    public float toYPoint(int p) {
         return topBorder + p * yPartSize;
     }
 
