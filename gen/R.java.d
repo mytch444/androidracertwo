@@ -1,4 +1,4 @@
-/home/nilp/src/androidracertwo/gen/com/sIlence/androidracertwo/R.java \
+/home/nilp/src/androidracertwo/gen/com/mytchel/androidracertwo/R.java \
  : /home/nilp/src/androidracertwo/res/drawable-hdpi/ic_launcher.png \
 /home/nilp/src/androidracertwo/res/drawable-mdpi/ic_launcher.png \
 /home/nilp/src/androidracertwo/res/values/strings.xml \
